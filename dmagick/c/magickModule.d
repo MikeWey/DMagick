@@ -48,7 +48,7 @@ extern(C)
 
 	char** GetModuleList(const char*, const MagickModuleType, size_t*, ExceptionInfo*);
 
-	const(ModuleInfo**) GetModuleInfoList(const char*, size_t*, ExceptionInfo*);
+	const(ModuleInfo)** GetModuleInfoList(const char*, size_t*, ExceptionInfo*);
 
 	MagickBooleanType InitializeModuleList(ExceptionInfo*);
 	MagickBooleanType InvokeDynamicImageFilter(const char*, Image**, const int, const char**, ExceptionInfo*);

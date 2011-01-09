@@ -37,7 +37,7 @@ extern(C)
 	char*  StringToken(const char*, char**);
 	char** StringToList(const char*);
 
-	const(char*) GetStringInfoPath(const StringInfo*);
+	const(char)* GetStringInfoPath(const StringInfo*);
 
 	int	CompareStringInfo(const StringInfo*, const StringInfo*);
 	int	LocaleCompare(const char*, const char*);

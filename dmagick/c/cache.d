@@ -10,12 +10,12 @@ import dmagick.c.cacheView;
 
 extern(C)
 {
-	const(IndexPacket*) GetVirtualIndexQueue(const Image*);
+	const(IndexPacket)* GetVirtualIndexQueue(const Image*);
 
-	const(PixelPacket*) GetVirtualPixels(const Image*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
-	const(PixelPacket*) GetVirtualPixelQueue(const Image*);
+	const(PixelPacket)* GetVirtualPixels(const Image*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
+	const(PixelPacket)* GetVirtualPixelQueue(const Image*);
 
-	const(void*) AcquirePixelCachePixels(const Image*, MagickSizeType*, ExceptionInfo*);
+	const(void)* AcquirePixelCachePixels(const Image*, MagickSizeType*, ExceptionInfo*);
 
 	IndexPacket* GetAuthenticIndexQueue(const Image*);
 

@@ -11,10 +11,10 @@ extern(C)
 	char* CanonicalXMLContent(const char*, const MagickBooleanType);
 	char* XMLTreeInfoToXML(XMLTreeInfo*);
 
-	const(char*)  GetXMLTreeAttribute(XMLTreeInfo*, const char*);
-	const(char*)  GetXMLTreeContent(XMLTreeInfo*);
-	const(char**) GetXMLTreeProcessingInstructions(XMLTreeInfo*, const char*);
-	const(char*)  GetXMLTreeTag(XMLTreeInfo*);
+	const(char)*  GetXMLTreeAttribute(XMLTreeInfo*, const char*);
+	const(char)*  GetXMLTreeContent(XMLTreeInfo*);
+	const(char)** GetXMLTreeProcessingInstructions(XMLTreeInfo*, const char*);
+	const(char)*  GetXMLTreeTag(XMLTreeInfo*);
 
 	MagickBooleanType GetXMLTreeAttributes(const XMLTreeInfo*, SplayTreeInfo*);
 

@@ -56,16 +56,16 @@ deprecated extern(C)
 	char* PostscriptGeometry(const char*);
 	char* TranslateText(const ImageInfo *,Image *,const char *);
 
-	const(ImageAttribute*) GetImageAttribute(const Image*, const char*);
-	const(ImageAttribute*) GetImageClippingPathAttribute(Image*);
-	const(ImageAttribute*) GetNextImageAttribute(const Image*);
+	const(ImageAttribute)* GetImageAttribute(const Image*, const char*);
+	const(ImageAttribute)* GetImageClippingPathAttribute(Image*);
+	const(ImageAttribute)* GetNextImageAttribute(const Image*);
 
-	const(IndexPacket*) AcquireCacheViewIndexes(const CacheView*);
-	const(IndexPacket*) AcquireIndexes(const Image*);
+	const(IndexPacket)* AcquireCacheViewIndexes(const CacheView*);
+	const(IndexPacket)* AcquireIndexes(const Image*);
 
-	const(PixelPacket*) AcquirePixels(const Image*);
-	const(PixelPacket*) AcquireCacheViewPixels(const CacheView*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
-	const(PixelPacket*) AcquireImagePixels(const Image*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
+	const(PixelPacket)* AcquirePixels(const Image*);
+	const(PixelPacket)* AcquireCacheViewPixels(const CacheView*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
+	const(PixelPacket)* AcquireImagePixels(const Image*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
 
 	Image* AllocateImage(const ImageInfo*);
 	Image* AverageImages(const Image*, ExceptionInfo*);

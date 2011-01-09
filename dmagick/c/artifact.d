@@ -8,7 +8,7 @@ extern(C)
 	char* GetNextImageArtifact(const Image*);
 	char* RemoveImageArtifact(Image*, const char*);
 
-	const(char*) GetImageArtifact(const Image*, const char*);
+	const(char)* GetImageArtifact(const Image*, const char*);
 
 	MagickBooleanType CloneImageArtifacts(Image*, const Image*);
 	MagickBooleanType DefineImageArtifact(Image*, const char*);

@@ -36,10 +36,10 @@ extern(C)
 	char*  GetDelegateCommand(const ImageInfo*, Image*, const char*, const char*, ExceptionInfo*);
 	char** GetDelegateList(const char *,size_t *,ExceptionInfo *);
 
-	const(char*) GetDelegateCommands(const DelegateInfo*);
+	const(char)* GetDelegateCommands(const DelegateInfo*);
 
-	const(DelegateInfo*)  GetDelegateInfo(const char*, const char*, ExceptionInfo* exception);
-	const(DelegateInfo**) GetDelegateInfoList(const char*, size_t*, ExceptionInfo*);
+	const(DelegateInfo)*  GetDelegateInfo(const char*, const char*, ExceptionInfo* exception);
+	const(DelegateInfo)** GetDelegateInfoList(const char*, size_t*, ExceptionInfo*);
 
 	ssize_t GetDelegateMode(const DelegateInfo*);
 

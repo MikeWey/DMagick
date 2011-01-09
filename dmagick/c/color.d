@@ -54,8 +54,8 @@ extern(C)
 
 	char** GetColorList(const char*, size_t*, ExceptionInfo*);
 
-	const(ColorInfo*) GetColorInfo(const char*, ExceptionInfo*);
-	const(ColorInfo**) GetColorInfoList(const char*, size_t*, ExceptionInfo*);
+	const(ColorInfo)*  GetColorInfo(const char*, ExceptionInfo*);
+	const(ColorInfo)** GetColorInfoList(const char*, size_t*, ExceptionInfo*);
 
 	MagickBooleanType ColorComponentGenesis();
 	MagickBooleanType IsColorSimilar(const Image*, const PixelPacket*, const PixelPacket*);

@@ -37,10 +37,10 @@ extern(C)
 
 	char** GetLogList(const char*, size_t*, ExceptionInfo*);
 
-	const(char*) GetLogName();
-	const(char*) SetLogName(const char*);
+	const(char)* GetLogName();
+	const(char)* SetLogName(const char*);
 
-	const(LogInfo**) GetLogInfoList(const char*, size_t*, ExceptionInfo*);
+	const(LogInfo)** GetLogInfoList(const char*, size_t*, ExceptionInfo*);
 
 	LogEventType SetLogEventMask(const char*);
 

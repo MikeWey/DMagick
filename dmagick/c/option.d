@@ -99,7 +99,7 @@ extern(C)
 
 	struct OptionInfo
 	{
-		const(char*)
+		const(char)*
 			mnemonic;
 
 		ssize_t
@@ -113,8 +113,8 @@ extern(C)
 	char*  GetNextImageOption(const ImageInfo*);
 	char*  RemoveImageOption(ImageInfo*, const char*);
 
-	const(char*) GetImageOption(const ImageInfo*, const char*);
-	const(char*) MagickOptionToMnemonic(const MagickOption, const ssize_t);
+	const(char)* GetImageOption(const ImageInfo*, const char*);
+	const(char)* MagickOptionToMnemonic(const MagickOption, const ssize_t);
 
 	MagickBooleanType CloneImageOptions(ImageInfo*, const ImageInfo*);
 	MagickBooleanType DefineImageOption(ImageInfo*, const char*);

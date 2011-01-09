@@ -32,7 +32,7 @@ extern(C)
 
 	char* GetNextImageProfile(const Image*);
 
-	const(StringInfo) *GetImageProfile(const Image *,const char *);
+	const(StringInfo)* GetImageProfile(const Image *,const char *);
 
 	MagickBooleanType CloneImageProfiles(Image*, const Image*);
 	MagickBooleanType DeleteImageProfile(Image*, const char*);

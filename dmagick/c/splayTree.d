@@ -10,9 +10,9 @@ extern(C)
 	MagickBooleanType DeleteNodeByValueFromSplayTree(SplayTreeInfo*, const void*);
 	MagickBooleanType DeleteNodeFromSplayTree(SplayTreeInfo*, const void*);
 
-	const(void*) GetNextKeyInSplayTree(SplayTreeInfo*);
-	const(void*) GetNextValueInSplayTree(SplayTreeInfo*);
-	const(void*) GetValueFromSplayTree(SplayTreeInfo*, const void*);
+	const(void)* GetNextKeyInSplayTree(SplayTreeInfo*);
+	const(void)* GetNextValueInSplayTree(SplayTreeInfo*);
+	const(void)* GetValueFromSplayTree(SplayTreeInfo*, const void*);
 
 	int CompareSplayTreeString(const void*, const void*);
 	int CompareSplayTreeStringInfo(const void*, const void*);

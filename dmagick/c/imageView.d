@@ -20,9 +20,9 @@ extern(C)
 
 	char* GetImageViewException(const ImageView*, ExceptionType*);
 
-	const(IndexPacket*) GetImageViewVirtualIndexes(const ImageView*);
+	const(IndexPacket)* GetImageViewVirtualIndexes(const ImageView*);
 
-	const(PixelPacket*) GetImageViewVirtualPixels(const ImageView*);
+	const(PixelPacket)* GetImageViewVirtualPixels(const ImageView*);
 
 	Image* GetImageViewImage(const ImageView*);
 

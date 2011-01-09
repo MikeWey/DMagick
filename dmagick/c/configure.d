@@ -32,8 +32,8 @@ extern(C)
 
 	const(char*) GetConfigureValue(const ConfigureInfo*);
 
-	const(ConfigureInfo*)  GetConfigureInfo(const char*, ExceptionInfo*);
-	const(ConfigureInfo**) GetConfigureInfoList(const char*, size_t*, ExceptionInfo*);
+	const(ConfigureInfo)*  GetConfigureInfo(const char*, ExceptionInfo*);
+	const(ConfigureInfo)** GetConfigureInfoList(const char*, size_t*, ExceptionInfo*);
 
 	LinkedListInfo* DestroyConfigureOptions(LinkedListInfo *);
 	LinkedListInfo* GetConfigurePaths(const char *,ExceptionInfo *);

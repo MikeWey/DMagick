@@ -28,8 +28,8 @@ extern(C)
 
 	char** GetCoderList(const char*, size_t*, ExceptionInfo*);
 
-	const(CoderInfo*)  GetCoderInfo(const char*, ExceptionInfo*);
-	const(CoderInfo**) GetCoderInfoList(const char*, size_t*, ExceptionInfo*);
+	const(CoderInfo)*  GetCoderInfo(const char*, ExceptionInfo*);
+	const(CoderInfo)** GetCoderInfoList(const char*, size_t*, ExceptionInfo*);
 
 	MagickBooleanType CoderComponentGenesis();
 	MagickBooleanType ListCoderInfo(FILE*, ExceptionInfo*);

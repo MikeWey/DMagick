@@ -74,7 +74,7 @@ extern(C)
 
 	char** GetMagickList(const char*, size_t*, ExceptionInfo*);
 
-	const(char*) GetMagickDescription(const MagickInfo*);
+	const(char)* GetMagickDescription(const MagickInfo*);
 
 	DecodeImageHandler* GetImageDecoder(const MagickInfo*);
 
@@ -93,8 +93,8 @@ extern(C)
 	MagickBooleanType MagickComponentGenesis();
 	MagickBooleanType UnregisterMagickInfo(const char*);
 
-	const(MagickInfo*)  GetMagickInfo(const char*, ExceptionInfo*);
-	const(MagickInfo**) GetMagickInfoList(const char*, size_t*, ExceptionInfo*);
+	const(MagickInfo)*  GetMagickInfo(const char*, ExceptionInfo*);
+	const(MagickInfo)** GetMagickInfoList(const char*, size_t*, ExceptionInfo*);
 
 	MagickInfo* RegisterMagickInfo(MagickInfo*);
 	MagickInfo* SetMagickInfo(const char*);
