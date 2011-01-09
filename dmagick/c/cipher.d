@@ -7,8 +7,8 @@ import dmagick.c.magickType;
 
 extern(C)
 {
-	MagickBooleanType DecipherImage(Image*, const char*, ExceptionInfo*);
-	MagickBooleanType EncipherImage(Image*, const char*, ExceptionInfo*);
-	MagickBooleanType PasskeyDecipherImage(Image*, const StringInfo*, ExceptionInfo*);
-	MagickBooleanType PasskeyEncipherImage(Image*, const StringInfo*, ExceptionInfo*);
+	MagickBooleanType DecipherImage(Image*, const(char)*, ExceptionInfo*);
+	MagickBooleanType EncipherImage(Image*, const(char)*, ExceptionInfo*);
+	MagickBooleanType PasskeyDecipherImage(Image*, const(StringInfo)*, ExceptionInfo*);
+	MagickBooleanType PasskeyEncipherImage(Image*, const(StringInfo)*, ExceptionInfo*);
 }

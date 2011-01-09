@@ -107,14 +107,14 @@ extern(C)
 	}
 
 
-	KernelInfo* AcquireKernelInfo(const char*);
-	KernelInfo* AcquireKernelBuiltIn(const KernelInfoType, const GeometryInfo*);
-	KernelInfo* CloneKernelInfo(const KernelInfo*);
+	KernelInfo* AcquireKernelInfo(const(char)*);
+	KernelInfo* AcquireKernelBuiltIn(const KernelInfoType, const(GeometryInfo)*);
+	KernelInfo* CloneKernelInfo(const(KernelInfo)*);
 	KernelInfo* DestroyKernelInfo(KernelInfo*);
 
-	Image* MorphologyImage(const Image*, const MorphologyMethod, const ssize_t, const KernelInfo*, ExceptionInfo*);
-	Image* MorphologyImageChannel(const Image*, const ChannelType, const MorphologyMethod, const ssize_t, const KernelInfo*, ExceptionInfo*);
+	Image* MorphologyImage(const(Image)*, const MorphologyMethod, const ssize_t, const(KernelInfo)*, ExceptionInfo*);
+	Image* MorphologyImageChannel(const(Image)*, const ChannelType, const MorphologyMethod, const ssize_t, const(KernelInfo)*, ExceptionInfo*);
 
-	void ScaleGeometryKernelInfo(KernelInfo*, const char*);
+	void ScaleGeometryKernelInfo(KernelInfo*, const(char)*);
 	void ShowKernelInfo(KernelInfo*);
 }

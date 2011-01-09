@@ -29,12 +29,12 @@ extern(C)
 
 	struct PolicyInfo {}
 
-	char*  GetPolicyValue(const char* name);
-	char** GetPolicyList(const char*, size_t*, ExceptionInfo*);
+	char*  GetPolicyValue(const(char)* name);
+	char** GetPolicyList(const(char)*, size_t*, ExceptionInfo*);
 
-	const(PolicyInfo)** GetPolicyInfoList(const char*, size_t*, ExceptionInfo*);
+	const(PolicyInfo)** GetPolicyInfoList(const(char)*, size_t*, ExceptionInfo*);
 
-	MagickBooleanType IsRightsAuthorized(const PolicyDomain, const PolicyRights, const char*);
+	MagickBooleanType IsRightsAuthorized(const PolicyDomain, const PolicyRights, const(char)*);
 	MagickBooleanType ListPolicyInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType PolicyComponentGenesis();
 

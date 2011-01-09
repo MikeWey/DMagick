@@ -52,28 +52,28 @@ extern(C)
 			normalized_maximum_error;
 	}
 
-	char** GetColorList(const char*, size_t*, ExceptionInfo*);
+	char** GetColorList(const(char)*, size_t*, ExceptionInfo*);
 
-	const(ColorInfo)*  GetColorInfo(const char*, ExceptionInfo*);
-	const(ColorInfo)** GetColorInfoList(const char*, size_t*, ExceptionInfo*);
+	const(ColorInfo)*  GetColorInfo(const(char)*, ExceptionInfo*);
+	const(ColorInfo)** GetColorInfoList(const(char)*, size_t*, ExceptionInfo*);
 
 	MagickBooleanType ColorComponentGenesis();
-	MagickBooleanType IsColorSimilar(const Image*, const PixelPacket*, const PixelPacket*);
-	MagickBooleanType IsGrayImage(const Image*, ExceptionInfo*);
-	MagickBooleanType IsImageSimilar(const Image*, const Image*, ssize_t* x,ssize_t* y, ExceptionInfo*);
-	MagickBooleanType IsMagickColorSimilar(const MagickPixelPacket*, const MagickPixelPacket*);
-	MagickBooleanType IsMonochromeImage(const Image*, ExceptionInfo*);
-	MagickBooleanType IsOpacitySimilar(const Image*, const PixelPacket*, const PixelPacket*);
-	MagickBooleanType IsOpaqueImage(const Image*, ExceptionInfo*);
+	MagickBooleanType IsColorSimilar(const(Image)*, const(PixelPacket)*, const(PixelPacket)*);
+	MagickBooleanType IsGrayImage(const(Image)*, ExceptionInfo*);
+	MagickBooleanType IsImageSimilar(const(Image)*, const(Image)*, ssize_t* x,ssize_t* y, ExceptionInfo*);
+	MagickBooleanType IsMagickColorSimilar(const(MagickPixelPacket)*, const(MagickPixelPacket)*);
+	MagickBooleanType IsMonochromeImage(const(Image)*, ExceptionInfo*);
+	MagickBooleanType IsOpacitySimilar(const(Image)*, const(PixelPacket)*, const(PixelPacket)*);
+	MagickBooleanType IsOpaqueImage(const(Image)*, ExceptionInfo*);
 	MagickBooleanType ListColorInfo(FILE*, ExceptionInfo*);
-	MagickBooleanType QueryColorCompliance(const char*, const ComplianceType, PixelPacket*, ExceptionInfo*);
-	MagickBooleanType QueryColorDatabase(const char*, PixelPacket*, ExceptionInfo*);
-	MagickBooleanType QueryColorname(const Image*, const PixelPacket*, const ComplianceType, char*, ExceptionInfo*);
-	MagickBooleanType QueryMagickColorCompliance(const char*, const ComplianceType, MagickPixelPacket*, ExceptionInfo*);
-	MagickBooleanType QueryMagickColor(const char*, MagickPixelPacket*, ExceptionInfo*);
-	MagickBooleanType QueryMagickColorname(const Image*, const MagickPixelPacket*, const ComplianceType, char*, ExceptionInfo*);
+	MagickBooleanType QueryColorCompliance(const(char)*, const ComplianceType, PixelPacket*, ExceptionInfo*);
+	MagickBooleanType QueryColorDatabase(const(char)*, PixelPacket*, ExceptionInfo*);
+	MagickBooleanType QueryColorname(const(Image)*, const(PixelPacket)*, const ComplianceType, char*, ExceptionInfo*);
+	MagickBooleanType QueryMagickColorCompliance(const(char)*, const ComplianceType, MagickPixelPacket*, ExceptionInfo*);
+	MagickBooleanType QueryMagickColor(const(char)*, MagickPixelPacket*, ExceptionInfo*);
+	MagickBooleanType QueryMagickColorname(const(Image)*, const(MagickPixelPacket)*, const ComplianceType, char*, ExceptionInfo*);
 
 	void ColorComponentTerminus();
-	void ConcatenateColorComponent(const MagickPixelPacket*, const ChannelType, const ComplianceType, char*);
-	void GetColorTuple(const MagickPixelPacket*, const MagickBooleanType, char*);
+	void ConcatenateColorComponent(const(MagickPixelPacket)*, const ChannelType, const ComplianceType, char*);
+	void GetColorTuple(const(MagickPixelPacket)*, const MagickBooleanType, char*);
 }

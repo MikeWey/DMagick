@@ -476,61 +476,61 @@ extern(C)
 
 	ExceptionType CatchImageException(Image*);
 
-	FILE* GetImageInfoFile(const ImageInfo*);
+	FILE* GetImageInfoFile(const(ImageInfo)*);
 
-	Image* AcquireImage(const ImageInfo*);
-	Image* AppendImages(const Image*, const MagickBooleanType, ExceptionInfo*);
-	Image* CloneImage(const Image*, const size_t, const size_t, const MagickBooleanType, ExceptionInfo*);
-	Image* CombineImages(const Image*, const ChannelType, ExceptionInfo*);
+	Image* AcquireImage(const(ImageInfo)*);
+	Image* AppendImages(const(Image)*, const MagickBooleanType, ExceptionInfo*);
+	Image* CloneImage(const(Image)*, const size_t, const size_t, const MagickBooleanType, ExceptionInfo*);
+	Image* CombineImages(const(Image)*, const ChannelType, ExceptionInfo*);
 	Image* DestroyImage(Image*);
-	Image* GetImageClipMask(const Image*, ExceptionInfo*);
-	Image* GetImageMask(const Image*, ExceptionInfo*);
-	Image* NewMagickImage(const ImageInfo*, const size_t, const size_t, const MagickPixelPacket*);
+	Image* GetImageClipMask(const(Image)*, ExceptionInfo*);
+	Image* GetImageMask(const(Image)*, ExceptionInfo*);
+	Image* NewMagickImage(const(ImageInfo)*, const size_t, const size_t, const(MagickPixelPacket)*);
 	Image* ReferenceImage(Image*);
-	Image* SeparateImages(const Image*, const ChannelType, ExceptionInfo*);
+	Image* SeparateImages(const(Image)*, const ChannelType, ExceptionInfo*);
 
 	ImageInfo* AcquireImageInfo();
-	ImageInfo* CloneImageInfo(const ImageInfo*);
+	ImageInfo* CloneImageInfo(const(ImageInfo)*);
 	ImageInfo* DestroyImageInfo(ImageInfo*);
 
 	MagickBooleanType ClipImage(Image*);
-	MagickBooleanType ClipImagePath(Image*, const char*, const MagickBooleanType);
-	MagickBooleanType GetImageAlphaChannel(const Image*);
-	MagickBooleanType IsTaintImage(const Image*);
-	MagickBooleanType IsMagickConflict(const char*);
-	MagickBooleanType IsHighDynamicRangeImage(const Image*, ExceptionInfo*);
-	MagickBooleanType IsImageObject(const Image*);
+	MagickBooleanType ClipImagePath(Image*, const(char)*, const MagickBooleanType);
+	MagickBooleanType GetImageAlphaChannel(const(Image)*);
+	MagickBooleanType IsTaintImage(const(Image)*);
+	MagickBooleanType IsMagickConflict(const(char)*);
+	MagickBooleanType IsHighDynamicRangeImage(const(Image)*, ExceptionInfo*);
+	MagickBooleanType IsImageObject(const(Image)*);
 	MagickBooleanType ListMagickInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType ModifyImage(Image**, ExceptionInfo*);
-	MagickBooleanType ResetImagePage(Image*, const char*);
+	MagickBooleanType ResetImagePage(Image*, const(char)*);
 	MagickBooleanType SeparateImageChannel(Image*, const ChannelType);
 	MagickBooleanType SetImageAlphaChannel(Image*, const AlphaChannelType);
 	MagickBooleanType SetImageBackgroundColor(Image*);
-	MagickBooleanType SetImageClipMask(Image*, const Image*);
-	MagickBooleanType SetImageColor(Image*, const MagickPixelPacket*);
+	MagickBooleanType SetImageClipMask(Image*, const(Image)*);
+	MagickBooleanType SetImageColor(Image*, const(MagickPixelPacket)*);
 	MagickBooleanType SetImageExtent(Image*, const size_t, const size_t);
 	MagickBooleanType SetImageInfo(ImageInfo*, const uint, ExceptionInfo*);
-	MagickBooleanType SetImageMask(Image*, const Image*);
+	MagickBooleanType SetImageMask(Image*, const(Image)*);
 	MagickBooleanType SetImageOpacity(Image*, const Quantum);
 	MagickBooleanType SetImageStorageClass(Image*, const ClassType);
 	MagickBooleanType SetImageType(Image*, const ImageType);
 	MagickBooleanType StripImage(Image*);
 	MagickBooleanType SyncImage(Image*);
-	MagickBooleanType SyncImageSettings(const ImageInfo*, Image*);
+	MagickBooleanType SyncImageSettings(const(ImageInfo)*, Image*);
 	MagickBooleanType SyncImagesSettings(ImageInfo*, Image*);
 
-	size_t InterpretImageFilename(const ImageInfo*, Image*, const char*, int, char*);
+	size_t InterpretImageFilename(const(ImageInfo)*, Image*, const(char)*, int, char*);
 
 	ssize_t GetImageReferenceCount(Image*);
 
-	VirtualPixelMethod GetImageVirtualPixelMethod(const Image*);
-	VirtualPixelMethod SetImageVirtualPixelMethod(const Image*, const VirtualPixelMethod);
+	VirtualPixelMethod GetImageVirtualPixelMethod(const(Image)*);
+	VirtualPixelMethod SetImageVirtualPixelMethod(const(Image)*, const VirtualPixelMethod);
 
-	void AcquireNextImage(const ImageInfo*, Image*);
+	void AcquireNextImage(const(ImageInfo)*, Image*);
 	void DestroyImagePixels(Image*);
 	void DisassociateImageStream(Image*);
 	void GetImageException(Image*, ExceptionInfo*);
 	void GetImageInfo(ImageInfo*);
-	void SetImageInfoBlob(ImageInfo*, const void*, const size_t);
+	void SetImageInfoBlob(ImageInfo*, const(void)*, const size_t);
 	void SetImageInfoFile(ImageInfo*, FILE*);
 }

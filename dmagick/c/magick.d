@@ -20,9 +20,9 @@ extern(C)
 		EncoderThreadSupport = 0x0002
 	}
 
-	alias Image* function(const ImageInfo*, ExceptionInfo*) DecodeImageHandler;
-	alias MagickBooleanType function(const ImageInfo*, Image*) EncodeImageHandler;
-	alias MagickBooleanType function(const ubyte*, const size_t) IsImageFormatHandler;
+	alias Image* function(const(ImageInfo)*, ExceptionInfo*) DecodeImageHandler;
+	alias MagickBooleanType function(const(ImageInfo)*, Image*) EncodeImageHandler;
+	alias MagickBooleanType function(const(ubyte)*, const size_t) IsImageFormatHandler;
 
 	struct MagickInfo
 	{
@@ -72,36 +72,36 @@ extern(C)
 			signature;
 	}
 
-	char** GetMagickList(const char*, size_t*, ExceptionInfo*);
+	char** GetMagickList(const(char)*, size_t*, ExceptionInfo*);
 
-	const(char)* GetMagickDescription(const MagickInfo*);
+	const(char)* GetMagickDescription(const(MagickInfo)*);
 
-	DecodeImageHandler* GetImageDecoder(const MagickInfo*);
+	DecodeImageHandler* GetImageDecoder(const(MagickInfo)*);
 
-	EncodeImageHandler* GetImageEncoder(const MagickInfo*);
+	EncodeImageHandler* GetImageEncoder(const(MagickInfo)*);
 
 	int GetMagickPrecision();
 	int SetMagickPrecision(const int);
 
-	MagickBooleanType GetImageMagick(const ubyte*, const size_t, char*);
-	MagickBooleanType GetMagickAdjoin(const MagickInfo*);
-	MagickBooleanType GetMagickBlobSupport(const MagickInfo*);
-	MagickBooleanType GetMagickEndianSupport(const MagickInfo*);
-	MagickBooleanType GetMagickRawSupport(const MagickInfo*);
-	MagickBooleanType GetMagickSeekableStream(const MagickInfo*);
+	MagickBooleanType GetImageMagick(const(ubyte)*, const size_t, char*);
+	MagickBooleanType GetMagickAdjoin(const(MagickInfo)*);
+	MagickBooleanType GetMagickBlobSupport(const(MagickInfo)*);
+	MagickBooleanType GetMagickEndianSupport(const(MagickInfo)*);
+	MagickBooleanType GetMagickRawSupport(const(MagickInfo)*);
+	MagickBooleanType GetMagickSeekableStream(const(MagickInfo)*);
 	MagickBooleanType IsMagickInstantiated();
 	MagickBooleanType MagickComponentGenesis();
-	MagickBooleanType UnregisterMagickInfo(const char*);
+	MagickBooleanType UnregisterMagickInfo(const(char)*);
 
-	const(MagickInfo)*  GetMagickInfo(const char*, ExceptionInfo*);
-	const(MagickInfo)** GetMagickInfoList(const char*, size_t*, ExceptionInfo*);
+	const(MagickInfo)*  GetMagickInfo(const(char)*, ExceptionInfo*);
+	const(MagickInfo)** GetMagickInfoList(const(char)*, size_t*, ExceptionInfo*);
 
 	MagickInfo* RegisterMagickInfo(MagickInfo*);
-	MagickInfo* SetMagickInfo(const char*);
+	MagickInfo* SetMagickInfo(const(char)*);
 
-	MagickStatusType GetMagickThreadSupport(const MagickInfo*);
+	MagickStatusType GetMagickThreadSupport(const(MagickInfo)*);
 
 	void MagickComponentTerminus();
-	void MagickCoreGenesis(const char*, const MagickBooleanType);
+	void MagickCoreGenesis(const(char)*, const MagickBooleanType);
 	void MagickCoreTerminus();
 }

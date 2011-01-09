@@ -38,6 +38,6 @@ extern(C)
 		VoronoiColorInterpolate =     DistortImageMethod.SentinelDistortion
 	}
 
-	Image* DistortImage(const Image*, const DistortImageMethod, const size_t, const double*, MagickBooleanType, ExceptionInfo* exception);
-	Image* SparseColorImage(const Image*, const ChannelType, const SparseColorMethod, const size_t, const double*, ExceptionInfo*);
+	Image* DistortImage(const(Image)*, const DistortImageMethod, const size_t, const(double)*, MagickBooleanType, ExceptionInfo* exception);
+	Image* SparseColorImage(const(Image)*, const ChannelType, const SparseColorMethod, const size_t, const(double)*, ExceptionInfo*);
 }

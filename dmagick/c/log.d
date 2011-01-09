@@ -35,22 +35,22 @@ extern(C)
 
 	struct LogInfo {}
 
-	char** GetLogList(const char*, size_t*, ExceptionInfo*);
+	char** GetLogList(const(char)*, size_t*, ExceptionInfo*);
 
 	const(char)* GetLogName();
-	const(char)* SetLogName(const char*);
+	const(char)* SetLogName(const(char)*);
 
-	const(LogInfo)** GetLogInfoList(const char*, size_t*, ExceptionInfo*);
+	const(LogInfo)** GetLogInfoList(const(char)*, size_t*, ExceptionInfo*);
 
-	LogEventType SetLogEventMask(const char*);
+	LogEventType SetLogEventMask(const(char)*);
 
 	MagickBooleanType IsEventLogging();
 	MagickBooleanType ListLogInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType LogComponentGenesis();
-	MagickBooleanType LogMagickEvent(const LogEventType, const char*, const char*, const size_t, const char*, ...);
-	MagickBooleanType LogMagickEventList(const LogEventType, const char*, const char*, const size_t, const char*, va_list);
+	MagickBooleanType LogMagickEvent(const LogEventType, const(char)*, const(char)*, const size_t, const(char)*, ...);
+	MagickBooleanType LogMagickEventList(const LogEventType, const(char)*, const(char)*, const size_t, const(char)*, va_list);
 
 	void CloseMagickLog();
 	void LogComponentTerminus();
-	void SetLogFormat(const char*);
+	void SetLogFormat(const(char)*);
 }

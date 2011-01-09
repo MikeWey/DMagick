@@ -38,16 +38,16 @@ extern(C)
 		TrimBoundsLayer
 	}
 
-	Image* CoalesceImages(const Image*, ExceptionInfo*);
-	Image* DisposeImages(const Image*, ExceptionInfo*);
-	Image* CompareImageLayers(const Image*, const ImageLayerMethod, ExceptionInfo*);
-	Image* DeconstructImages(const Image*, ExceptionInfo*);
+	Image* CoalesceImages(const(Image)*, ExceptionInfo*);
+	Image* DisposeImages(const(Image)*, ExceptionInfo*);
+	Image* CompareImageLayers(const(Image)*, const ImageLayerMethod, ExceptionInfo*);
+	Image* DeconstructImages(const(Image)*, ExceptionInfo*);
 	Image* MergeImageLayers(Image*, const ImageLayerMethod, ExceptionInfo*);
-	Image* OptimizeImageLayers(const Image*, ExceptionInfo*);
-	Image* OptimizePlusImageLayers(const Image*, ExceptionInfo*);
+	Image* OptimizeImageLayers(const(Image)*, ExceptionInfo*);
+	Image* OptimizePlusImageLayers(const(Image)*, ExceptionInfo*);
 
 	void CompositeLayers(Image*, const CompositeOperator, Image*, const ssize_t, const ssize_t, ExceptionInfo*);
-	void OptimizeImageTransparency(const Image*, ExceptionInfo*);
+	void OptimizeImageTransparency(const(Image)*, ExceptionInfo*);
 	void RemoveDuplicateLayers(Image**, ExceptionInfo*);
 	void RemoveZeroDelayLayers(Image**, ExceptionInfo*);
 }

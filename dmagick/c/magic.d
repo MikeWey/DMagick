@@ -36,15 +36,15 @@ extern(C)
 			signature;
 	}
 
-	char** GetMagicList(const char*, size_t*, ExceptionInfo*);
+	char** GetMagicList(const(char)*, size_t*, ExceptionInfo*);
 
-	const(char)* GetMagicName(const MagicInfo*);
+	const(char)* GetMagicName(const(MagicInfo)*);
 
 	MagickBooleanType ListMagicInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType MagicComponentGenesis();
 
-	const(MagicInfo)*  GetMagicInfo(const ubyte*, const size_t, ExceptionInfo*);
-	const(MagicInfo)** GetMagicInfoList(const char*, size_t*, ExceptionInfo*);
+	const(MagicInfo)*  GetMagicInfo(const(ubyte)*, const size_t, ExceptionInfo*);
+	const(MagicInfo)** GetMagicInfoList(const(char)*, size_t*, ExceptionInfo*);
 
 	void MagicComponentTerminus();
 }

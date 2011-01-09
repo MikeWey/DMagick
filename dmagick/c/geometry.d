@@ -99,21 +99,21 @@ extern(C)
 			y;
 	}
 
-	char* GetPageGeometry(const char*);
+	char* GetPageGeometry(const(char)*);
 
-	MagickBooleanType IsGeometry(const char*);
-	MagickBooleanType IsSceneGeometry(const char*, const MagickBooleanType);
+	MagickBooleanType IsGeometry(const(char)*);
+	MagickBooleanType IsSceneGeometry(const(char)*, const MagickBooleanType);
 
-	MagickStatusType GetGeometry(const char*, ssize_t*, ssize_t*, size_t*, size_t*);
-	MagickStatusType ParseAbsoluteGeometry(const char*, RectangleInfo*);
-	MagickStatusType ParseAffineGeometry(const char*, AffineMatrix*, ExceptionInfo*);
-	MagickStatusType ParseGeometry(const char*, GeometryInfo*);
-	MagickStatusType ParseGravityGeometry(const Image*, const char*, RectangleInfo*, ExceptionInfo*);
-	MagickStatusType ParseMetaGeometry(const char*, ssize_t*, ssize_t*, size_t*, size_t*);
-	MagickStatusType ParsePageGeometry(const Image*, const char*, RectangleInfo*, ExceptionInfo*);
-	MagickStatusType ParseRegionGeometry(const Image*, const char*, RectangleInfo*, ExceptionInfo*);
+	MagickStatusType GetGeometry(const(char)*, ssize_t*, ssize_t*, size_t*, size_t*);
+	MagickStatusType ParseAbsoluteGeometry(const(char)*, RectangleInfo*);
+	MagickStatusType ParseAffineGeometry(const(char)*, AffineMatrix*, ExceptionInfo*);
+	MagickStatusType ParseGeometry(const(char)*, GeometryInfo*);
+	MagickStatusType ParseGravityGeometry(const(Image)*, const(char)*, RectangleInfo*, ExceptionInfo*);
+	MagickStatusType ParseMetaGeometry(const(char)*, ssize_t*, ssize_t*, size_t*, size_t*);
+	MagickStatusType ParsePageGeometry(const(Image)*, const(char)*, RectangleInfo*, ExceptionInfo*);
+	MagickStatusType ParseRegionGeometry(const(Image)*, const(char)*, RectangleInfo*, ExceptionInfo*);
 
 	void GravityAdjustGeometry(const size_t, const size_t, const GravityType, RectangleInfo*);
-	void SetGeometry(const Image*, RectangleInfo*);
+	void SetGeometry(const(Image)*, RectangleInfo*);
 	void SetGeometryInfo(GeometryInfo*);
 }

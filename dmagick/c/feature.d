@@ -24,5 +24,5 @@ extern(C)
 			maximum_correlation_coefficient;
 	}
 
-	ChannelFeatures* GetImageChannelFeatures(const Image*, const size_t, ExceptionInfo*);
+	ChannelFeatures* GetImageChannelFeatures(const(Image)*, const size_t, ExceptionInfo*);
 }

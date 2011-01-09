@@ -9,5 +9,5 @@ extern(C)
 
 	MagickBooleanType GaussJordanElimination(double**, double**, const size_t, const size_t);
 
-	void LeastSquaresAddTerms(double**, double**, const double*, const double*, const size_t, const size_t);
+	void LeastSquaresAddTerms(double**, double**, const(double)*, const(double)*, const size_t, const size_t);
 }

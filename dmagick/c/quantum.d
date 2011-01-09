@@ -78,22 +78,22 @@ extern(C)
 		return(cast(ubyte) (((quantum+128UL)-((quantum+128UL) >> 8)) >> 8));
 	}
 
-	MagickBooleanType SetQuantumDepth(const Image*, QuantumInfo*, const size_t);
-	MagickBooleanType SetQuantumFormat(const Image*, QuantumInfo*, const QuantumFormatType);
-	MagickBooleanType SetQuantumPad(const Image*, QuantumInfo*, const size_t);
+	MagickBooleanType SetQuantumDepth(const(Image)*, QuantumInfo*, const size_t);
+	MagickBooleanType SetQuantumFormat(const(Image)*, QuantumInfo*, const QuantumFormatType);
+	MagickBooleanType SetQuantumPad(const(Image)*, QuantumInfo*, const size_t);
 
-	QuantumInfo* AcquireQuantumInfo(const ImageInfo*, Image*);
+	QuantumInfo* AcquireQuantumInfo(const(ImageInfo)*, Image*);
 	QuantumInfo* DestroyQuantumInfo(QuantumInfo*);
 
 	QuantumType GetQuantumType(Image*, ExceptionInfo*);
 
-	size_t ExportQuantumPixels(const Image*, const CacheView*, const QuantumInfo*, const QuantumType, ubyte*, ExceptionInfo*);
-	size_t GetQuantumExtent(const Image*, const QuantumInfo*, const QuantumType);
-	size_t ImportQuantumPixels(Image*, CacheView*, const QuantumInfo*, const QuantumType, const ubyte*, ExceptionInfo*);
+	size_t ExportQuantumPixels(const(Image)*, const(CacheView)*, const(QuantumInfo)*, const QuantumType, ubyte*, ExceptionInfo*);
+	size_t GetQuantumExtent(const(Image)*, const(QuantumInfo)*, const QuantumType);
+	size_t ImportQuantumPixels(Image*, CacheView*, const(QuantumInfo)*, const QuantumType, const(ubyte)*, ExceptionInfo*);
 
-	ubyte* GetQuantumPixels(const QuantumInfo*);
+	ubyte* GetQuantumPixels(const(QuantumInfo)*);
 
-	void GetQuantumInfo(const ImageInfo*, QuantumInfo*);
+	void GetQuantumInfo(const(ImageInfo)*, QuantumInfo*);
 	void SetQuantumAlphaType(QuantumInfo*, const QuantumAlphaType);
 	void SetQuantumImageType(Image*, const QuantumType);
 	void SetQuantumMinIsWhite(QuantumInfo*, const MagickBooleanType);

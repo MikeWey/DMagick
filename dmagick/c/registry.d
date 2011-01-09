@@ -15,13 +15,13 @@ extern(C)
 
 	char* GetNextImageRegistry();
 
-	MagickBooleanType DefineImageRegistry(const RegistryType, const char*, ExceptionInfo*);
-	MagickBooleanType DeleteImageRegistry(const char*);
+	MagickBooleanType DefineImageRegistry(const RegistryType, const(char)*, ExceptionInfo*);
+	MagickBooleanType DeleteImageRegistry(const(char)*);
 	MagickBooleanType RegistryComponentGenesis();
-	MagickBooleanType SetImageRegistry(const RegistryType, const char*, const void*, ExceptionInfo*);
+	MagickBooleanType SetImageRegistry(const RegistryType, const(char)*, const(void)*, ExceptionInfo*);
 
-	void* GetImageRegistry(const RegistryType, const char*, ExceptionInfo*);
+	void* GetImageRegistry(const RegistryType, const(char)*, ExceptionInfo*);
 	void  RegistryComponentTerminus();
-	void* RemoveImageRegistry(const char*);
+	void* RemoveImageRegistry(const(char)*);
 	void  ResetImageRegistryIterator();
 }

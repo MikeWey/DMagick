@@ -31,7 +31,7 @@ extern(C)
 	struct Ascii85Info {}
 
 	MagickBooleanType HuffmanDecodeImage(Image*);
-	MagickBooleanType HuffmanEncodeImage(const ImageInfo*, Image*, Image*);
+	MagickBooleanType HuffmanEncodeImage(const(ImageInfo)*, Image*, Image*);
 	MagickBooleanType LZWEncodeImage(Image*, const size_t, ubyte*);
 	MagickBooleanType PackbitsEncodeImage(Image*, const size_t, ubyte*);
 	MagickBooleanType ZLIBEncodeImage(Image*, const size_t, ubyte*);

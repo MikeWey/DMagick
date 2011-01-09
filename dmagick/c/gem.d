@@ -7,7 +7,7 @@ import dmagick.c.random;
 
 extern(C)
 {
-	double ExpandAffine(const AffineMatrix*);
+	double ExpandAffine(const(AffineMatrix)*);
 	double GenerateDifferentialNoise(RandomInfo*, const Quantum, const NoiseType, const MagickRealType);
 
 	size_t GetOptimalKernelWidth(const double, const double);

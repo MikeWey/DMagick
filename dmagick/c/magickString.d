@@ -23,56 +23,56 @@ extern(C)
 			signature;
 	}
 
-	char*  AcquireString(const char*);
-	char*  CloneString(char**, const char*);
-	char*  ConstantString(const char*);
+	char*  AcquireString(const(char)*);
+	char*  CloneString(char**, const(char)*);
+	char*  ConstantString(const(char)*);
 	char*  DestroyString(char*);
 	char** DestroyStringList(char**);
-	char*  EscapeString(const char*, const char);
-	char*  FileToString(const char*, const size_t, ExceptionInfo*);
-	char*  GetEnvironmentValue(const char*);
-	char*  StringInfoToHexString(const StringInfo*);
-	char*  StringInfoToString(const StringInfo*);
-	char** StringToArgv(const char*, int*);
-	char*  StringToken(const char*, char**);
-	char** StringToList(const char*);
+	char*  EscapeString(const(char)*, const char);
+	char*  FileToString(const(char)*, const size_t, ExceptionInfo*);
+	char*  GetEnvironmentValue(const(char)*);
+	char*  StringInfoToHexString(const(StringInfo)*);
+	char*  StringInfoToString(const(StringInfo)*);
+	char** StringToArgv(const(char)*, int*);
+	char*  StringToken(const(char)*, char**);
+	char** StringToList(const(char)*);
 
-	const(char)* GetStringInfoPath(const StringInfo*);
+	const(char)* GetStringInfoPath(const(StringInfo)*);
 
-	int	CompareStringInfo(const StringInfo*, const StringInfo*);
-	int	LocaleCompare(const char*, const char*);
-	int	LocaleNCompare(const char*, const char*, const size_t);
+	int	CompareStringInfo(const(StringInfo)*, const(StringInfo)*);
+	int	LocaleCompare(const(char)*, const(char)*);
+	int	LocaleNCompare(const(char)*, const(char)*, const size_t);
 
-	MagickBooleanType ConcatenateString(char**, const char*);
-	MagickBooleanType SubstituteString(char**, const char*, const char*);
+	MagickBooleanType ConcatenateString(char**, const(char)*);
+	MagickBooleanType SubstituteString(char**, const(char)*, const(char)*);
 
-	size_t ConcatenateMagickString(char*, const char*, const size_t);
-	size_t CopyMagickString(char*, const char*, const size_t);
-	size_t GetStringInfoLength(const StringInfo*);
+	size_t ConcatenateMagickString(char*, const(char)*, const size_t);
+	size_t CopyMagickString(char*, const(char)*, const size_t);
+	size_t GetStringInfoLength(const(StringInfo)*);
 
 	ssize_t	FormatMagickSize(const MagickSizeType, const MagickBooleanType, char*);
-	ssize_t	FormatMagickString(char*, const size_t, const char*, ...);
-	ssize_t	FormatMagickStringList(char*, const size_t, const char*, va_list);
+	ssize_t	FormatMagickString(char*, const size_t, const(char)*, ...);
+	ssize_t	FormatMagickStringList(char*, const size_t, const(char)*, va_list);
 	ssize_t	FormatMagickTime(const time_t, const size_t, char*);
 
 	StringInfo* AcquireStringInfo(const size_t);
-	StringInfo* CloneStringInfo(const StringInfo*);
-	StringInfo* ConfigureFileToStringInfo(const char*);
+	StringInfo* CloneStringInfo(const(StringInfo)*);
+	StringInfo* ConfigureFileToStringInfo(const(char)*);
 	StringInfo* DestroyStringInfo(StringInfo*);
-	StringInfo* FileToStringInfo(const char*, const size_t, ExceptionInfo*);
+	StringInfo* FileToStringInfo(const(char)*, const size_t, ExceptionInfo*);
 	StringInfo* SplitStringInfo(StringInfo*, const size_t);
-	StringInfo* StringToStringInfo(const char*);
+	StringInfo* StringToStringInfo(const(char)*);
 
-	ubyte* GetStringInfoDatum(const StringInfo*);
+	ubyte* GetStringInfoDatum(const(StringInfo)*);
 
-	void ConcatenateStringInfo(StringInfo*, const StringInfo*);
+	void ConcatenateStringInfo(StringInfo*, const(StringInfo)*);
 	void LocaleLower(char*);
 	void LocaleUpper(char*);
-	void PrintStringInfo(FILE *file, const char*, const StringInfo*);
+	void PrintStringInfo(FILE *file, const(char)*, const(StringInfo)*);
 	void ResetStringInfo(StringInfo*);
-	void SetStringInfo(StringInfo*, const StringInfo*);
-	void SetStringInfoDatum(StringInfo*, const ubyte*);
+	void SetStringInfo(StringInfo*, const(StringInfo)*);
+	void SetStringInfoDatum(StringInfo*, const(ubyte)*);
 	void SetStringInfoLength(StringInfo*, const size_t);
-	void SetStringInfoPath(StringInfo*, const char*);
+	void SetStringInfoPath(StringInfo*, const(char)*);
 	void StripString(char*);
 }

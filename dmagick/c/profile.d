@@ -30,18 +30,18 @@ extern(C)
 		RelativeIntent
 	}
 
-	char* GetNextImageProfile(const Image*);
+	char* GetNextImageProfile(const(Image)*);
 
-	const(StringInfo)* GetImageProfile(const Image *,const char *);
+	const(StringInfo)* GetImageProfile(const(Image)*, const(char)*);
 
-	MagickBooleanType CloneImageProfiles(Image*, const Image*);
-	MagickBooleanType DeleteImageProfile(Image*, const char*);
-	MagickBooleanType ProfileImage(Image*, const char*, const void*, const size_t, const MagickBooleanType);
-	MagickBooleanType SetImageProfile(Image*, const char*, const StringInfo*);
+	MagickBooleanType CloneImageProfiles(Image*, const(Image)*);
+	MagickBooleanType DeleteImageProfile(Image*, const(char)*);
+	MagickBooleanType ProfileImage(Image*, const(char)*, const(void)*, const size_t, const MagickBooleanType);
+	MagickBooleanType SetImageProfile(Image*, const(char)*, const(StringInfo)*);
 	MagickBooleanType SyncImageProfiles(Image*);
 
-	StringInfo* RemoveImageProfile(Image*, const char*);
+	StringInfo* RemoveImageProfile(Image*, const(char)*);
 
 	void DestroyImageProfiles(Image*);
-	void ResetImageProfileIterator(const Image*);
+	void ResetImageProfileIterator(const(Image)*);
 }

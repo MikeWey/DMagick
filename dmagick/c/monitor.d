@@ -5,7 +5,7 @@ import dmagick.c.magickType;
 
 extern(C)
 {
-	alias MagickBooleanType function(const char*, const MagickOffsetType, const MagickSizeType, void*) MagickProgressMonitor;
+	alias MagickBooleanType function(const(char)*, const MagickOffsetType, const MagickSizeType, void*) MagickProgressMonitor;
 
 	MagickProgressMonitor SetImageProgressMonitor(Image*, const MagickProgressMonitor, void*);
 	MagickProgressMonitor SetImageInfoProgressMonitor(ImageInfo*, const MagickProgressMonitor, void*);

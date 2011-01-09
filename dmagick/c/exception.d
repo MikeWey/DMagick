@@ -106,13 +106,13 @@ extern(C)
 			signature;
 	}
 
-	alias void function(const ExceptionType, const char*, const char*) ErrorHandler;
-	alias void function(const ExceptionType, const char*, const char*) FatalErrorHandler;
-	alias void function(const ExceptionType, const char*, const char*) WarningHandler;
+	alias void function(const ExceptionType, const(char)*, const(char)*) ErrorHandler;
+	alias void function(const ExceptionType, const(char)*, const(char)*) FatalErrorHandler;
+	alias void function(const ExceptionType, const(char)*, const(char)*) WarningHandler;
 
 	char* GetExceptionMessage(const int);
 
-	const(char*) GetLocaleExceptionMessage(const ExceptionType, const char*);
+	const(char*) GetLocaleExceptionMessage(const ExceptionType, const(char)*);
 
 	ErrorHandler SetErrorHandler(ErrorHandler);
 
@@ -121,17 +121,17 @@ extern(C)
 
 	FatalErrorHandler SetFatalErrorHandler(FatalErrorHandler);
 
-	MagickBooleanType ThrowException(ExceptionInfo*, const ExceptionType, const char*, const char*);
-	MagickBooleanType ThrowMagickException(ExceptionInfo*, const char*, const char*, const size_t, const ExceptionType, const char*, const char*, ...);
-	MagickBooleanType ThrowMagickExceptionList(ExceptionInfo*, const char*, const char*, const size_t, const ExceptionType, const char*, const char*, va_list);
+	MagickBooleanType ThrowException(ExceptionInfo*, const ExceptionType, const(char)*, const(char)*);
+	MagickBooleanType ThrowMagickException(ExceptionInfo*, const(char)*, const(char)*, const size_t, const ExceptionType, const(char)*, const(char)*, ...);
+	MagickBooleanType ThrowMagickExceptionList(ExceptionInfo*, const(char)*, const(char)*, const size_t, const ExceptionType, const(char)*, const(char)*, va_list);
 
 	void CatchException(ExceptionInfo*);
 	void ClearMagickException(ExceptionInfo*);
 	void GetExceptionInfo(ExceptionInfo*);
-	void InheritException(ExceptionInfo*, const ExceptionInfo*);
-	void MagickError(const ExceptionType, const char*, const char*);
-	void MagickFatalError(const ExceptionType, const char*, const char*);
-	void MagickWarning(const ExceptionType, const char*, const char*);
+	void InheritException(ExceptionInfo*, const(ExceptionInfo)*);
+	void MagickError(const ExceptionType, const(char)*, const(char)*);
+	void MagickFatalError(const ExceptionType, const(char)*, const(char)*);
+	void MagickWarning(const ExceptionType, const(char)*, const(char)*);
 
 	WarningHandler SetWarningHandler(WarningHandler);
 }

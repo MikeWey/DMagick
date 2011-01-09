@@ -75,7 +75,7 @@ extern(C)
 		MathematicsCompositeOp
 	}
 
-	MagickBooleanType CompositeImage(Image*, const CompositeOperator, const Image*, const ssize_t, const ssize_t);
-	MagickBooleanType CompositeImageChannel(Image*, const ChannelType, const CompositeOperator, const Image*, const ssize_t, const ssize_t);
-	MagickBooleanType TextureImage(Image*, const Image*);
+	MagickBooleanType CompositeImage(Image*, const CompositeOperator, const(Image)*, const ssize_t, const ssize_t);
+	MagickBooleanType CompositeImageChannel(Image*, const ChannelType, const CompositeOperator, const(Image)*, const ssize_t, const ssize_t);
+	MagickBooleanType TextureImage(Image*, const(Image)*);
 }

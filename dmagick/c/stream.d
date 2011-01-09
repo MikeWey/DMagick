@@ -6,9 +6,9 @@ import dmagick.c.magickType;
 
 extern(C)
 {
-	alias size_t function(const Image *,const void *,const size_t) StreamHandler;
+	alias size_t function(const(Image)*, const(void)*, const size_t) StreamHandler;
 
-	Image* ReadStream(const ImageInfo*, StreamHandler, ExceptionInfo*);
+	Image* ReadStream(const(ImageInfo)*, StreamHandler, ExceptionInfo*);
 
-	MagickBooleanType WriteStream(const ImageInfo*, Image*, StreamHandler);
+	MagickBooleanType WriteStream(const(ImageInfo)*, Image*, StreamHandler);
 }

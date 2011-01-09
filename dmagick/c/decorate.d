@@ -22,8 +22,8 @@ extern(C)
 			outer_bevel;
 	}
 
-	Image* BorderImage(const Image*, const RectangleInfo*, ExceptionInfo*);
-	Image* FrameImage(const Image*, const FrameInfo*, ExceptionInfo*);
+	Image* BorderImage(const(Image)*, const(RectangleInfo)*, ExceptionInfo*);
+	Image* FrameImage(const(Image)*, const(FrameInfo)*, ExceptionInfo*);
 
-	MagickBooleanType RaiseImage(Image*, const RectangleInfo*, const MagickBooleanType);
+	MagickBooleanType RaiseImage(Image*, const(RectangleInfo)*, const MagickBooleanType);
 }

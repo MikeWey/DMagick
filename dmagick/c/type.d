@@ -69,14 +69,14 @@ extern(C)
 			signature;
 	}
 
-	char** GetTypeList(const char*, size_t*, ExceptionInfo*);
+	char** GetTypeList(const(char)*, size_t*, ExceptionInfo*);
 
 	MagickBooleanType ListTypeInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType TypeComponentGenesis();
 
-	const(TypeInfo)*  GetTypeInfo(const char*, ExceptionInfo*);
-	const(TypeInfo)*  GetTypeInfoByFamily(const char*, const StyleType, const StretchType, const size_t, ExceptionInfo*);
-	const(TypeInfo)** GetTypeInfoList(const char*, size_t*, ExceptionInfo*);
+	const(TypeInfo)*  GetTypeInfo(const(char)*, ExceptionInfo*);
+	const(TypeInfo)*  GetTypeInfoByFamily(const(char)*, const StyleType, const StretchType, const size_t, ExceptionInfo*);
+	const(TypeInfo)** GetTypeInfoList(const(char)*, size_t*, ExceptionInfo*);
 
 	void TypeComponentTerminus();
 }

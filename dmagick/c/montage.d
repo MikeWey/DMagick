@@ -55,11 +55,11 @@ extern(C)
 			signature;
 	}
 
-	Image* MontageImages(const Image*, const MontageInfo*, ExceptionInfo*);
-	Image* MontageImageList(const ImageInfo*, const MontageInfo*, const Image*, ExceptionInfo*);
+	Image* MontageImages(const(Image)*, const(MontageInfo)*, ExceptionInfo*);
+	Image* MontageImageList(const(ImageInfo)*, const(MontageInfo)*, const(Image)*, ExceptionInfo*);
 
-	MontageInfo* CloneMontageInfo(const ImageInfo*, const MontageInfo*);
+	MontageInfo* CloneMontageInfo(const(ImageInfo)*, const(MontageInfo)*);
 	MontageInfo* DestroyMontageInfo(MontageInfo*);
 
-	void GetMontageInfo(const ImageInfo*, MontageInfo*);
+	void GetMontageInfo(const(ImageInfo)*, MontageInfo*);
 }

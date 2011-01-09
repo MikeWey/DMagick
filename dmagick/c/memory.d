@@ -9,7 +9,7 @@ extern(C)
 	void* AcquireAlignedMemory(const size_t, const size_t);
 	void* AcquireMagickMemory(const size_t);
 	void* AcquireQuantumMemory(const size_t, const size_t);
-	void* CopyMagickMemory(void*, const void*, const size_t);
+	void* CopyMagickMemory(void*, const(void)*, const size_t);
 	void  DestroyMagickMemory();
 	void  GetMagickMemoryMethods(AcquireMemoryHandler*, ResizeMemoryHandler*, DestroyMemoryHandler*);
 	void* RelinquishAlignedMemory(void*);

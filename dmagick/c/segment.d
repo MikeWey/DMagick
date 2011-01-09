@@ -8,6 +8,6 @@ import dmagick.c.pixel;
 
 extern(C)
 {
-	MagickBooleanType GetImageDynamicThreshold(const Image*, const double, const double, MagickPixelPacket*, ExceptionInfo*);
+	MagickBooleanType GetImageDynamicThreshold(const(Image)*, const double, const double, MagickPixelPacket*, ExceptionInfo*);
 	MagickBooleanType SegmentImage(Image*, const ColorspaceType, const MagickBooleanType, const double, const double);
 }

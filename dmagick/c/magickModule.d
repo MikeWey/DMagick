@@ -44,20 +44,20 @@ extern(C)
 			signature;
 	}
 
-	size_t ImageFilterHandler(Image**, const int, const char**, ExceptionInfo*);
+	size_t ImageFilterHandler(Image**, const int, const(char)**, ExceptionInfo*);
 
-	char** GetModuleList(const char*, const MagickModuleType, size_t*, ExceptionInfo*);
+	char** GetModuleList(const(char)*, const MagickModuleType, size_t*, ExceptionInfo*);
 
-	const(ModuleInfo)** GetModuleInfoList(const char*, size_t*, ExceptionInfo*);
+	const(ModuleInfo)** GetModuleInfoList(const(char)*, size_t*, ExceptionInfo*);
 
 	MagickBooleanType InitializeModuleList(ExceptionInfo*);
-	MagickBooleanType InvokeDynamicImageFilter(const char*, Image**, const int, const char**, ExceptionInfo*);
+	MagickBooleanType InvokeDynamicImageFilter(const(char)*, Image**, const int, const(char)**, ExceptionInfo*);
 	MagickBooleanType ListModuleInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType ModuleComponentGenesis();
-	MagickBooleanType OpenModule(const char*, ExceptionInfo*);
+	MagickBooleanType OpenModule(const(char)*, ExceptionInfo*);
 	MagickBooleanType OpenModules(ExceptionInfo*);
 
-	ModuleInfo* GetModuleInfo(const char*, ExceptionInfo*);
+	ModuleInfo* GetModuleInfo(const(char)*, ExceptionInfo*);
 
 	void DestroyModuleList();
 	void ModuleComponentTerminus();

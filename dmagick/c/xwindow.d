@@ -15,7 +15,7 @@ extern(C)
 		silent;
 	}
 
-	Image* XImportImage(const ImageInfo*, XImportInfo*);
+	Image* XImportImage(const(ImageInfo)*, XImportInfo*);
 
 	void XGetImportInfo(XImportInfo*);
 }

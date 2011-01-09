@@ -67,8 +67,8 @@ extern(C)
 
 	}
 
-	MagickBooleanType ExportImagePixels(const Image*, const ssize_t, const ssize_t, const size_t, const size_t, const char*, const StorageType, void*, ExceptionInfo*);
-	MagickBooleanType ImportImagePixels(Image*, const ssize_t, const ssize_t, const size_t, const size_t, const char*, const StorageType, const void*);
+	MagickBooleanType ExportImagePixels(const(Image)*, const ssize_t, const ssize_t, const size_t, const size_t, const(char)*, const StorageType, void*, ExceptionInfo*);
+	MagickBooleanType ImportImagePixels(Image*, const ssize_t, const ssize_t, const size_t, const size_t, const(char)*, const StorageType, const(void)*);
 
-	void GetMagickPixelPacket(const Image*, MagickPixelPacket*);
+	void GetMagickPixelPacket(const(Image)*, MagickPixelPacket*);
 }

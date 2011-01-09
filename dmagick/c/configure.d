@@ -27,17 +27,17 @@ extern(C)
 			signature;
 	}
 
-	char** GetConfigureList(const char*, size_t*, ExceptionInfo*);
-	char*  GetConfigureOption(const char*);
+	char** GetConfigureList(const(char)*, size_t*, ExceptionInfo*);
+	char*  GetConfigureOption(const(char)*);
 
-	const(char*) GetConfigureValue(const ConfigureInfo*);
+	const(char*) GetConfigureValue(const(ConfigureInfo)*);
 
-	const(ConfigureInfo)*  GetConfigureInfo(const char*, ExceptionInfo*);
-	const(ConfigureInfo)** GetConfigureInfoList(const char*, size_t*, ExceptionInfo*);
+	const(ConfigureInfo)*  GetConfigureInfo(const(char)*, ExceptionInfo*);
+	const(ConfigureInfo)** GetConfigureInfoList(const(char)*, size_t*, ExceptionInfo*);
 
 	LinkedListInfo* DestroyConfigureOptions(LinkedListInfo *);
-	LinkedListInfo* GetConfigurePaths(const char *,ExceptionInfo *);
-	LinkedListInfo* GetConfigureOptions(const char *,ExceptionInfo *);
+	LinkedListInfo* GetConfigurePaths(const(char)*,ExceptionInfo *);
+	LinkedListInfo* GetConfigureOptions(const(char)*,ExceptionInfo *);
 
 	MagickBooleanType ConfigureComponentGenesis();
 	MagickBooleanType ListConfigureInfo(FILE*, ExceptionInfo*);

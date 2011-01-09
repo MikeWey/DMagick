@@ -6,6 +6,6 @@ import dmagick.c.magickType;
 
 extern(C)
 {
-	Image* ForwardFourierTransformImage(const Image*, const MagickBooleanType, ExceptionInfo*);
-	Image* InverseFourierTransformImage(const Image*, const Image*, const MagickBooleanType, ExceptionInfo*);
+	Image* ForwardFourierTransformImage(const(Image)*, const MagickBooleanType, ExceptionInfo*);
+	Image* InverseFourierTransformImage(const(Image)*, const(Image)*, const MagickBooleanType, ExceptionInfo*);
 }

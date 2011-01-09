@@ -354,16 +354,16 @@ extern(C)
 	}
 
 	DrawInfo* AcquireDrawInfo();
-	DrawInfo* CloneDrawInfo(const ImageInfo*, const DrawInfo*);
+	DrawInfo* CloneDrawInfo(const(ImageInfo)*, const(DrawInfo)*);
 	DrawInfo* DestroyDrawInfo(DrawInfo*);
 
-	MagickBooleanType DrawAffineImage(Image*, const Image*, const AffineMatrix*);
-	MagickBooleanType DrawClipPath(Image*, const DrawInfo*, const char*);
-	MagickBooleanType DrawGradientImage(Image*, const DrawInfo*);
-	MagickBooleanType DrawImage(Image*, const DrawInfo*);
-	MagickBooleanType DrawPatternPath(Image*, const DrawInfo*, const char*, Image**);
-	MagickBooleanType DrawPrimitive(Image*, const DrawInfo*, const PrimitiveInfo*);
+	MagickBooleanType DrawAffineImage(Image*, const(Image)*, const(AffineMatrix)*);
+	MagickBooleanType DrawClipPath(Image*, const(DrawInfo)*, const(char)*);
+	MagickBooleanType DrawGradientImage(Image*, const(DrawInfo)*);
+	MagickBooleanType DrawImage(Image*, const(DrawInfo)*);
+	MagickBooleanType DrawPatternPath(Image*, const(DrawInfo)*, const(char)*, Image**);
+	MagickBooleanType DrawPrimitive(Image*, const(DrawInfo)*, const(PrimitiveInfo)*);
 
 	void GetAffineMatrix(AffineMatrix*);
-	void GetDrawInfo(const ImageInfo*, DrawInfo*);
+	void GetDrawInfo(const(ImageInfo)*, DrawInfo*);
 }

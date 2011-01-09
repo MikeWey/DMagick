@@ -57,7 +57,7 @@ extern(C)
 	MagickBooleanType SetResampleFilterInterpolateMethod(ResampleFilter*, const InterpolatePixelMethod);
 	MagickBooleanType SetResampleFilterVirtualPixelMethod(ResampleFilter*, const VirtualPixelMethod);
 
-	ResampleFilter* AcquireResampleFilter(const Image*, ExceptionInfo*);
+	ResampleFilter* AcquireResampleFilter(const(Image)*, ExceptionInfo*);
 	ResampleFilter* DestroyResampleFilter(ResampleFilter*);
 
 	void ScaleResampleFilter(ResampleFilter*, const double, const double, const double, const double);

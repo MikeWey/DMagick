@@ -6,6 +6,6 @@ import dmagick.c.magickType;
 
 extern(C)
 {
-	MagickBooleanType DisplayImages(const ImageInfo*, Image*);
-	MagickBooleanType RemoteDisplayCommand(const ImageInfo*, const char*, const char*, ExceptionInfo*);
+	MagickBooleanType DisplayImages(const(ImageInfo)*, Image*);
+	MagickBooleanType RemoteDisplayCommand(const(ImageInfo)*, const(char)*, const(char)*, ExceptionInfo*);
 }

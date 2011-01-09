@@ -24,7 +24,7 @@ extern(C)
 
 	MagickBooleanType AcquireMagickResource(const ResourceType, const MagickSizeType);
 	MagickBooleanType ListMagickResourceInfo(FILE*, ExceptionInfo*);
-	MagickBooleanType RelinquishUniqueFileResource(const char*);
+	MagickBooleanType RelinquishUniqueFileResource(const(char)*);
 	MagickBooleanType ResourceComponentGenesis();
 	MagickBooleanType SetMagickResourceLimit(const ResourceType, const MagickSizeType);
 

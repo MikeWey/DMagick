@@ -26,15 +26,15 @@ extern(C)
 			signature;
 	}
 
-	char** GetLocaleList(const char*, size_t*, ExceptionInfo*);
+	char** GetLocaleList(const(char)*, size_t*, ExceptionInfo*);
 
-	const(char)* GetLocaleMessage(const char*);
+	const(char)* GetLocaleMessage(const(char)*);
 
-	const(LocaleInfo)*  GetLocaleInfo_(const char*, ExceptionInfo*);
-	const(LocaleInfo)** GetLocaleInfoList(const char*, size_t*, ExceptionInfo*);
+	const(LocaleInfo)*  GetLocaleInfo_(const(char)*, ExceptionInfo*);
+	const(LocaleInfo)** GetLocaleInfoList(const(char)*, size_t*, ExceptionInfo*);
 
 	LinkedListInfo* DestroyLocaleOptions(LinkedListInfo*);
-	LinkedListInfo* GetLocaleOptions(const char*, ExceptionInfo*);
+	LinkedListInfo* GetLocaleOptions(const(char)*, ExceptionInfo*);
 
 	MagickBooleanType ListLocaleInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType LocaleComponentGenesis();

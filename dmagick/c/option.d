@@ -110,23 +110,23 @@ extern(C)
 	}
 
 	char** GetMagickOptions(const MagickOption);
-	char*  GetNextImageOption(const ImageInfo*);
-	char*  RemoveImageOption(ImageInfo*, const char*);
+	char*  GetNextImageOption(const(ImageInfo)*);
+	char*  RemoveImageOption(ImageInfo*, const(char)*);
 
-	const(char)* GetImageOption(const ImageInfo*, const char*);
+	const(char)* GetImageOption(const(ImageInfo)*, const(char)*);
 	const(char)* MagickOptionToMnemonic(const MagickOption, const ssize_t);
 
-	MagickBooleanType CloneImageOptions(ImageInfo*, const ImageInfo*);
-	MagickBooleanType DefineImageOption(ImageInfo*, const char*);
-	MagickBooleanType DeleteImageOption(ImageInfo*, const char*);
-	MagickBooleanType IsMagickOption(const char*);
+	MagickBooleanType CloneImageOptions(ImageInfo*, const(ImageInfo)*);
+	MagickBooleanType DefineImageOption(ImageInfo*, const(char)*);
+	MagickBooleanType DeleteImageOption(ImageInfo*, const(char)*);
+	MagickBooleanType IsMagickOption(const(char)*);
 	MagickBooleanType ListMagickOptions(FILE*, const MagickOption, ExceptionInfo*);
-	MagickBooleanType SetImageOption(ImageInfo*, const char*, const char*);
+	MagickBooleanType SetImageOption(ImageInfo*, const(char)*, const(char)*);
 
-	ssize_t ParseChannelOption(const char*);
-	ssize_t ParseMagickOption(const MagickOption, const MagickBooleanType,const char*);
+	ssize_t ParseChannelOption(const(char)*);
+	ssize_t ParseMagickOption(const MagickOption, const MagickBooleanType,const(char)*);
 
 	void DestroyImageOptions(ImageInfo*);
-	void ResetImageOptions(const ImageInfo*);
-	void ResetImageOptionIterator(const ImageInfo*);
+	void ResetImageOptions(const(ImageInfo)*);
+	void ResetImageOptionIterator(const(ImageInfo)*);
 }
