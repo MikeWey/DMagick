@@ -140,8 +140,7 @@ extern(C)
 		OrientationType
 			orientation;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			taint,
 			matte;
 
@@ -263,8 +262,7 @@ extern(C)
 		ExceptionInfo
 			exception;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			ddebug;
 
 		ssize_t
@@ -294,8 +292,7 @@ extern(C)
 		InterpolatePixelMethod
 			interpolate;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			black_point_compensation;
 
 		PixelPacket
@@ -314,15 +311,13 @@ extern(C)
 		ImageType
 			type;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			dither;
 
 		MagickSizeType
 			extent;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			ping;
 	}
 
@@ -334,8 +329,7 @@ extern(C)
 		OrientationType
 			orientation;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			temporary,
 			adjoin,
 			affirm,
@@ -380,8 +374,7 @@ extern(C)
 			border_color,
 			matte_color;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			dither,
 			monochrome;
 
@@ -400,8 +393,7 @@ extern(C)
 		ssize_t
 			group;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			ping,
 			verbose;
 
@@ -443,8 +435,7 @@ extern(C)
 			zero,
 			filename;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			ddebug;
 
 		char*
@@ -469,8 +460,7 @@ extern(C)
 		void*
 			profile;
 
-		//MagickBooleanType
-		int
+		MagickBooleanType
 			synchronize;
 	}
 
