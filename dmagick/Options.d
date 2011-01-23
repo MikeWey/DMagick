@@ -161,7 +161,7 @@ class Options
 
 	/**
 	 * Specifies the vertical and horizontal resolution in pixels.
-	 * The default density is "72.0x72.0". This attribute can be used
+	 * The default _density is "72.0x72.0". This attribute can be used
 	 * when writing JBIG, PCL, PS, PS2, and PS3 format images.
 	 * 
 	 * This attribute can also be used to specify the width and height
@@ -178,11 +178,11 @@ class Options
 	}
 
 	/**
-	 * Specifies the image depth
+	 * Specifies the image _depth
 	 * 
 	 * Either 8, 16, or 32. You can specify 16 and 32
 	 * only when ImageMagick was compiled with a QuantumDepth
-	 * that allows these depth values.
+	 * that allows these _depth values.
 	 */
 	void depth(size_t d)
 	{
@@ -227,7 +227,7 @@ class Options
 	}
 
 	/**
-	 * Image file descriptor.
+	 * Image _file descriptor.
 	 */
 	void file(FILE* f)
 	{
@@ -240,7 +240,7 @@ class Options
 	}
 
 	/**
-	 * Image filename/path.
+	 * Image _filename/path.
 	 */
 	void filename(string str)
 	{
@@ -253,10 +253,10 @@ class Options
 	}
 
 	/**
-	 * Text rendering font. If the font is a fully qualified
-	 * X server font name, the font is obtained from an X  server.
-	 * To use a TrueType font, precede the TrueType filename with an @.
-	 * Otherwise, specify  a  Postscript font name (e.g. "helvetica")
+	 * Text rendering _font. If the _font is a fully qualified
+	 * X server _font name, the _font is obtained from an X  server.
+	 * To use a TrueType _font, precede the TrueType filename with an @.
+	 * Otherwise, specify a Postscript _font name (e.g. "helvetica")
 	 */
 	void font(string str)
 	{
@@ -286,8 +286,8 @@ class Options
 	}
 
 	/**
-	 * Specify the type of interlacing scheme for raw image formats
-	 * such as RGB or YUV. NoInterlace means do not interlace,
+	 * Specify the _type of interlacing scheme for raw image formats
+	 * such as RGB or YUV. NoInterlace means do not _interlace,
 	 * LineInterlace uses scanline interlacing, and PlaneInterlace
 	 * uses plane interlacing. PartitionInterlace is like PlaneInterlace
 	 * except the different planes are saved to individual files
@@ -344,7 +344,7 @@ class Options
 
 	/**
 	 * Use this option to specify the dimensions and position
-	 * of the Postscript page in dots per inch or in pixels.
+	 * of the Postscript _page in dots per inch or in pixels.
 	 * This option is typically used in concert with density.
 	 * 
 	 * Page may also be used to position a GIF image
@@ -426,7 +426,7 @@ class Options
 
 	/**
 	 * Set the width and height of the image when reading a
-	 * built-in image format that does not have an inherent size,
+	 * built-in image format that does not have an inherent _size,
 	 * or when reading an image from a multi-resolution file format
 	 * such as Photo CD, JBIG, or JPEG.
 	 */
@@ -467,7 +467,7 @@ class Options
 	}
 
 	/**
-	 * Image type.
+	 * Image _type.
 	 */
 	void type(ImageType t)
 	{
@@ -506,7 +506,7 @@ class Options
 	}
 
 	/**
-	 * Image virtual pixel method.
+	 * Image virtual pixel _method.
 	 */
 	void virtualPixelMethod(VirtualPixelMethod method)
 	{
@@ -758,13 +758,13 @@ class Options
 	}
 
 	/**
-	 * The font name or filename.
-	 * You can tag a font to specify whether it is a Postscript,
-	 * Truetype, or OPTION1 font. For example, Arial.ttf is a
-	 * Truetype font, ps:helvetica is Postscript, and x:fixed is OPTION1.
+	 * The _font name or filename.
+	 * You can tag a _font to specify whether it is a Postscript,
+	 * Truetype, or OPTION1 _font. For example, Arial.ttf is a
+	 * Truetype _font, ps:helvetica is Postscript, and x:fixed is OPTION1.
 	 * 
-	 * The font name can be a complete filename such as
-	 * "/mnt/windows/windows/fonts/Arial.ttf". The font name can
+	 * The _font name can be a complete filename such as
+	 * "/mnt/windows/windows/fonts/Arial.ttf". The _font name can
 	 * also be a fully qualified X font name such as
 	 * "-urw-times-medium-i-normal--0-0-0-0-p-0-iso8859-13".
 	 */
@@ -818,7 +818,7 @@ class Options
 	}
 
 	/**
-	 * Describe a pattern of dashes to be used when stroking paths.
+	 * Describe a _pattern of dashes to be used when stroking paths.
 	 * The arguments are a list of pixel widths of
 	 * alternating dashes and gaps.
 	 * All elements must be > 0.
@@ -877,7 +877,7 @@ class Options
 	 * Specify a constraint on the length of the "miter"
 	 * formed by two lines meeting at an angle. If the angle
 	 * if very sharp, the miter could be very long relative
-	 * to the line thickness. The miter limit is a limit on
+	 * to the line thickness. The miter _limit is a _limit on
 	 * the ratio of the miter length to the line width.
 	 * The default is 4.
 	 */
@@ -908,7 +908,7 @@ class Options
 	//}
 
 	/**
-	 * Stroke width for use when drawing vector objects
+	 * Stroke _width for use when drawing vector objects
 	 */
 	void strokeWidth(double width)
 	{
