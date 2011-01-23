@@ -10,15 +10,25 @@
 module dmagick.Options;
 
 import std.conv;
+import std.math;
+import core.stdc.stdio;
 import core.stdc.string;
 
+import dmagick.c.cacheView;
+import dmagick.c.colorspace;
+import dmagick.c.compress;
 import dmagick.c.draw;
+import dmagick.c.geometry;
 import dmagick.c.image;
 import dmagick.c.magickString;
 import dmagick.c.magickType;
 import dmagick.c.memory;
 import dmagick.c.quantize;
+import dmagick.c.quantum;
 
+/**
+ * A class that wraps ImageInfo, DrawInfo and QuantizeInfo
+ */
 class Options
 {
 	ImageInfo*    imageInfo;
@@ -31,6 +41,8 @@ class Options
 		quantizeInfo = cast(QuantizeInfo*)AcquireMagickMemory(QuantizeInfo.sizeof);
 		drawInfo = cast(DrawInfo*)AcquireMagickMemory(DrawInfo.sizeof);
 
+		//In D all strings are UTF encoded.
+		textEncoding("UTF-8");
 	}
 
 	this(const(ImageInfo)* imageInfo, const(QuantizeInfo)* quantizeInfo, const(DrawInfo)* drawInfo)
@@ -47,26 +59,31 @@ class Options
 		drawInfo = DestroyDrawInfo(drawInfo);
 	}
 
-	/****************************************************************
+	/+***************************************************************
 	 * ImageInfo fields
-	 ****************************************************************/
+	 ***************************************************************+/
 
+	/**
+	 * Join images into a single multi-image file.
+	 */
 	void adjoin(bool flag)
 	{
 		imageInfo.adjoin = flag;
 	}
+	///ditto
 	bool adjoin()
 	{
-		return imageInfo.adjoin;
+		return imageInfo.adjoin == 1;
 	}
 
-	/**
-	 * Set the image background color. The default is "white".
-	 */
+	//**
+	// * Set the image background color. The default is "white".
+	// */
 	//void backgroundColor(string color)
 	//{
 	//
 	//}
+	//ditto	
 	//void backgroundColor(Color color)
 	//{
 	//
@@ -85,6 +102,7 @@ class Options
 	{
 		copyString(imageInfo.texture, str);
 	}
+	///ditto
 	string backgroundTexture()
 	{
 		return to!(string)(imageInfo.texture);
@@ -92,8 +110,10 @@ class Options
 
 	//void borderColor(Color color)
 	//{
-	//
+	//	imageInfo.border_color
+	//	drawInfo.border_color
 	//}
+	//ditto
 	//Color borderColor()
 	//{
 	//
@@ -106,22 +126,24 @@ class Options
 	{
 		imageInfo.colorspace = space;
 	}
+	///ditto
 	ColorspaceType colorspace()
 	{
 		return imageInfo.colorspace;
 	}
 
 	/**
-	 * Specifies the type of compression used when writing the image.
-	 * Only some image formats support compression. For those that do,
-	 * only some compression types are supported. If you specify an
-	 * compression type that is not supported, the default compression
+	 * Specifies the type of _compression used when writing the image.
+	 * Only some image formats support _compression. For those that do,
+	 * only some _compression types are supported. If you specify an
+	 * _compression type that is not supported, the default _compression
 	 * type (usually NoCompression) is used instead.
 	 */
 	void compression(CompressionType compress)
 	{
 		imageInfo.compression = compress;
 	}
+	///ditto
 	CompressionType compression()
 	{
 		return imageInfo.compression;
@@ -131,6 +153,7 @@ class Options
 	//{
 	//
 	//}
+	//ditto
 	//bool ddebug()
 	//{
 	//
@@ -148,6 +171,7 @@ class Options
 	{
 		copyString(imageInfo.density, str);
 	}
+	///ditto
 	string density()
 	{
 		return to!(string)(imageInfo.density);
@@ -164,6 +188,7 @@ class Options
 	{
 		imageInfo.depth = d;
 	}
+	///ditto
 	size_t depth()
 	{
 		return imageInfo.depth;
@@ -182,6 +207,7 @@ class Options
 	{
 		imageInfo.dither = d;
 	}
+	///ditto
 	size_t dither()
 	{
 		return imageInfo.dither;
@@ -194,6 +220,7 @@ class Options
 	{
 		imageInfo.endian = type;
 	}
+	///ditto
 	EndianType endian()
 	{
 		return imageInfo.endian;
@@ -206,6 +233,7 @@ class Options
 	{
 		imageInfo.file = f;
 	}
+	///ditto
 	FILE* file()
 	{
 		return imageInfo.file;
@@ -218,6 +246,7 @@ class Options
 	{
 		copyString(imageInfo.filename, str);
 	}
+	///ditto
 	string filename()
 	{
 		return imageInfo.filename[0 .. strlen(imageInfo.filename.ptr)].idup;
@@ -234,6 +263,7 @@ class Options
 		copyString(imageInfo.font, str);
 		copyString(drawInfo.font, str);
 	}
+	///ditto
 	string font()
 	{
 		return to!(string)(drawInfo.font);
@@ -249,6 +279,7 @@ class Options
 	{
 		imageInfo.fuzz = f;
 	}
+	///ditto
 	double fuzz()
 	{
 		return imageInfo.fuzz;
@@ -268,6 +299,7 @@ class Options
 	{
 		imageInfo.interlace = type;
 	}
+	///ditto
 	InterlaceType interlace()
 	{
 		return imageInfo.interlace;
@@ -280,6 +312,7 @@ class Options
 	{
 		copyString(imageInfo.magick, str);
 	}
+	///ditto
 	string magick()
 	{
 		return imageInfo.magick[0 .. strlen(imageInfo.magick.ptr)].idup;
@@ -289,6 +322,7 @@ class Options
 	//{
 	//
 	//}
+	//ditto
 	//Color matteColor()
 	//{
 	//
@@ -302,9 +336,10 @@ class Options
 	{
 		imageInfo.monochrome = m;
 	}
+	///ditto
 	bool monochrome()
 	{
-		return imageInfo.monochrome;
+		return imageInfo.monochrome == 1;
 	}
 
 	/**
@@ -320,6 +355,7 @@ class Options
 	{
 		copyString(imageInfo.page, str);
 	}
+	///ditto
 	string page()
 	{
 		return to!(string)(imageInfo.page);
@@ -333,6 +369,7 @@ class Options
 		imageInfo.pointsize = size;
 		drawInfo.pointsize = size;
 	}
+	///ditto
 	double pointSize()
 	{
 		return drawInfo.pointsize;
@@ -347,6 +384,7 @@ class Options
 	{
 		imageInfo.quality = q;
 	}
+	///ditto
 	size_t quality()
 	{
 		return imageInfo.quality;
@@ -359,6 +397,7 @@ class Options
 	{
 		imageInfo.units = type;
 	}
+	///ditto
 	ResolutionType resolutionUnits()
 	{
 		return imageInfo.units;
@@ -379,6 +418,7 @@ class Options
 	{
 		copyString(imageInfo.sampling_factor, str);
 	}
+	///ditto
 	string samplingFactor()
 	{
 		return to!(string)(imageInfo.sampling_factor);
@@ -394,6 +434,7 @@ class Options
 	{
 		copyString(imageInfo.size, str);
 	}
+	///ditto
 	string size()
 	{
 		return to!(string)(imageInfo.size);
@@ -406,6 +447,7 @@ class Options
 	{
 		imageInfo.scene = num;
 	}
+	///ditto
 	size_t subImage()
 	{
 		return imageInfo.scene;
@@ -418,6 +460,7 @@ class Options
 	{
 		imageInfo.number_scenes = num;
 	}
+	///ditto
 	size_t subRange()
 	{
 		return imageInfo.number_scenes;
@@ -430,6 +473,7 @@ class Options
 	{
 		imageInfo.type = t;
 	}
+	///ditto
 	ImageType type()
 	{
 		return imageInfo.type;
@@ -442,9 +486,10 @@ class Options
 	{
 		imageInfo.verbose = v;
 	}
+	///ditto
 	bool verbose()
 	{
-		return imageInfo.verbose;
+		return imageInfo.verbose == 1;
 	}
 
 	/**
@@ -454,6 +499,7 @@ class Options
 	{
 		copyString(imageInfo.view, str);
 	}
+	///ditto
 	string view()
 	{
 		return to!(string)(imageInfo.view);
@@ -462,11 +508,11 @@ class Options
 	/**
 	 * Image virtual pixel method.
 	 */
-	//TODO: Delegates?
 	void virtualPixelMethod(VirtualPixelMethod method)
 	{
 		imageInfo.virtual_pixel_method = method;
 	}
+	///ditto
 	VirtualPixelMethod virtualPixelMethod()
 	{
 		return imageInfo.virtual_pixel_method;
@@ -478,7 +524,9 @@ class Options
 	void x11Display(string str)
 	{
 		copyString(imageInfo.server_name, str);
+		drawInfo.server_name = imageInfo.server_name;
 	}
+	///ditto
 	string x11Display()
 	{
 		return to!(string)(imageInfo.server_name);
@@ -510,6 +558,429 @@ class Options
 	//void* profile;
 	//MagickBooleanType synchronize;
 
+	/+***************************************************************
+	 * DrawInfo fields
+	 ***************************************************************+/
+
+	void affine(AffineMatrix affine)
+	{
+		drawInfo.affine = affine;
+	}
+	AffineMatrix affine()
+	{
+		return drawInfo.affine;
+	}
+
+	/**
+	 * Origin of coordinate system to use when annotating or drawing
+	 */
+	void transformOrigin (double tx, double ty)
+	{
+		AffineMatrix affine;
+		affine.sx = 1.0;
+		affine.rx = 0.0;
+		affine.ry = 0.0;
+		affine.sy = 1.0;
+		affine.tx = tx;
+		affine.ty = ty;
+
+		drawInfo.affine = multiplyMatrix(drawInfo.affine, affine);
+	}
+
+	/**
+	 * Rotation to use when annotating or drawing
+	 */
+	void transformRotation(double angle)
+	{
+		AffineMatrix affine;
+		affine.sx = cos(degreesToRadians(angle % 360.0));
+		affine.rx = sin(degreesToRadians(angle % 360.0));
+		affine.ry = -affine.rx;
+		affine.sy =  affine.sx;
+		affine.tx = 0.0;
+		affine.ty = 0.0;
+
+		drawInfo.affine = multiplyMatrix(drawInfo.affine, affine);
+	}
+
+	/**
+	 * Scale to use when annotating or drawing
+	 */
+	void transformScale(double sx, double sy)
+	{
+		AffineMatrix affine;
+		affine.sx = sx;
+		affine.rx = 0.0;
+		affine.ry = 0.0;
+		affine.sy = sy;
+		affine.tx = 0.0;
+		affine.ty = 0.0;
+
+		drawInfo.affine = multiplyMatrix(drawInfo.affine, affine);
+	}
+
+	/**
+	 * Shear to use in X axis when annotating or drawing
+	 */
+	void transformShearX(double skewx)
+	{
+		AffineMatrix affine;
+		affine.sx = 1.0;
+		affine.rx = 0.0;
+		affine.ry = tan(degreesToRadians(skewx % 360.0));
+		affine.sy = 1.0;
+		affine.tx = 0.0;
+		affine.ty = 0.0;
+
+		drawInfo.affine = multiplyMatrix(drawInfo.affine, affine);
+	}
+
+	/**
+	 * Shear to use in X axis when annotating or drawing
+	 */
+	void transformShearY(double skewy)
+	{
+		AffineMatrix affine;
+		affine.sx = 1.0;
+		affine.rx = tan(degreesToRadians(skewy % 360.0));
+		affine.ry = 0.0;
+		affine.sy = 1.0;
+		affine.tx = 0.0;
+		affine.ty = 0.0;
+
+		drawInfo.affine = multiplyMatrix(drawInfo.affine, affine);
+	}
+
+	/**
+	 * Reset transformation parameters to default
+	 */
+	void transformReset()
+	{
+		drawInfo.affine.sx = 1.0;
+		drawInfo.affine.rx = 0.0;
+		drawInfo.affine.ry = 0.0;
+		drawInfo.affine.sy = 1.0;
+		drawInfo.affine.tx = 0.0;
+		drawInfo.affine.ty = 0.0;
+	}
+
+	/**
+	 * Returns the product of two Affine matrices
+	 * The AffineMatrix looks like this:
+	 * -----------
+	 * | sx rx 0 |
+	 * | ry sy 0 |
+	 * | tx ty 1 |
+	 * -----------
+	 */
+	AffineMatrix multiplyMatrix(AffineMatrix a, AffineMatrix b)
+	{
+		AffineMatrix result;
+
+		result.sx = a.sx * b.sx + a.rx * b.ry;
+		result.rx = a.sx * b.rx + a.rx * b.sy;
+		result.ry = a.ry * b.sx + a.sy * b.ry;
+		result.sy = a.ry * b.rx + a.sy * b.sy;
+		result.tx = a.tx * b.sx + a.ty * b.ry + b.tx;
+		result.ty = a.tx * b.rx + a.ty * b.sy + b.ty;
+
+		return result;
+	}
+
+	/**
+	 * Control antialiasing of rendered Postscript
+	 * and Postscript or TrueType fonts. The default is true.
+	 */
+	void antialias(bool antialias)
+	{
+		drawInfo.text_antialias = antialias;
+	}
+	///ditto
+	bool antialias()
+	{
+		return drawInfo.text_antialias == 1;
+	}
+
+	//**
+	// * If set, causes the text to be drawn over a box of the specified color.
+	// */
+	//void boxColor(Color color)
+	//{
+	//	drawInfo.undercolor
+	//}
+	//ditto
+	//Color boxColor()
+	//{
+	//
+	//}
+
+	//**
+	// * Color to use when filling drawn objects.
+	// * The default is "black".
+	// */
+	//void fillColor(Color color)
+	//{
+	//	drawInfo.fill
+	//}
+	//ditto
+	//Color fillColor()
+	//{
+	//
+	//}
+
+	//**
+	// * Pattern image to use when filling drawn objects.
+	// */
+	//void fillPattern(Image pattern)
+	//{
+	//	if (drawInfo.fill_pattern)
+	//		destroy
+	//
+	//	clone
+	//}
+	//ditto
+	//Image fillPattern()
+	//{
+	//
+	//}
+
+	/**
+	 * Rule to use when filling drawn objects.
+	 */
+	void fillRule(FillRule rule)
+	{
+		drawInfo.fill_rule = rule;
+	}
+	///ditto
+	FillRule fillRule()
+	{
+		return drawInfo.fill_rule;
+	}
+
+	/**
+	 * The font name or filename.
+	 * You can tag a font to specify whether it is a Postscript,
+	 * Truetype, or OPTION1 font. For example, Arial.ttf is a
+	 * Truetype font, ps:helvetica is Postscript, and x:fixed is OPTION1.
+	 * 
+	 * The font name can be a complete filename such as
+	 * "/mnt/windows/windows/fonts/Arial.ttf". The font name can
+	 * also be a fully qualified X font name such as
+	 * "-urw-times-medium-i-normal--0-0-0-0-p-0-iso8859-13".
+	 */
+	void font(string str)
+	{
+		copyString(imageInfo.font, str);
+	}
+	///ditto
+	string font()
+	{
+		return to!(string)(imageInfo.font);
+	}
+
+	/**
+	 * Enable or disable anti-aliasing when drawing object outlines.
+	 */
+	void strokeAntialias(bool antialias)
+	{
+		drawInfo.stroke_antialias = antialias;
+	}
+	///ditto
+	bool strokeAntialias()
+	{
+		return drawInfo.stroke_antialias == 1;
+	}
+
+	//**
+	// * Color to use when drawing object outlines
+	// */
+	//void strokeColor(Color color)
+	//{
+	//	drawInfo.stroke
+	//}
+	//ditto
+	//Color strokeColor()
+	//{
+	//
+	//}
+
+	/**
+	 * The initial distance into the dash pattern. The units are pixels.
+	 */
+	void strokeDashOffset(double offset)
+	{
+		drawInfo.dash_offset = offset;
+	}
+	///ditto
+	double strokeDashOffset()
+	{
+		return drawInfo.dash_offset;
+	}
+
+	/**
+	 * Describe a pattern of dashes to be used when stroking paths.
+	 * The arguments are a list of pixel widths of
+	 * alternating dashes and gaps.
+	 * All elements must be > 0.
+	 */
+	void strokeDashPattern(const(double)[] pattern)
+	{
+		if ( drawInfo.dash_pattern !is null )
+			RelinquishMagickMemory(drawInfo.dash_pattern);
+
+		if ( pattern is null )
+			return;
+
+		drawInfo.dash_pattern = cast(double*)AcquireMagickMemory((pattern.length+1) * double.sizeof);
+		drawInfo.dash_pattern[0 .. pattern.length] = pattern;
+		drawInfo.dash_pattern[pattern.length] = 0.0;
+	}
+	///ditto
+	double[] strokeDashPattern()
+	{
+		size_t x;
+		for (x = 0; drawInfo.dash_pattern[x] == 0.0; x++ ) {}
+
+		double[] pattern = new double[x];
+		pattern[] = drawInfo.dash_pattern[0 .. x];
+
+		return pattern;
+	}
+
+	/**
+	 * Specify how the line ends should be drawn.
+	 */
+	void strokeLineCap(LineCap cap)
+	{
+		drawInfo.linecap = cap;
+	}
+	///ditto
+	LineCap lineCap()
+	{
+		return drawInfo.linecap;
+	}
+
+	/**
+	 * Specify how corners are drawn.
+	 */
+	void strokeLineJoin(LineJoin join)
+	{
+		drawInfo.linejoin = join;
+	}
+	///ditto
+	LineJoin lineJoin()
+	{
+		return drawInfo.linejoin;
+	}
+
+	/**
+	 * Specify a constraint on the length of the "miter"
+	 * formed by two lines meeting at an angle. If the angle
+	 * if very sharp, the miter could be very long relative
+	 * to the line thickness. The miter limit is a limit on
+	 * the ratio of the miter length to the line width.
+	 * The default is 4.
+	 */
+	void strokeMiterlimit(size_t limit)
+	{
+		drawInfo.miterlimit = limit;
+	}
+	///ditto
+	size_t strokeMiterlimit()
+	{
+		return drawInfo.miterlimit;
+	}
+
+	//**
+	// * Pattern image to use while drawing object stroke
+	// */
+	//void strokePattern(Image pattern)
+	//{
+	//	if (drawInfo.stroke_pattern)
+	//		destroy
+	//
+	//	clone
+	//}
+	//ditto
+	//Image fillPattern()
+	//{
+	//
+	//}
+
+	/**
+	 * Stroke width for use when drawing vector objects
+	 */
+	void strokeWidth(double width)
+	{
+		drawInfo.stroke_width = width;
+	}
+	///ditto
+	double strokeWidth()
+	{
+		return drawInfo.stroke_width;
+	}
+
+	/**
+	 * The text density in the x and y directions. The default is "72x72".
+	 */
+	void textDensity(string str)
+	{
+		copyString(imageInfo.density, str);
+	}
+	///ditto
+	string textDensity()
+	{
+		return to!(string)(imageInfo.density);
+	}
+
+	/**
+	 * Specify the code set to use for text annotations.
+	 * The only character encoding which may be specified at
+	 * this time is "UTF-8" for representing Unicode as a
+	 * sequence of bytes. Specify an empty string to use
+	 * ASCII encoding. Successful text annotation using
+	 * Unicode may require fonts designed to support Unicode.
+	 * The default is "UTF-8"
+	 */
+	void textEncoding(string str)
+	{
+		copyString(drawInfo.encoding, str);
+	}
+	///ditto
+	string textEncoding()
+	{
+		return to!(string)(drawInfo.encoding);
+	}
+
+	//char* primitive,
+	//char* geometry;
+	//RectangleInfo viewbox;
+	//GravityType gravity;
+	//GradientInfo gradient;
+	//MagickBooleanType tile,
+	//DecorationType decorate;
+	//CompositeOperator compose;
+	//char* text;
+	//size_t face;
+	//char* metrics,
+	//char* family;
+	//StyleType style;
+	//StretchType stretch;
+	//size_t weight;
+	//AlignType align;
+	//char* clip_mask;
+	//SegmentInfo bounds;
+	//ClipPathUnits clip_units;
+	//Quantum opacity;
+	//MagickBooleanType render;
+	//ElementReference element_reference;
+	//MagickBooleanType ddebug;
+	//size_t signature;
+	//double kerning,
+	//double interword_spacing,
+	//double interline_spacing;
+	//DirectionType direction;
+
 	/**
 	 * Copy a string into a static array used
 	 * by ImageMagick for some atributes.
@@ -519,7 +990,7 @@ class Options
 		if ( source.length < MaxTextExtent )
 			throw new Exception("text is to long"); //TODO: a proper exception.
 
-		dest[0 .. source.length] = str;
+		dest[0 .. source.length] = source;
 		dest[source.length] = '\0';
 	}
 
@@ -543,7 +1014,7 @@ class Options
 			throw new Exception("UnableToAcquireString"); //TODO: a proper exception.
 
 		if ( dest is null )
-			dest = cast(char*)AcquireQuantumMemory(dest, source.length+MaxTextExtent, dest.sizeof);
+			dest = cast(char*)AcquireQuantumMemory(source.length+MaxTextExtent, dest.sizeof);
 		else
 			dest = cast(char*)ResizeQuantumMemory(dest, source.length+MaxTextExtent, dest.sizeof);
 
@@ -551,8 +1022,13 @@ class Options
 			throw new Exception("UnableToAcquireString"); //TODO: a proper exception.
 
 		if ( source.length > 0 )
-			dest[0 .. source.length] = str;
+			dest[0 .. source.length] = source;
 
 		dest[source.length] = '\0';
+	}
+
+	real degreesToRadians(real deg)
+	{
+		return deg*PI/180;
 	}
 }
