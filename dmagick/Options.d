@@ -206,6 +206,7 @@ class Options
 	void dither(bool d)
 	{
 		imageInfo.dither = d;
+		quantizeInfo.dither = d;
 	}
 	///ditto
 	size_t dither()
@@ -980,6 +981,66 @@ class Options
 	//double interword_spacing,
 	//double interline_spacing;
 	//DirectionType direction;
+
+	/+***************************************************************
+	 * QuantizeInfo fields
+	 ***************************************************************+/
+
+
+	/**
+	 * Preferred number of _colors in the image.
+	 * The actual number of _colors in the image may be less
+	 * than your request, but never more. Images with less
+	 * unique _colors than specified with this option will have
+	 * any duplicate or unused _colors removed.
+	 */
+	void quantizeColors(size_t colors)
+	{
+		quantizeInfo.number_colors = colors;
+	}
+	///ditto
+	size_t quantizeColors()
+	{
+		return quantizeInfo.number_colors;
+	}
+
+	/**
+	 * Colorspace to quantize colors in.
+	 * Empirical evidence suggests that distances in color spaces
+	 * such as YUV or YIQ correspond to perceptual color differences
+	 * more closely than do distances in RGB space. These color spaces
+	 * may give better results when color reducing an image.
+	 * The default is RGB
+	 */
+	void quantizeColorSpace(ColorSpaceType type)
+	{
+		quantizeInfo.colorspace = type;
+	}
+	///ditto
+	ColorSpaceType quantizeColorSpace()
+	{
+		return quantizeInfo.colorspace;
+	}
+
+	/**
+	 * Depth of the quantization color classification tree.
+	 * Values of 0 or 1 allow selection of the optimal tree _depth
+	 * for the color reduction algorithm. Values between 2 and 8
+	 * may be used to manually adjust the tree _depth.
+	 */
+	void quantizeTreeDepth(size_t depth)
+	{
+		quantizeInfo.tree_depth = depth;
+	}
+	///ditto
+	size_t quantizeTreeDepth()
+	{
+		return quantizeInfo.tree_depth;
+	}
+
+	//MagickBooleanType measure_error;
+	//size_t signature;
+	//DitherMethod dither_method;
 
 	/**
 	 * Copy a string into a static array used
