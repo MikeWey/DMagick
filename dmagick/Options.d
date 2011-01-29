@@ -1017,12 +1017,12 @@ class Options
 	 * may give better results when color reducing an image.
 	 * The default is RGB
 	 */
-	void quantizeColorSpace(ColorSpaceType type)
+	void quantizeColorSpace(ColorspaceType type)
 	{
 		quantizeInfo.colorspace = type;
 	}
 	///ditto
-	ColorSpaceType quantizeColorSpace()
+	ColorspaceType quantizeColorSpace()
 	{
 		return quantizeInfo.colorspace;
 	}

@@ -66,7 +66,7 @@ real degreesToRadians(real deg)
 }
 
 struct RefCounted(alias pred, T)
-	if ( !is(T == class) && is(typeof(pred(null)) == void) )
+	if ( !is(T == class) && is(typeof(pred(cast(T*)null)) == void) )
 {
 	T* payload;
 
