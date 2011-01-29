@@ -66,7 +66,7 @@ real degreesToRadians(real deg)
 }
 
 struct RefCounted(alias pred, T)
-	if ( !is(T == class) && is(typeof(pred(cast(T*)null)) == void) )
+	if ( !is(T == class) && is(typeof(pred(cast(T*)null)) == T*) )
 {
 	T* payload;
 
@@ -96,7 +96,7 @@ struct RefCounted(alias pred, T)
 		(*refcount)--;
 
 		if ( *refcount == 0 )
-			pred(payload);
+			payload = pred(payload);
 	}
 
 	@property size_t refCount()
@@ -110,7 +110,7 @@ unittest
 	int x = 10;
 	int y = 20;
 
-	alias RefCounted!( (void* t){ x = 20; }, int ) IntRef;
+	alias RefCounted!( (int* t){ x = 20; return t; }, int ) IntRef;
 
 	auto a = IntRef(&x);
 	assert( a.refCount == 1 );

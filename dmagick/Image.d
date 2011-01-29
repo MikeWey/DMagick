@@ -19,12 +19,7 @@ import dmagick.c.image;
 class Image
 {
 	alias dmagick.c.image.Image MagickCoreImage;
-	//We can't reduce the function literal further, becase that generates an error.
-	alias RefCounted!( function(MagickCoreImage* img)
-	{
-		img = DestroyImage(img);
-	}, MagickCoreImage ) ImageRef;
-
+	alias RefCounted!( DestroyImage, MagickCoreImage ) ImageRef;
 
 	ImageRef imageRef;
 	Options options;
