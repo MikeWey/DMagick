@@ -10,9 +10,10 @@
 module dmagick.Options;
 
 import std.conv;
-import std.math;
 import core.stdc.stdio;
 import core.stdc.string;
+
+import dmagick.Utils;
 
 import dmagick.c.cacheView;
 import dmagick.c.colorspace;
@@ -20,7 +21,6 @@ import dmagick.c.compress;
 import dmagick.c.draw;
 import dmagick.c.geometry;
 import dmagick.c.image;
-import dmagick.c.magickString;
 import dmagick.c.magickType;
 import dmagick.c.memory;
 import dmagick.c.quantize;
@@ -41,7 +41,12 @@ class Options
 		quantizeInfo = cast(QuantizeInfo*)AcquireMagickMemory(QuantizeInfo.sizeof);
 		drawInfo = cast(DrawInfo*)AcquireMagickMemory(DrawInfo.sizeof);
 
-		//In D all strings are UTF encoded.
+		//Initialize with defaults.
+		GetImageInfo(imageInfo);
+		GetDrawInfo(imageInfo, drawInfo);
+		GetQuantizeInfo(quantizeInfo);
+
+		//In D strings are UTF encoded.
 		textEncoding("UTF-8");
 	}
 
@@ -1041,55 +1046,4 @@ class Options
 	//MagickBooleanType measure_error;
 	//size_t signature;
 	//DitherMethod dither_method;
-
-	/**
-	 * Copy a string into a static array used
-	 * by ImageMagick for some atributes.
-	 */
-	private void copyString(ref char[MaxTextExtent] dest, string source)
-	{
-		if ( source.length < MaxTextExtent )
-			throw new Exception("text is to long"); //TODO: a proper exception.
-
-		dest[0 .. source.length] = source;
-		dest[source.length] = '\0';
-	}
-
-	/**
-	 * Our implementation of ImageMagick's CloneString.
-	 *
-	 * We use this since using CloneString forces us to
-	 * append a \0 to the end of the string, and the realocation
-	 * whould be wastefull if we are just going to copy it
-	 */
-	private void copyString(ref char* dest, string source)
-	{
-		if ( source is null )
-		{
-			if ( dest !is null )
-				DestroyString(dest);
-			return;
-		}
-
-		if ( ~source.length < MaxTextExtent )
-			throw new Exception("UnableToAcquireString"); //TODO: a proper exception.
-
-		if ( dest is null )
-			dest = cast(char*)AcquireQuantumMemory(source.length+MaxTextExtent, dest.sizeof);
-		else
-			dest = cast(char*)ResizeQuantumMemory(dest, source.length+MaxTextExtent, dest.sizeof);
-
-		if ( dest is null )
-			throw new Exception("UnableToAcquireString"); //TODO: a proper exception.
-
-		if ( source.length > 0 )
-			dest[0 .. source.length] = source;
-
-		dest[source.length] = '\0';
-	}
-
-	real degreesToRadians(real deg)
-	{
-		return deg*PI/180;
-	}
 }
