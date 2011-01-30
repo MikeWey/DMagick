@@ -10,9 +10,11 @@
 module dmagick.Options;
 
 import std.conv;
+import std.math;
 import core.stdc.stdio;
 import core.stdc.string;
 
+import dmagick.Image;
 import dmagick.Utils;
 
 import dmagick.c.cacheView;
@@ -21,6 +23,7 @@ import dmagick.c.compress;
 import dmagick.c.draw;
 import dmagick.c.geometry;
 import dmagick.c.image;
+import dmagick.c.list;
 import dmagick.c.magickType;
 import dmagick.c.memory;
 import dmagick.c.quantize;
@@ -259,10 +262,15 @@ class Options
 	}
 
 	/**
-	 * Text rendering _font. If the _font is a fully qualified
-	 * X server _font name, the _font is obtained from an X  server.
-	 * To use a TrueType _font, precede the TrueType filename with an @.
-	 * Otherwise, specify a Postscript _font name (e.g. "helvetica")
+	 * The _font name or filename.
+	 * You can tag a _font to specify whether it is a Postscript,
+	 * Truetype, or OPTION1 _font. For example, Arial.ttf is a
+	 * Truetype _font, ps:helvetica is Postscript, and x:fixed is OPTION1.
+	 * 
+	 * The _font name can be a complete filename such as
+	 * "/mnt/windows/windows/fonts/Arial.ttf". The _font name can
+	 * also be a fully qualified X font name such as
+	 * "-urw-times-medium-i-normal--0-0-0-0-p-0-iso8859-13".
 	 */
 	void font(string str)
 	{
@@ -734,21 +742,22 @@ class Options
 	//
 	//}
 
-	//**
-	// * Pattern image to use when filling drawn objects.
-	// */
-	//void fillPattern(Image pattern)
-	//{
-	//	if (drawInfo.fill_pattern)
-	//		destroy
-	//
-	//	clone
-	//}
-	//ditto
-	//Image fillPattern()
-	//{
-	//
-	//}
+	/**
+	 * Pattern image to use when filling drawn objects.
+	 */
+	//TODO: investigate if we need to clone the image.
+	void fillPattern(dmagick.Image.Image pattern)
+	{
+		if (drawInfo.fill_pattern)
+			drawInfo.fill_pattern = DestroyImageList(drawInfo.fill_pattern);
+
+		drawInfo.fill_pattern = ReferenceImage(pattern.imageRef);
+	}
+	///ditto
+	dmagick.Image.Image fillPattern()
+	{
+		return new dmagick.Image.Image(ReferenceImage(drawInfo.fill_pattern));
+	}
 
 	/**
 	 * Rule to use when filling drawn objects.
@@ -761,27 +770,6 @@ class Options
 	FillRule fillRule()
 	{
 		return drawInfo.fill_rule;
-	}
-
-	/**
-	 * The _font name or filename.
-	 * You can tag a _font to specify whether it is a Postscript,
-	 * Truetype, or OPTION1 _font. For example, Arial.ttf is a
-	 * Truetype _font, ps:helvetica is Postscript, and x:fixed is OPTION1.
-	 * 
-	 * The _font name can be a complete filename such as
-	 * "/mnt/windows/windows/fonts/Arial.ttf". The _font name can
-	 * also be a fully qualified X font name such as
-	 * "-urw-times-medium-i-normal--0-0-0-0-p-0-iso8859-13".
-	 */
-	void font(string str)
-	{
-		copyString(imageInfo.font, str);
-	}
-	///ditto
-	string font()
-	{
-		return to!(string)(imageInfo.font);
 	}
 
 	/**
@@ -897,21 +885,22 @@ class Options
 		return drawInfo.miterlimit;
 	}
 
-	//**
-	// * Pattern image to use while drawing object stroke
-	// */
-	//void strokePattern(Image pattern)
-	//{
-	//	if (drawInfo.stroke_pattern)
-	//		destroy
-	//
-	//	clone
-	//}
-	//ditto
-	//Image fillPattern()
-	//{
-	//
-	//}
+	/**
+	 * Pattern image to use while drawing object stroke
+	 */
+	//TODO: investigate if we need to clone the image.
+	void strokePattern(dmagick.Image.Image pattern)
+	{
+		if (drawInfo.stroke_pattern)
+			drawInfo.stroke_pattern = DestroyImageList(drawInfo.stroke_pattern);
+
+		drawInfo.stroke_pattern = ReferenceImage(pattern.imageRef);
+	}
+	///ditto
+	dmagick.Image.Image fillPattern()
+	{
+		return new dmagick.Image.Image(ReferenceImage(drawInfo.stroke_pattern));
+	}
 
 	/**
 	 * Stroke _width for use when drawing vector objects

@@ -30,10 +30,15 @@ class Image
 		imageRef = ImageRef(AcquireImage(options.imageInfo));
 	}
 
+	this(MagickCoreImage* image)
+	{
+		options = new Options();
+		imageRef = ImageRef(image);
+	}
+
 	this(string filename)
 	{
 		options = new Options();
-
 		read(filename);
 	}
 

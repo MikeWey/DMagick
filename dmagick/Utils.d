@@ -18,7 +18,7 @@ import dmagick.c.magickType;
  * Copy a string into a static array used
  * by ImageMagick for some atributes.
  */
-private void copyString(ref char[MaxTextExtent] dest, string source)
+void copyString(ref char[MaxTextExtent] dest, string source)
 {
 	if ( source.length < MaxTextExtent )
 		throw new Exception("text is to long"); //TODO: a proper exception.
@@ -34,7 +34,7 @@ private void copyString(ref char[MaxTextExtent] dest, string source)
  * append a \0 to the end of the string, and the realocation
  * whould be wastefull if we are just going to copy it
  */
-private void copyString(ref char* dest, string source)
+void copyString(ref char* dest, string source)
 {
 	if ( source is null )
 	{
@@ -93,6 +93,9 @@ struct RefCounted(alias pred, T)
 
 	~this()
 	{
+		if ( !isInitialized )
+			return;
+
 		(*refcount)--;
 
 		if ( *refcount == 0 )
