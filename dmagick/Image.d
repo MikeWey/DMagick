@@ -8,6 +8,7 @@
 
 module dmagick.Image;
 
+import dmagick.Exception;
 import dmagick.Options;
 import dmagick.Utils;
 
@@ -49,7 +50,7 @@ class Image
 		ExceptionInfo* exception = AcquireExceptionInfo();
 		MagickCoreImage* image = ReadImage(options.imageInfo, exception);
 
-		//TODO: Throw if exception.
+		throwException(exception);
 
 		imageRef = ImageRef(image);
 		DestroyExceptionInfo(exception);

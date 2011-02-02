@@ -6,7 +6,6 @@
  * Authors:   Mike Wey
  */
 
-
 module dmagick.Options;
 
 import std.conv;
