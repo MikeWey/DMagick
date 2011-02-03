@@ -50,7 +50,7 @@ class Image
 		ExceptionInfo* exception = AcquireExceptionInfo();
 		MagickCoreImage* image = ReadImage(options.imageInfo, exception);
 
-		throwException(exception);
+		DMagickException.throwException(exception);
 
 		imageRef = ImageRef(image);
 		DestroyExceptionInfo(exception);

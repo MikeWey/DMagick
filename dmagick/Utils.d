@@ -10,6 +10,8 @@ module dmagick.Utils;
 
 import std.math;
 
+import dmagick.Exception;
+
 import dmagick.c.memory;
 import dmagick.c.magickString;
 import dmagick.c.magickType;
@@ -21,7 +23,7 @@ import dmagick.c.magickType;
 void copyString(ref char[MaxTextExtent] dest, string source)
 {
 	if ( source.length < MaxTextExtent )
-		throw new Exception("text is to long"); //TODO: a proper exception.
+		throw new ResourceLimitException("Source is larger then MaxTextExtend", null);
 
 	dest[0 .. source.length] = source;
 	dest[source.length] = '\0';
@@ -44,7 +46,7 @@ void copyString(ref char* dest, string source)
 	}
 
 	if ( ~source.length < MaxTextExtent )
-		throw new Exception("UnableToAcquireString"); //TODO: a proper exception.
+		throw new ResourceLimitException("unable to acquire string", null);
 
 	if ( dest is null )
 		dest = cast(char*)AcquireQuantumMemory(source.length+MaxTextExtent, dest.sizeof);
@@ -52,7 +54,7 @@ void copyString(ref char* dest, string source)
 		dest = cast(char*)ResizeQuantumMemory(dest, source.length+MaxTextExtent, dest.sizeof);
 
 	if ( dest is null )
-		throw new Exception("UnableToAcquireString"); //TODO: a proper exception.
+		throw new ResourceLimitException("unable to acquire string", null);
 
 	if ( source.length > 0 )
 		dest[0 .. source.length] = source;

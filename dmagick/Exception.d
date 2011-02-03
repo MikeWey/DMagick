@@ -15,7 +15,8 @@ import dmagick.c.exception;
 
 /**
  * A base class for all exceptions thrown bij DMagick.
- * The following Exceptions are derived from this class: $(BR)$(BR)
+ * The following Exceptions are derived from this class:
+ *
  * ResourceLimitException, TypeException, OptionException,
  * DelegateException, MissingDelegateException, CorruptImageException,
  * FileOpenException, BlobException, StreamException, CacheException,
@@ -23,7 +24,7 @@ import dmagick.c.exception;
  * ImageException, WandException, RandomException, XServerException,
  * MonitorException, RegistryException, ConfigureException, PolicyException
  */
-class MagickException : Exception
+class DMagickException : Exception
 {
 	this(string reason, string description)
 	{
@@ -36,11 +37,51 @@ class MagickException : Exception
 
 		super(message);
 	}
+
+	private enum string[] severities = [ "Blob", "Cache", "Coder",
+		"Configure", "CorruptImage", "Delegate", "Draw", "FileOpen",
+		"Filter", "Image", "MissingDelegate", "Module", "Monitor",
+		"Option", "Policy", "Random", "Registry", "ResourceLimit",
+		"Stream", "Type", "Wand", "XServer" ];
+
+	/**
+	 * Throws an Exception or error matching the ExceptionInfo.
+	 */
+	static void throwException(ExceptionInfo* exception)
+	{
+		if ( exception.severity == ExceptionType.UndefinedException )
+			return;
+
+		string reason      = to!(string)(exception.reason);
+		string description = to!(string)(exception.description);
+
+		mixin(
+		{
+			string exceptions =
+				"switch ( exception.severity )
+			 	{";
+
+			foreach ( severity; severities )
+			{
+				exceptions ~=
+					"case ExceptionType."~ severity ~"Warning:
+						throw new "~ severity ~"Exception(reason, description);
+						break;
+					 case ExceptionType."~ severity ~"Error:
+					 case ExceptionType."~ severity ~"FatalError:
+						throw new "~ severity ~"Error(reason, description);
+						break;";
+			}
+
+			return exceptions ~= "}";
+		}());
+	}
 }
 
 /**
  * A base class for all errors thrown bij DMagick.
- * The following Errors are derived from this class: $(BR)$(BR)
+ * The following Errors are derived from this class:
+ *
  * ResourceLimitError, TypeError, OptionError,
  * DelegateError, MissingDelegateError, CorruptImageError,
  * FileOpenError, BlobError, StreamError, CacheError,
@@ -48,7 +89,7 @@ class MagickException : Exception
  * ImageError, WandError, RandomError, XServerError,
  * MonitorError, RegistryError, ConfigureError, PolicyError
  */
-class MagickError : Error
+class DMagickError : Error
 {
 	this(string reason, string description)
 	{
@@ -63,47 +104,17 @@ class MagickError : Error
 	}
 }
 
-mixin(generateExceptions());
-
 /**
  * Generate the exceptions and the throwException function;
  */
-private string generateExceptions()
+mixin(
 {
-	string[] severities = [ "Blob", "Cache", "Coder", "Configure",
-		"CorruptImage", "Delegate", "Draw", "FileOpen", "Filter",
-		"Image", "MissingDelegate", "Module", "Monitor", "Option",
-		"Policy", "Random", "Registry", "ResourceLimit", "Stream",
-		"Type", "Wand", "XServer" ];
-
 	string exceptions;
 
-	exceptions ~= 
-		"void throwException(ExceptionInfo* exception)
-		 {
-			if ( exception.severity == ExceptionType.UndefinedException )
-				return;
-
-			string reason      = to!(string)(exception.reason);
-			string description = to!(string)(exception.description);	
-
-			switch(exception.severity)
-			{";
-
-	foreach ( severity; severities )
-	{
-		exceptions ~=
-			"case ExceptionType."~ severity ~"Warning:
-				throw new "~ severity ~"Exception(reason, description);
-				break;";
-	}
-
-	exceptions ~= "}}";
-
-	foreach ( severity; severities )
+	foreach ( severity; DMagickException.severities )
 	{
 		exceptions ~= 
-			"class " ~ severity ~ "Exception : MagickException
+			"class " ~ severity ~ "Exception : DMagickException
 			 {
 				this(string reason, string description)
 				{
@@ -112,7 +123,7 @@ private string generateExceptions()
 			 }";
 
 		exceptions ~= 
-			"class " ~ severity ~ "Error : MagickError
+			"class " ~ severity ~ "Error : DMagickError
 			 {
 				this(string reason, string description)
 				{
@@ -122,5 +133,5 @@ private string generateExceptions()
 	}
 
 	return exceptions;
-}
+}());
 
