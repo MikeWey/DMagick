@@ -8,7 +8,10 @@ extern (C)
 	alias long   MagickOffsetType;
 	alias ulong  MagickSizeType;
 
+	alias int MagickBooleanType;
+
 	alias MagickSizeType QuantumAny;
+	alias QuantumRange TransparentOpacity;
 
 	enum MaxTextExtent = 4096;
 	enum QuantumRange = 65535UL;
@@ -44,16 +47,5 @@ extern (C)
 		PseudoClass
 	}
 
-	alias int MagickBooleanType;
-
-	//typedef enum
-	//{
-	//	MagickFalse = 0,
-	//	MagickTrue = 1
-	//} MagickBooleanType;
-
 	struct BlobInfo {}
-
-	//alias _Image Image;
-	//alias _ImageInfo ImageInfo;
 }

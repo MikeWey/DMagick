@@ -13,6 +13,7 @@ import std.math;
 import core.stdc.stdio;
 import core.stdc.string;
 
+import dmagick.Color;
 import dmagick.Image;
 import dmagick.Utils;
 
@@ -83,22 +84,23 @@ class Options
 		return imageInfo.adjoin == 1;
 	}
 
-	//**
-	// * Set the image background color. The default is "white".
-	// */
-	//void backgroundColor(string color)
-	//{
-	//
-	//}
-	//ditto	
-	//void backgroundColor(Color color)
-	//{
-	//
-	//}
-	//Color backgroundColor()
-	//{
-	//
-	//}
+	/**
+	 * Set the image background color. The default is "white".
+	 */
+	void backgroundColor(string color)
+	{
+		backgroundColor = new Color(color);
+	}
+	///ditto	
+	void backgroundColor(Color color)
+	{
+		imageInfo.background_color = color.pixelPacket;	
+	}
+	///ditto
+	Color backgroundColor()
+	{
+		return new Color(imageInfo.background_color);
+	}
 
 	/**
 	 * Set a texture to tile onto the image background.
@@ -115,16 +117,24 @@ class Options
 		return to!(string)(imageInfo.texture);
 	}
 
-	//void borderColor(Color color)
-	//{
-	//	imageInfo.border_color
-	//	drawInfo.border_color
-	//}
-	//ditto
-	//Color borderColor()
-	//{
-	//
-	//}
+	/**
+	 * Set the image border color. The default is "#dfdfdf".
+	 */
+	void borderColor(string color)
+	{
+		borderColor = new Color(color);
+	}
+	///ditto
+	void borderColor(Color color)
+	{
+		imageInfo.border_color = color.pixelPacket;
+		drawInfo.border_color = color.pixelPacket;
+	}
+	///ditto
+	Color borderColor()
+	{
+		return new Color(imageInfo.border_color);
+	}
 
 	/**
 	 * Set the image border color. The default is "#dfdfdf".
@@ -331,15 +341,23 @@ class Options
 		return imageInfo.magick[0 .. strlen(imageInfo.magick.ptr)].idup;
 	}
 
-	//void matteColor(Color color)
-	//{
-	//
-	//}
-	//ditto
-	//Color matteColor()
-	//{
-	//
-	//}
+	/**
+	 * Set the image transparent color. The default is "#bdbdbd".
+	 */
+	void matteColor(string color)
+	{
+		matteColor = new Color(color);
+	}
+	///ditto
+	void matteColor(Color color)
+	{
+		imageInfo.matte_color = color.pixelPacket;
+	}
+	///ditto
+	Color matteColor()
+	{
+		return new Color(imageInfo.matte_color);
+	}
 
 	/**
 	 * Transform the image to black and white on input.
@@ -714,32 +732,42 @@ class Options
 		return drawInfo.text_antialias == 1;
 	}
 
-	//**
-	// * If set, causes the text to be drawn over a box of the specified color.
-	// */
-	//void boxColor(Color color)
-	//{
-	//	drawInfo.undercolor
-	//}
-	//ditto
-	//Color boxColor()
-	//{
-	//
-	//}
+	/**
+	 * If set, causes the text to be drawn over a box of the specified color.
+	 */
+	void boxColor(string color)
+	{
+		boxColor = new Color(color);
+	}
+	///ditto
+	void boxColor(Color color)
+	{
+		drawInfo.undercolor = color.pixelPacket;
+	}
+	///ditto
+	Color boxColor()
+	{
+		return new Color(drawInfo.undercolor);
+	}
 
-	//**
-	// * Color to use when filling drawn objects.
-	// * The default is "black".
-	// */
-	//void fillColor(Color color)
-	//{
-	//	drawInfo.fill
-	//}
-	//ditto
-	//Color fillColor()
-	//{
-	//
-	//}
+	/**
+	 * Color to use when filling drawn objects.
+	 * The default is "black".
+	 */
+	void fillColor(string color)
+	{
+		fillColor = new Color(color);
+	}
+	///ditto
+	void fillColor(Color color)
+	{
+		drawInfo.fill = color.pixelPacket;
+	}
+	///ditto
+	Color fillColor()
+	{
+		return new Color(drawInfo.fill);
+	}
 
 	/**
 	 * Pattern image to use when filling drawn objects.
@@ -784,18 +812,23 @@ class Options
 		return drawInfo.stroke_antialias == 1;
 	}
 
-	//**
-	// * Color to use when drawing object outlines
-	// */
-	//void strokeColor(Color color)
-	//{
-	//	drawInfo.stroke
-	//}
-	//ditto
-	//Color strokeColor()
-	//{
-	//
-	//}
+	/**
+	 * Color to use when drawing object outlines
+	 */
+	void strokeColor(string color)
+	{
+		strokeColor = new Color(color);
+	}
+	///ditto
+	void strokeColor(Color color)
+	{
+		drawInfo.stroke = color.pixelPacket;
+	}
+	///ditto
+	Color strokeColor()
+	{
+		return new Color(imageInfo.background_color);
+	}
 
 	/**
 	 * The initial distance into the dash pattern. The units are pixels.
