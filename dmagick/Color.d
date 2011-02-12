@@ -1,6 +1,4 @@
 /**
- * A container for the pixel values: red, green, blue and opacity.
- *
  * Copyright: Mike Wey 2011
  * License:   To be determined
  * Authors:   Mike Wey
@@ -18,10 +16,14 @@ import dmagick.c.exception;
 import dmagick.c.pixel;
 import dmagick.c.magickType;
 
+/**
+ * A container for the pixel values: red, green, blue and opacity.
+ */
 class Color
 {
 	PixelPacket* pixelPacket;
 
+	/** */
 	this()
 	{
 		pixelPacket = new PixelPacket;
@@ -29,11 +31,17 @@ class Color
 		pixelPacket.opacity = TransparentOpacity;
 	}
 
+	/**
+	 * Create a Color from the specified Quantums.
+	 */
 	this(Quantum red, Quantum green, Quantum blue)
 	{
 		this(red, green, blue, 0);
 	}
 
+	/**
+	 * ditto
+	 */
 	this(Quantum red, Quantum green, Quantum blue, Quantum opacity)
 	{
 		this();
@@ -44,6 +52,9 @@ class Color
 		pixelPacket.opacity = opacity;
 	}
 
+	/**
+	 * Create a Color from a X11 color specification string
+	 */
 	this(string color)
 	{
 		this();
@@ -57,6 +68,9 @@ class Color
 		DestroyExceptionInfo(exception);
 	}
 
+	/**
+	 * Create a Color from this PixelPacket.
+	 */
 	this(PixelPacket packet)
 	{
 		this();
@@ -67,6 +81,10 @@ class Color
 		pixelPacket.opacity = packet.opacity;
 	}
 
+	/**
+	 * Create a Color and set the internal pointer to this PixelPacket.
+	 * We can use this to change pixels in an image through Color.
+	 */
 	this(PixelPacket* packet)
 	{
 		pixelPacket = packet;
@@ -84,6 +102,9 @@ class Color
 		return "none";
 	}
 
+	/**
+	 * Create a copy of this Color.
+	 */
 	Color clone()
 	{
 		return new Color(*pixelPacket);

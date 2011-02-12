@@ -62,11 +62,18 @@ void copyString(ref char* dest, string source)
 	dest[source.length] = '\0';
 }
 
+/** */
 real degreesToRadians(real deg)
 {
 	return deg*PI/180;
 }
 
+
+/**
+ * A template struct ot make pointers to ImageMagick structs
+ * reference counted. Excepts a predicate pred which destroys
+ * the struct pointer when refCount is 0.
+ */
 struct RefCounted(alias pred, T)
 	if ( !is(T == class) && is(typeof(pred(cast(T*)null)) == T*) )
 {

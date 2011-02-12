@@ -1,5 +1,5 @@
 /**
- * A class to expose ImageInfo QuantizeInfo and DrawInfo
+ * Classes that wrap the Imagemagick exception handling.
  *
  * Copyright: Mike Wey 2011
  * License:   To be determined
