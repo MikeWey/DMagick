@@ -1,5 +1,5 @@
 /**
- * The image
+ * A container for the pixel values: red, green, blue and opacity.
  *
  * Copyright: Mike Wey 2011
  * License:   To be determined
@@ -20,10 +20,12 @@ import dmagick.c.magickType;
 
 class Color
 {
-	PixelPacket pixelPacket;
+	PixelPacket* pixelPacket;
 
 	this()
 	{
+		pixelPacket = new PixelPacket;
+
 		pixelPacket.opacity = TransparentOpacity;
 	}
 
@@ -49,7 +51,7 @@ class Color
 		ExceptionInfo* exception = AcquireExceptionInfo();
 		const(char)* name = toStringz(color);
 
-		QueryColorDatabase(name, &pixelPacket, exception);
+		QueryColorDatabase(name, pixelPacket, exception);
 		DMagickException.throwException(exception);
 
 		DestroyExceptionInfo(exception);
@@ -57,12 +59,22 @@ class Color
 
 	this(PixelPacket packet)
 	{
+		this();
+
+		pixelPacket.red     = packet.red;
+		pixelPacket.green   = packet.green;
+		pixelPacket.blue    = packet.blue;
+		pixelPacket.opacity = packet.opacity;
+	}
+
+	this(PixelPacket* packet)
+	{
 		pixelPacket = packet;
 	}
 
 	bool opEquals(Color color)
 	{
-		return pixelPacket == color.pixelPacket;
+		return *pixelPacket == *(color.pixelPacket);
 	}
 
 	override string toString()
@@ -74,6 +86,6 @@ class Color
 
 	Color clone()
 	{
-		return new Color(pixelPacket);
+		return new Color(*pixelPacket);
 	}
 }
