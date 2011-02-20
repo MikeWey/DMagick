@@ -97,60 +97,87 @@ class Color
 			return format("#%04X%04X%04X%04X", pixelPacket.red, pixelPacket.green, pixelPacket.blue, pixelPacket.opacity);
 	}
 
+	/**
+	 * The value for red in the range [0 .. QuantumRange]
+	 */
 	void redQuantum(Quantum red)
 	{
 		pixelPacket.red = red;
 	}
+	///ditto
 	Quantum redQuantum()
 	{
 		return pixelPacket.red;
 	}
 
+	/**
+	 * The value for green in the range [0 .. QuantumRange]
+	 */
 	void greenQuantum(Quantum green)
 	{
 		pixelPacket.green = green;
 	}
+	///ditto
 	Quantum greenQuantum()
 	{
 		return pixelPacket.green;
 	}
 
+	/**
+	 * The value for blue in the range [0 .. QuantumRange]
+	 */
 	void blueQuantum(Quantum blue)
 	{
 		pixelPacket.blue = blue;
 	}
+	///ditto
 	Quantum blueQuantum()
 	{
 		return pixelPacket.blue;
 	}
 
+	/**
+	 * The opacity as a byte. [0 .. 255]
+	 */
 	void opacityByte(ubyte opacity)
 	{
 		pixelPacket.opacity = ScaleCharToQuantum(opacity);
 	}
+	///ditto
 	ubyte opacityByte()
 	{
 		return ScaleQuantumToChar(pixelPacket.opacity);
 	}
 
+	/**
+	 * The value for opacity in the range [0 .. QuantumRange]
+	 */
 	void opacityQuantum(Quantum opacity)
 	{
 		pixelPacket.opacity = opacity;
 	}
+	///ditto
 	Quantum opacityQuantum()
 	{
 		return pixelPacket.opacity;
 	}
 
+	/**
+	 * The value for opacity as a double in the range [0.0 .. 1.0]
+	 */
 	void opacity(double opacity)
 	{
 		pixelPacket.opacity = scaleDoubleToQuantum(opacity);
 	}
+	///ditto
 	double opacity()
 	{
 		return scaleQuantumToDouble(pixelPacket.opacity);
 	}
 
+	/**
+	 * The intensity of this color.
+	 */
 	double intensity()
 	{
 		//The Constants used here are derived from BT.709 Which standardizes HDTV
@@ -172,12 +199,11 @@ class Color
 	 */
 	string name()
 	{
-		char* pattern;
 		size_t numberOfColors;
 		const(ColorInfo)** colorList;
+		const(char)* pattern = toStringz("*");
 		ExceptionInfo* exception = AcquireExceptionInfo();
 
-		copyString(pattern, "*");
 		colorList = GetColorInfoList(pattern, &numberOfColors, exception);
 		DMagickException.throwException(exception);
 
