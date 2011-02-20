@@ -94,7 +94,7 @@ class Options
 	///ditto	
 	void backgroundColor(Color color)
 	{
-		imageInfo.background_color = color.pixelPacket;	
+		imageInfo.background_color = *(color.pixelPacket);	
 	}
 	///ditto
 	Color backgroundColor()
@@ -127,8 +127,8 @@ class Options
 	///ditto
 	void borderColor(Color color)
 	{
-		imageInfo.border_color = color.pixelPacket;
-		drawInfo.border_color = color.pixelPacket;
+		imageInfo.border_color = *(color.pixelPacket);
+		drawInfo.border_color = *(color.pixelPacket);
 	}
 	///ditto
 	Color borderColor()
@@ -351,7 +351,7 @@ class Options
 	///ditto
 	void matteColor(Color color)
 	{
-		imageInfo.matte_color = color.pixelPacket;
+		imageInfo.matte_color = *(color.pixelPacket);
 	}
 	///ditto
 	Color matteColor()
@@ -742,7 +742,7 @@ class Options
 	///ditto
 	void boxColor(Color color)
 	{
-		drawInfo.undercolor = color.pixelPacket;
+		drawInfo.undercolor = *(color.pixelPacket);
 	}
 	///ditto
 	Color boxColor()
@@ -761,7 +761,7 @@ class Options
 	///ditto
 	void fillColor(Color color)
 	{
-		drawInfo.fill = color.pixelPacket;
+		drawInfo.fill = *(color.pixelPacket);
 	}
 	///ditto
 	Color fillColor()
@@ -822,7 +822,7 @@ class Options
 	///ditto
 	void strokeColor(Color color)
 	{
-		drawInfo.stroke = color.pixelPacket;
+		drawInfo.stroke = *(color.pixelPacket);
 	}
 	///ditto
 	Color strokeColor()

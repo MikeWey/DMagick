@@ -78,6 +78,13 @@ extern(C)
 		return(cast(ubyte) (((quantum+128UL)-((quantum+128UL) >> 8)) >> 8));
 	}
 
+	static pure nothrow Quantum ScaleCharToQuantum(ubyte value)
+	{
+		enum Quantum factor = QuantumRange/255;
+
+		return cast(Quantum)(factor*value);
+	}
+
 	MagickBooleanType SetQuantumDepth(const(Image)*, QuantumInfo*, const size_t);
 	MagickBooleanType SetQuantumFormat(const(Image)*, QuantumInfo*, const QuantumFormatType);
 	MagickBooleanType SetQuantumPad(const(Image)*, QuantumInfo*, const size_t);
