@@ -35,13 +35,15 @@ void copyString(ref char[MaxTextExtent] dest, string source)
  * We use this since using CloneString forces us to
  * append a \0 to the end of the string, and the realocation
  * whould be wastefull if we are just going to copy it
+ *
+ * used for copying a string into a Imagemagick struct
  */
 void copyString(ref char* dest, string source)
 {
 	if ( source is null )
 	{
 		if ( dest !is null )
-			DestroyString(dest);
+			dest = DestroyString(dest);
 		return;
 	}
 
@@ -61,6 +63,25 @@ void copyString(ref char* dest, string source)
 
 	dest[source.length] = '\0';
 }
+
+unittest
+{
+	char* dest;
+	string source = "test";
+
+	copyString(dest, source);
+
+	assert( dest !is source.ptr );
+	assert( dest[0..5] == "test\0" );
+
+	copyString(dest, "unit");
+	assert( dest[0..5] == "unit\0" );
+
+	copyString(dest, null);
+	assert( dest is null );
+}
+
+void main(){}
 
 /** */
 real degreesToRadians(real deg)

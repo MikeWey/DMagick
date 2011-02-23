@@ -1,0 +1,108 @@
+/**
+ * A class to specify a geometry argument.
+ *
+ * Copyright: Mike Wey 2011
+ * License:   To be determined
+ * Authors:   Mike Wey
+ */
+
+module dmagick.Geometry;
+
+import std.conv;
+import std.ctype;
+import std.string;
+import core.sys.posix.sys.types;
+
+import dmagick.c.geometry;
+import dmagick.c.magickString;
+import dmagick.c.magickType;
+
+struct Geometry
+{
+	size_t width;
+	size_t height;
+	ssize_t xOffset;
+	ssize_t yOffset;
+	bool percent;
+	bool minimum;
+	bool keepAspect = true;
+	bool greater;
+	bool less;
+
+	this(string geometry)
+	{
+		MagickStatusType flags;
+
+		//If the strin starts with a letter assume it's a Page Geometry.
+		if ( isalpha(geometry[0]) )
+		{
+			char* geo = GetPageGeometry(toStringz(geometry));
+
+			if( geo !is null )
+			{
+				geometry = to!(string)(geo);
+				DestroyString(geo);
+			}
+		}
+
+		flags = GetGeometry(toStringz(geometry), &xOffset, &yOffset, &width, &height);
+
+		percent    = ( flags & GeometryFlags.PercentValue ) != 0;
+		minimum    = ( flags & GeometryFlags.MinimumValue ) != 0;
+		keepAspect = ( flags & GeometryFlags.AspectValue  ) == 0;
+		greater    = ( flags & GeometryFlags.GreaterValue ) != 0;
+		less       = ( flags & GeometryFlags.LessValue    ) != 0;
+	}
+
+	unittest
+	{
+		Geometry geo = Geometry("200x150-50+25!");
+		assert( geo.width == 200 && geo.xOffset == -50 );
+		assert( geo.keepAspect == false );
+
+		geo = Geometry("A4");
+		assert( geo.width == 595 && geo.height == 842);
+	}
+
+	this(size_t width, size_t height, ssize_t xOffset, ssize_t yOffset)
+	{
+		this.width   = width;
+		this.height  = height;
+		this.xOffset = xOffset;
+		this.yOffset = yOffset;
+	}
+
+	string toString()
+	{
+		string geometry;
+
+		if ( width > 0 )
+			geometry ~= to!(string)(width);
+
+		if ( height > 0 )
+			geometry ~= "x" ~ to!(string)(height);
+
+		if ( xOffset != 0 && yOffset != 0 )
+			geometry ~= format("%+s%+s", xOffset, yOffset);
+
+		geometry ~= format("%s%s%s%s%s",
+			percent ? "%" : "",
+			minimum ? "^" : "",
+			keepAspect ? "" : "!",
+			less ? "<" : "",
+			greater ? ">" : "");
+
+		return geometry;
+	}
+
+	unittest
+	{
+		Geometry geo = Geometry("200x150-50+25!");
+		assert( geo.toString == "200x150-50+25!");
+	}
+
+	int opCmp(ref const Geometry geometry)
+	{
+		return width*height - geometry.width*geometry.height;
+	}
+}
