@@ -81,8 +81,6 @@ unittest
 	assert( dest is null );
 }
 
-void main(){}
-
 /** */
 real degreesToRadians(real deg)
 {

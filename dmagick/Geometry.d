@@ -33,7 +33,7 @@ struct Geometry
 	{
 		MagickStatusType flags;
 
-		//If the strin starts with a letter assume it's a Page Geometry.
+		//If the string starts with a letter assume it's a Page Geometry.
 		if ( isalpha(geometry[0]) )
 		{
 			char* geo = GetPageGeometry(toStringz(geometry));
