@@ -222,6 +222,12 @@ class Color
 		return toString();
 	}
 
+	unittest
+	{
+		Color color = new Color("red");
+		assert( color.name == "red" );
+	}
+
 	static Quantum scaleDoubleToQuantum(double value)
 	{
 		return cast(Quantum)(value*QuantumRange);

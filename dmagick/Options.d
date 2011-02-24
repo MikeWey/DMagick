@@ -14,6 +14,7 @@ import core.stdc.stdio;
 import core.stdc.string;
 
 import dmagick.Color;
+import dmagick.Geometry;
 import dmagick.Image;
 import dmagick.Utils;
 
@@ -189,9 +190,14 @@ class Options
 		copyString(imageInfo.density, str);
 	}
 	///ditto
-	string density()
+	void density(Geometry geometry)
 	{
-		return to!(string)(imageInfo.density);
+		density(geometry.toString());
+	}
+	///ditto
+	Geometry density()
+	{
+		return Geometry( to!(string)(imageInfo.density) );
 	}
 
 	/**
@@ -387,9 +393,14 @@ class Options
 		copyString(imageInfo.page, str);
 	}
 	///ditto
-	string page()
+	void page(Geometry geometry)
 	{
-		return to!(string)(imageInfo.page);
+		page(geometry.toString());
+	}
+	///ditto
+	Geometry page()
+	{
+		return Geometry( to!(string)(imageInfo.page) );
 	}
 
 	/**
@@ -466,9 +477,14 @@ class Options
 		copyString(imageInfo.size, str);
 	}
 	///ditto
-	string size()
+	void size(Geometry geometry)
 	{
-		return to!(string)(imageInfo.size);
+		size(geometry.toString());
+	}
+	///ditto
+	Geometry size()
+	{
+		return Geometry( to!(string)(imageInfo.size) );
 	}
 
 	/**
@@ -955,9 +971,14 @@ class Options
 		copyString(imageInfo.density, str);
 	}
 	///ditto
-	string textDensity()
+	void textDensity(Geometry geometry)
 	{
-		return to!(string)(imageInfo.density);
+		textDensity(geometry.toString);
+	}
+	///ditto
+	Geometry textDensity()
+	{
+		return Geometry( to!(string)(imageInfo.density) );
 	}
 
 	/**

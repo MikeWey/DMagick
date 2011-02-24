@@ -1,6 +1,4 @@
 /**
- * A class to specify a geometry argument.
- *
  * Copyright: Mike Wey 2011
  * License:   To be determined
  * Authors:   Mike Wey
@@ -17,18 +15,25 @@ import dmagick.c.geometry;
 import dmagick.c.magickString;
 import dmagick.c.magickType;
 
+/**
+ * Geometry provides a convenient means to specify a geometry argument.
+ */
 struct Geometry
 {
-	size_t width;
-	size_t height;
-	ssize_t xOffset;
-	ssize_t yOffset;
-	bool percent;
-	bool minimum;
-	bool keepAspect = true;
-	bool greater;
-	bool less;
+	size_t width;    ///
+	size_t height;   ///
+	ssize_t xOffset; ///
+	ssize_t yOffset; ///
+	bool percent;    /// The width and/or height are percentages of the original.
+	bool minimum;    /// The specified width and/or height is the minimum value.
+	bool keepAspect = true;  ///Retain the aspect ratio.
+	bool greater;    /// Resize only if the image is greater than the width and/or height.
+	bool less;       /// Resize only if the image is smaller than the width and/or height.
 
+	/**
+	 * Create a Geometry form a Imagemagick / X11 geometry string.
+	 */
+	//TODO: expand the documentation for this constructor.
 	this(string geometry)
 	{
 		MagickStatusType flags;
@@ -64,7 +69,10 @@ struct Geometry
 		assert( geo.width == 595 && geo.height == 842);
 	}
 
-	this(size_t width, size_t height, ssize_t xOffset, ssize_t yOffset)
+	/**
+	 * Initialize with width heigt and offsets.
+	 */
+	this(size_t width, size_t height, ssize_t xOffset = 0, ssize_t yOffset = 0)
 	{
 		this.width   = width;
 		this.height  = height;
@@ -72,6 +80,9 @@ struct Geometry
 		this.yOffset = yOffset;
 	}
 
+	/**
+	 * Convert Geometry into a Imagemagick geometry string.
+	 */
 	string toString()
 	{
 		string geometry;
@@ -82,9 +93,6 @@ struct Geometry
 		if ( height > 0 )
 			geometry ~= "x" ~ to!(string)(height);
 
-		if ( xOffset != 0 && yOffset != 0 )
-			geometry ~= format("%+s%+s", xOffset, yOffset);
-
 		geometry ~= format("%s%s%s%s%s",
 			percent ? "%" : "",
 			minimum ? "^" : "",
@@ -92,13 +100,16 @@ struct Geometry
 			less ? "<" : "",
 			greater ? ">" : "");
 
+		if ( xOffset != 0 && yOffset != 0 )
+			geometry ~= format("%+s%+s", xOffset, yOffset);
+
 		return geometry;
 	}
 
 	unittest
 	{
-		Geometry geo = Geometry("200x150-50+25!");
-		assert( geo.toString == "200x150-50+25!");
+		Geometry geo = Geometry("200x150!-50+25");
+		assert( geo.toString == "200x150!-50+25");
 	}
 
 	int opCmp(ref const Geometry geometry)
