@@ -43,6 +43,15 @@ class Image
 		read(filename);
 	}
 
+	this(Geometry size, Color color)
+	{
+		options = new Options();
+		options.size = size;
+
+		//Use read to create a cnavas with the spacified color.
+		read( "canvas:"~ color.toString() );
+	}
+
 	void read(string filename)
 	{
 		options.filename = filename;

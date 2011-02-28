@@ -68,14 +68,21 @@ extern(C)
 	{
 		if (value <= 0.0)
 			return(cast(Quantum) 0);
-		if (value >= cast(MagickRealType) 65535UL)
-			return(cast(Quantum) 65535UL);
+		if (value >= cast(MagickRealType) QuantumRange)
+			return(cast(Quantum) QuantumRange);
 		return(cast(Quantum) (value+0.5));
 	}
 
 	static pure nothrow ubyte ScaleQuantumToChar(const Quantum quantum)
 	{
-		return(cast(ubyte) (((quantum+128UL)-((quantum+128UL) >> 8)) >> 8));
+		static if ( MagickQuantumDepth == 8 )
+			return quantum;
+		else static if ( MagickQuantumDepth == 16 )
+			return cast(ubyte) (((quantum+128UL)-((quantum+128UL) >> 8)) >> 8);
+		else static if ( MagickQuantumDepth == 32 )
+			return cast(ubyte) (quantum+8421504UL/16843009UL );
+		else
+			return cast(ubyte) (quantum/72340172838076673.0+0.5);
 	}
 
 	static pure nothrow Quantum ScaleCharToQuantum(ubyte value)

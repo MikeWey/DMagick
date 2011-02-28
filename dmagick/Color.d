@@ -91,10 +91,19 @@ class Color
 
 	override string toString()
 	{
-		if ( pixelPacket.opacity == 0 )
-			return format("#%04X%04X%04X", pixelPacket.red, pixelPacket.green, pixelPacket.blue);
+		static if ( MagickQuantumDepth == 8 )
+			string frm = "%02X";
+		else static if ( MagickQuantumDepth == 16 )
+			string frm = "%04X";
 		else
-			return format("#%04X%04X%04X%04X", pixelPacket.red, pixelPacket.green, pixelPacket.blue, pixelPacket.opacity);
+			string frm = "%08X";
+
+		if ( pixelPacket.opacity == 0 )
+			frm = "#" ~ frm ~ frm ~ frm;
+		else
+			frm = "#" ~ frm ~ frm ~ frm ~ frm;
+
+		return format(frm, pixelPacket.red, pixelPacket.green, pixelPacket.blue, pixelPacket.opacity);
 	}
 
 	/**

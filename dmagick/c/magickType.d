@@ -2,19 +2,53 @@ module dmagick.c.magickType;
 
 extern (C)
 {
-	alias double MagickRealType;
-	alias ushort Quantum;
-	alias uint   MagickStatusType;
-	alias long   MagickOffsetType;
-	alias ulong  MagickSizeType;
+	version(Quantum8)
+	{
+		alias ubyte  Quantum;
+		alias double MagickRealType;
 
-	alias int MagickBooleanType;
+		enum MAGICKCORE_QUANTUM_DEPTH = 8;
+		enum QuantumRange = Quantum.max;
+	}
+	else version(Quantum32)
+	{
+		alias uint   Quantum;
+		alias double MagickRealType;
+
+		enum MAGICKCORE_QUANTUM_DEPTH = 32;
+		enum QuantumRange = Quantum.max;
+	}
+	else version(Quantum64)
+	{
+		static assert(false, "64bit Quantum not implemented, need long double");
+
+		//alias double Quantum;
+		//alias long double MagickRealType;
+
+		//enum MAGICKCORE_QUANTUM_DEPTH = 64;
+		//enum QuantumRange = 18446744073709551615.0;
+	}
+	else
+	{
+		alias ushort Quantum;
+		alias double MagickRealType;
+
+		enum MAGICKCORE_QUANTUM_DEPTH = 16;
+		enum QuantumRange = Quantum.max;
+	}
+
+	alias uint  MagickStatusType;
+	alias long  MagickOffsetType;
+	alias ulong MagickSizeType;
+	alias int   MagickBooleanType;
 
 	alias MagickSizeType QuantumAny;
-	alias QuantumRange TransparentOpacity;
+	alias QuantumRange   TransparentOpacity;
+
+	alias MAGICKCORE_QUANTUM_DEPTH MagickQuantumDepth;
 
 	enum MaxTextExtent = 4096;
-	enum QuantumRange = 65535UL;
+	enum OpaqueOpacity = 0;
 
 	enum ChannelType
 	{
