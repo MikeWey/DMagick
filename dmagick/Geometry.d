@@ -69,6 +69,14 @@ struct Geometry
 		assert( geo.width == 595 && geo.height == 842);
 	}
 
+	this(RectangleInfo rectangle)
+	{
+		this.width = rectangle.width;
+		this.height = rectangle.height;
+		this.xOffset = rectangle.x;
+		this.yOffset = rectangle.y;
+	}
+
 	/**
 	 * Initialize with width heigt and offsets.
 	 */

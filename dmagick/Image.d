@@ -14,10 +14,13 @@ import dmagick.Geometry;
 import dmagick.Options;
 import dmagick.Utils;
 
+import dmagick.c.attribute;
 import dmagick.c.blob;
 import dmagick.c.constitute;
 import dmagick.c.exception;
 import dmagick.c.image;
+import dmagick.c.magickType;
+import dmagick.c.resource;
 
 /**
  * The image
@@ -139,6 +142,60 @@ class Image
 	}
 
 	/**
+	 * Adaptively blurs the image by blurring more intensely near
+	 * image edges and less intensely far from edges.
+	 * The adaptiveBlur method blurs the image with a Gaussian operator
+	 * of the given radius and standard deviation (sigma).
+	 * For reasonable results, radius should be larger than sigma.
+	 * Use a radius of 0 and adaptive_blur selects a suitable radius for you.
+	 *
+	 * Params:
+	 *     radius  = The radius of the Gaussian in pixels,
+	 *               not counting the center pixel.
+	 *     sigma   = The standard deviation of the Laplacian, in pixels.
+	 *     channel = If no channels are specified, blurs all the channels.
+	 */
+	void adaptiveBlur(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		MagickCoreImage* image =
+			AdaptiveBlurImageChannel(imageRef, channel, radius, sigma, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * adaptiveResize uses the special Mesh Interpolation method
+	 * to resize images. Basically adaptiveResize avoids the excessive
+	 * blurring that resize can produce with sharp color changes.
+	 * This works well for slight image size adjustments and in
+	 * particularly for magnification, And especially with images
+	 * with sharp color changes. But when images are enlarged or reduced
+	 * by more than 50% it will start to produce aliasing,
+	 * and Moiré effects in the results.
+	 */
+	void adaptiveResize(Geometry size)
+	{
+		ssize_t x, y;
+		size_t width  = columns;
+		size_t height = rows;
+
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		ParseMetaGeometry(size.toString, &x, &y, &width, &height);
+
+		MagickCoreImage* image =
+			AdaptiveResizeImage(imageRef, width, height, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
 	 * Read an Image by reading from the file or
 	 * URL specified by filename.
 	 */
@@ -150,9 +207,9 @@ class Image
 		MagickCoreImage* image = ReadImage(options.imageInfo, exception);
 
 		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
 
 		imageRef = ImageRef(image);
-		DestroyExceptionInfo(exception);
 	}
 
 	/**
@@ -185,9 +242,9 @@ class Image
 			BlobToImage(options.imageInfo, blob.ptr, blob.length, exception);
 
 		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
 
 		imageRef = ImageRef(image);
-		DestroyExceptionInfo(exception);
 	}
 
 	///ditto
@@ -252,8 +309,169 @@ class Image
 			ConstituteImage(width, height, toStringz(map), storage, pixels.ptr, exception);
 
 		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
 
 		imageRef = ImageRef(image);
+	}
+
+	void animationDelay(size_t delay)
+	{
+		imageRef.delay = delay;
+	}
+	size_t annimationDelay()
+	{
+		return imageRef.delay;
+	}
+
+	void animationIterations(size_t iterations)
+	{
+		imageRef.iterations = iterations;
+	}
+	size_t animationIterations()
+	{
+		return imageRef.iterations;
+	}
+
+	/**
+	 * Set the image background color. The default is "white".
+	 */
+	void backgroundColor(string color)
+	{
+		backgroundColor = new Color(color);
+	}
+	///ditto	
+	void backgroundColor(Color color)
+	{
+		options.backgroundColor(color);
+
+		imageRef.background_color = *(color.pixelPacket);
+	}
+	///ditto
+	Color backgroundColor()
+	{
+		return options.backgroundColor;
+	}
+
+	/**
+	 * Set the image border color. The default is "#dfdfdf".
+	 */
+	void borderColor(string color)
+	{
+		borderColor = new Color(color);
+	}
+	///ditto
+	void borderColor(Color color)
+	{
+		options.borderColor = color;
+
+		imageRef.border_color = *(color.pixelPacket);
+	}
+	///ditto
+	Color borderColor()
+	{
+		return options.borderColor;
+	}
+
+	Geometry boundingBox()
+	{
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		RectangleInfo box = GetImageBoundingBox(imageRef, exception);
+
+		DMagickException.throwException(exception);
 		DestroyExceptionInfo(exception);
+
+		return Geometry(box);
+	}
+
+	static void cacheThreshold(size_t threshold)
+	{
+		SetMagickResourceLimit(ResourceType.MemoryResource, threshold);
+	}
+
+	//TODO: Is this a property?
+	void channelDepth(ChannelType channel, size_t depth)
+	{
+		SetImageChannelDepth(imageRef, channel, depth);
+	}
+	size_t channelDepth()
+	{
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		size_t depth = GetImageChannelDepth(imageRef, channel, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		return depth;
+	}
+
+	void chromaticity(ChromaticityInfo chroma)
+	{
+		imageRef.chromaticity = chroma;
+	}
+	ChromaticityInfo chromaticity()
+	{
+		return imageRef.chromaticity;
+	}
+
+	//TODO: Should setting the classType convert the image.
+	void classType(ClassType type)
+	{
+		imageRef.storage_type = type;
+	}
+	ClassType classType()
+	{
+		return imageRef.storage_type;
+	}
+
+	void Image clipMask(const(Image) image)
+	{
+		if ( image is null )
+		{
+			SetImageClipMask(imageRef, image);
+			return;
+		}
+
+		//Throw a chatchable exception when the size differs.
+		if ( image.columns != columns || image.rows != rows )
+			throw new ImageException("image size differs");
+
+		SetImageClipMask(imageRef, image);
+	}
+	Image clipMask()
+	{
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		MagickCoreImage* image = CloneImage(imageRef.clip_mask, 0, 0, true, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		return new Image(image);
+	}
+
+	size_t columns()
+	{
+		return imageRef.columns;
+	}
+
+	/**
+	 * Colors within this distance are considered equal. 
+	 * A number of algorithms search for a target  color.
+	 * By default the color must be exact. Use this option to match
+	 * colors that are close to the target color in RGB space.
+	 */
+	void fuzz(double f)
+	{
+		options.fuzz = f;
+		imageRef.fuzz = f;
+	}
+	///ditto
+	double fuzz()
+	{
+		return options.fuzz;
+	}
+
+	size_t rows()
+	{
+		return imageRef.rows;
 	}
 }

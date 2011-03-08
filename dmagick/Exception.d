@@ -116,7 +116,7 @@ mixin(
 		exceptions ~= 
 			"class " ~ severity ~ "Exception : DMagickException
 			 {
-				this(string reason, string description)
+				this(string reason, string description = null)
 				{
 					super(reason, description);
 				}
@@ -125,7 +125,7 @@ mixin(
 		exceptions ~= 
 			"class " ~ severity ~ "Error : DMagickError
 			 {
-				this(string reason, string description)
+				this(string reason, string description = null)
 				{
 					super(reason, description);
 				}
