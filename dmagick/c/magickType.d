@@ -9,6 +9,9 @@ extern (C)
 
 		enum MAGICKCORE_QUANTUM_DEPTH = 8;
 		enum QuantumRange = Quantum.max;
+		enum MaxColormapSize = 256;
+		enum MagickEpsilon = 1.0e-6;
+		enum MagickHuge    = 1.0e6;
 	}
 	else version(Quantum32)
 	{
@@ -17,6 +20,9 @@ extern (C)
 
 		enum MAGICKCORE_QUANTUM_DEPTH = 32;
 		enum QuantumRange = Quantum.max;
+		enum MaxColormapSize = 65536;
+		enum MagickEpsilon = 1.0e-10;
+		enum MagickHuge    = 1.0e12;
 	}
 	else version(Quantum64)
 	{
@@ -27,6 +33,9 @@ extern (C)
 
 		//enum MAGICKCORE_QUANTUM_DEPTH = 64;
 		//enum QuantumRange = 18446744073709551615.0;
+		//enum MaxColormapSize = 65536;
+		//enum MagickEpsilon = 1.0e-10;
+		//enum MagickHuge = 1.0e12;
 	}
 	else
 	{
@@ -35,6 +44,9 @@ extern (C)
 
 		enum MAGICKCORE_QUANTUM_DEPTH = 16;
 		enum QuantumRange = Quantum.max;
+		enum MaxColormapSize = 65536;
+		enum MagickEpsilon = 1.0e-10;
+		enum MagickHuge    = 1.0e12;
 	}
 
 	alias uint  MagickStatusType;
@@ -42,8 +54,9 @@ extern (C)
 	alias ulong MagickSizeType;
 	alias int   MagickBooleanType;
 
-	alias MagickSizeType QuantumAny;
-	alias QuantumRange   TransparentOpacity;
+	alias MagickSizeType  QuantumAny;
+	alias QuantumRange    TransparentOpacity;
+	alias MaxColormapSize MaxMap;
 
 	alias MAGICKCORE_QUANTUM_DEPTH MagickQuantumDepth;
 

@@ -7,6 +7,7 @@
 module dmagick.Image;
 
 import std.string;
+import core.sys.posix.sys.types;
 
 import dmagick.Color;
 import dmagick.Exception;
@@ -17,9 +18,12 @@ import dmagick.Utils;
 import dmagick.c.attribute;
 import dmagick.c.blob;
 import dmagick.c.constitute;
+import dmagick.c.effect;
 import dmagick.c.exception;
+import dmagick.c.geometry;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.resize;
 import dmagick.c.resource;
 
 /**
@@ -184,7 +188,7 @@ class Image
 		size_t height = rows;
 
 		ExceptionInfo* exception = AcquireExceptionInfo();
-		ParseMetaGeometry(size.toString, &x, &y, &width, &height);
+		ParseMetaGeometry(toStringz(size.toString), &x, &y, &width, &height);
 
 		MagickCoreImage* image =
 			AdaptiveResizeImage(imageRef, width, height, exception);
@@ -393,7 +397,7 @@ class Image
 	{
 		SetImageChannelDepth(imageRef, channel, depth);
 	}
-	size_t channelDepth()
+	size_t channelDepth(ChannelType channel)
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
 		size_t depth = GetImageChannelDepth(imageRef, channel, exception);
@@ -416,18 +420,18 @@ class Image
 	//TODO: Should setting the classType convert the image.
 	void classType(ClassType type)
 	{
-		imageRef.storage_type = type;
+		imageRef.storage_class = type;
 	}
 	ClassType classType()
 	{
-		return imageRef.storage_type;
+		return imageRef.storage_class;
 	}
 
-	void Image clipMask(const(Image) image)
+	void clipMask(const(Image) image)
 	{
 		if ( image is null )
 		{
-			SetImageClipMask(imageRef, image);
+			SetImageClipMask(imageRef, null);
 			return;
 		}
 
@@ -435,7 +439,7 @@ class Image
 		if ( image.columns != columns || image.rows != rows )
 			throw new ImageException("image size differs");
 
-		SetImageClipMask(imageRef, image);
+		SetImageClipMask(imageRef, image.imageRef);
 	}
 	Image clipMask()
 	{
@@ -448,7 +452,72 @@ class Image
 		return new Image(image);
 	}
 
-	size_t columns()
+	auto colorMap()
+	{
+		struct ColorMap
+		{
+			Color opIndex(uint index)
+			{
+				if ( index >= colorMapSize )
+					throw new Exception("Index out of bounds");
+
+				return new Color(imageRef.colormap[index]);
+			}
+
+			void opIndexAssign(Color value, uint index)
+			{
+				if ( index > colorMapSize )
+					throw new Exception("Index out of bounds");
+
+				if ( index == colorMapSize )
+					colorMapSize = index + 1;
+
+				imageRef.colormap[index] = *(vaule.pixelPacket)
+			}
+
+			size_t opDollar()
+			{
+				return imageRef.colors;
+			}
+		}
+
+		return ColorMap();
+	}
+
+	void colorMapSize(uint size)
+	{
+		if ( size > MaxColormapSize )
+			throw new OptionException(
+				"the size of the colormap can't exceed MaxColormapSize");
+
+		if ( imageRef.colormap is null )
+		{
+			AcquireImageColormap(imageRef, size);
+			imageRef.colors = 0;
+		}
+		else
+		{
+			imageRef.colormap = cast(PixelPacket*)
+				ResizeMagickMemory(imageRef.colormap, size * PixelPacket.sizeof);
+		}
+
+		//Initialize the colors as black.
+		foreach ( i; imageRef.colors .. size )
+		{
+			imageRef.colormap[i].blue    = 0;
+			imageRef.colormap[i].green   = 0;
+			imageRef.colormap[i].red     = 0;
+			imageRef.colormap[i].opacity = 0;
+		}
+
+		imageRef.colors = size;
+	}
+	uint colorMapSize() const
+	{
+		return cast(uint)imageRef.colors;
+	}
+
+	size_t columns() const
 	{
 		return imageRef.columns;
 	}
@@ -470,7 +539,7 @@ class Image
 		return options.fuzz;
 	}
 
-	size_t rows()
+	size_t rows() const
 	{
 		return imageRef.rows;
 	}
