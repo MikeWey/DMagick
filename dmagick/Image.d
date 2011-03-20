@@ -355,7 +355,7 @@ class Image
 		imageRef.background_color = color.pixelPacket;
 	}
 	///ditto
-	Color backgroundColor() //const
+	Color backgroundColor() const
 	{
 		return options.backgroundColor;
 	}
@@ -375,7 +375,7 @@ class Image
 		imageRef.border_color = color.pixelPacket;
 	}
 	///ditto
-	Color borderColor() //const
+	Color borderColor() const
 	{
 		return options.borderColor;
 	}
@@ -574,7 +574,7 @@ class Image
 		imageRef.fuzz = f;
 	}
 	///ditto
-	double fuzz() //const
+	double fuzz() const
 	{
 		return options.fuzz;
 	}

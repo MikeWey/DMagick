@@ -797,9 +797,9 @@ class Options
 		drawInfo.fill_pattern = ReferenceImage(pattern.imageRef);
 	}
 	///ditto
-	dmagick.Image.Image fillPattern()
+	const(dmagick.Image.Image) fillPattern() const
 	{
-		return new dmagick.Image.Image(ReferenceImage(drawInfo.fill_pattern));
+		return new dmagick.Image.Image(ReferenceImage((cast(DrawInfo*)drawInfo).fill_pattern));
 	}
 
 	/**
@@ -945,9 +945,9 @@ class Options
 		drawInfo.stroke_pattern = ReferenceImage(pattern.imageRef);
 	}
 	///ditto
-	dmagick.Image.Image strokePattern()
+	const(dmagick.Image.Image) strokePattern() const
 	{
-		return new dmagick.Image.Image(ReferenceImage(drawInfo.stroke_pattern));
+		return new dmagick.Image.Image(ReferenceImage((cast(DrawInfo*)drawInfo).stroke_pattern));
 	}
 
 	/**
