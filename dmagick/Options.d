@@ -80,7 +80,7 @@ class Options
 		imageInfo.adjoin = flag;
 	}
 	///ditto
-	bool adjoin()
+	bool adjoin() const
 	{
 		return imageInfo.adjoin == 1;
 	}
@@ -95,10 +95,10 @@ class Options
 	///ditto	
 	void backgroundColor(Color color)
 	{
-		imageInfo.background_color = *(color.pixelPacket);	
+		imageInfo.background_color = color.pixelPacket;	
 	}
 	///ditto
-	Color backgroundColor()
+	Color backgroundColor() const
 	{
 		return new Color(imageInfo.background_color);
 	}
@@ -113,7 +113,7 @@ class Options
 		copyString(imageInfo.texture, str);
 	}
 	///ditto
-	string backgroundTexture()
+	string backgroundTexture() const
 	{
 		return to!(string)(imageInfo.texture);
 	}
@@ -128,11 +128,11 @@ class Options
 	///ditto
 	void borderColor(Color color)
 	{
-		imageInfo.border_color = *(color.pixelPacket);
-		drawInfo.border_color = *(color.pixelPacket);
+		imageInfo.border_color = color.pixelPacket;
+		drawInfo.border_color = color.pixelPacket;
 	}
 	///ditto
-	Color borderColor()
+	Color borderColor() const
 	{
 		return new Color(imageInfo.border_color);
 	}
@@ -145,7 +145,7 @@ class Options
 		imageInfo.colorspace = space;
 	}
 	///ditto
-	ColorspaceType colorspace()
+	ColorspaceType colorspace() const
 	{
 		return imageInfo.colorspace;
 	}
@@ -162,7 +162,7 @@ class Options
 		imageInfo.compression = compress;
 	}
 	///ditto
-	CompressionType compression()
+	CompressionType compression() const
 	{
 		return imageInfo.compression;
 	}
@@ -195,7 +195,7 @@ class Options
 		density(geometry.toString());
 	}
 	///ditto
-	Geometry density()
+	Geometry density() const
 	{
 		return Geometry( to!(string)(imageInfo.density) );
 	}
@@ -212,7 +212,7 @@ class Options
 		imageInfo.depth = d;
 	}
 	///ditto
-	size_t depth()
+	size_t depth() const
 	{
 		return imageInfo.depth;
 	}
@@ -232,7 +232,7 @@ class Options
 		quantizeInfo.dither = d;
 	}
 	///ditto
-	size_t dither()
+	size_t dither() const
 	{
 		return imageInfo.dither;
 	}
@@ -245,7 +245,7 @@ class Options
 		imageInfo.endian = type;
 	}
 	///ditto
-	EndianType endian()
+	EndianType endian() const
 	{
 		return imageInfo.endian;
 	}
@@ -271,7 +271,7 @@ class Options
 		copyString(imageInfo.filename, str);
 	}
 	///ditto
-	string filename()
+	string filename() const
 	{
 		return imageInfo.filename[0 .. strlen(imageInfo.filename.ptr)].idup;
 	}
@@ -293,7 +293,7 @@ class Options
 		copyString(drawInfo.font, str);
 	}
 	///ditto
-	string font()
+	string font() const
 	{
 		return to!(string)(drawInfo.font);
 	}
@@ -309,7 +309,7 @@ class Options
 		imageInfo.fuzz = f;
 	}
 	///ditto
-	double fuzz()
+	double fuzz() const
 	{
 		return imageInfo.fuzz;
 	}
@@ -329,7 +329,7 @@ class Options
 		imageInfo.interlace = type;
 	}
 	///ditto
-	InterlaceType interlace()
+	InterlaceType interlace() const
 	{
 		return imageInfo.interlace;
 	}
@@ -342,7 +342,7 @@ class Options
 		copyString(imageInfo.magick, str);
 	}
 	///ditto
-	string magick()
+	string magick() const
 	{
 		return imageInfo.magick[0 .. strlen(imageInfo.magick.ptr)].idup;
 	}
@@ -357,10 +357,10 @@ class Options
 	///ditto
 	void matteColor(Color color)
 	{
-		imageInfo.matte_color = *(color.pixelPacket);
+		imageInfo.matte_color = color.pixelPacket;
 	}
 	///ditto
-	Color matteColor()
+	Color matteColor() const
 	{
 		return new Color(imageInfo.matte_color);
 	}
@@ -374,7 +374,7 @@ class Options
 		imageInfo.monochrome = m;
 	}
 	///ditto
-	bool monochrome()
+	bool monochrome() const
 	{
 		return imageInfo.monochrome == 1;
 	}
@@ -398,7 +398,7 @@ class Options
 		page(geometry.toString());
 	}
 	///ditto
-	Geometry page()
+	Geometry page() const
 	{
 		return Geometry( to!(string)(imageInfo.page) );
 	}
@@ -412,7 +412,7 @@ class Options
 		drawInfo.pointsize = size;
 	}
 	///ditto
-	double pointSize()
+	double pointSize() const
 	{
 		return drawInfo.pointsize;
 	}
@@ -427,7 +427,7 @@ class Options
 		imageInfo.quality = q;
 	}
 	///ditto
-	size_t quality()
+	size_t quality() const
 	{
 		return imageInfo.quality;
 	}
@@ -440,7 +440,7 @@ class Options
 		imageInfo.units = type;
 	}
 	///ditto
-	ResolutionType resolutionUnits()
+	ResolutionType resolutionUnits() const
 	{
 		return imageInfo.units;
 	}
@@ -461,7 +461,7 @@ class Options
 		copyString(imageInfo.sampling_factor, str);
 	}
 	///ditto
-	string samplingFactor()
+	string samplingFactor() const
 	{
 		return to!(string)(imageInfo.sampling_factor);
 	}
@@ -482,7 +482,7 @@ class Options
 		size(geometry.toString());
 	}
 	///ditto
-	Geometry size()
+	Geometry size() const
 	{
 		return Geometry( to!(string)(imageInfo.size) );
 	}
@@ -495,7 +495,7 @@ class Options
 		imageInfo.scene = num;
 	}
 	///ditto
-	size_t subImage()
+	size_t subImage() const
 	{
 		return imageInfo.scene;
 	}
@@ -508,7 +508,7 @@ class Options
 		imageInfo.number_scenes = num;
 	}
 	///ditto
-	size_t subRange()
+	size_t subRange() const
 	{
 		return imageInfo.number_scenes;
 	}
@@ -521,7 +521,7 @@ class Options
 		imageInfo.type = t;
 	}
 	///ditto
-	ImageType type()
+	ImageType type() const
 	{
 		return imageInfo.type;
 	}
@@ -534,7 +534,7 @@ class Options
 		imageInfo.verbose = v;
 	}
 	///ditto
-	bool verbose()
+	bool verbose() const
 	{
 		return imageInfo.verbose == 1;
 	}
@@ -547,7 +547,7 @@ class Options
 		copyString(imageInfo.view, str);
 	}
 	///ditto
-	string view()
+	string view() const
 	{
 		return to!(string)(imageInfo.view);
 	}
@@ -560,7 +560,7 @@ class Options
 		imageInfo.virtual_pixel_method = method;
 	}
 	///ditto
-	VirtualPixelMethod virtualPixelMethod()
+	VirtualPixelMethod virtualPixelMethod() const
 	{
 		return imageInfo.virtual_pixel_method;
 	}
@@ -574,7 +574,7 @@ class Options
 		drawInfo.server_name = imageInfo.server_name;
 	}
 	///ditto
-	string x11Display()
+	string x11Display() const
 	{
 		return to!(string)(imageInfo.server_name);
 	}
@@ -613,7 +613,7 @@ class Options
 	{
 		drawInfo.affine = affine;
 	}
-	AffineMatrix affine()
+	AffineMatrix affine() const
 	{
 		return drawInfo.affine;
 	}
@@ -743,7 +743,7 @@ class Options
 		drawInfo.text_antialias = antialias;
 	}
 	///ditto
-	bool antialias()
+	bool antialias() const
 	{
 		return drawInfo.text_antialias == 1;
 	}
@@ -758,10 +758,10 @@ class Options
 	///ditto
 	void boxColor(Color color)
 	{
-		drawInfo.undercolor = *(color.pixelPacket);
+		drawInfo.undercolor = color.pixelPacket;
 	}
 	///ditto
-	Color boxColor()
+	Color boxColor() const
 	{
 		return new Color(drawInfo.undercolor);
 	}
@@ -777,10 +777,10 @@ class Options
 	///ditto
 	void fillColor(Color color)
 	{
-		drawInfo.fill = *(color.pixelPacket);
+		drawInfo.fill = color.pixelPacket;
 	}
 	///ditto
-	Color fillColor()
+	Color fillColor() const
 	{
 		return new Color(drawInfo.fill);
 	}
@@ -810,7 +810,7 @@ class Options
 		drawInfo.fill_rule = rule;
 	}
 	///ditto
-	FillRule fillRule()
+	FillRule fillRule() const
 	{
 		return drawInfo.fill_rule;
 	}
@@ -823,7 +823,7 @@ class Options
 		drawInfo.stroke_antialias = antialias;
 	}
 	///ditto
-	bool strokeAntialias()
+	bool strokeAntialias() const
 	{
 		return drawInfo.stroke_antialias == 1;
 	}
@@ -838,10 +838,10 @@ class Options
 	///ditto
 	void strokeColor(Color color)
 	{
-		drawInfo.stroke = *(color.pixelPacket);
+		drawInfo.stroke = color.pixelPacket;
 	}
 	///ditto
-	Color strokeColor()
+	Color strokeColor() const
 	{
 		return new Color(imageInfo.background_color);
 	}
@@ -854,7 +854,7 @@ class Options
 		drawInfo.dash_offset = offset;
 	}
 	///ditto
-	double strokeDashOffset()
+	double strokeDashOffset() const
 	{
 		return drawInfo.dash_offset;
 	}
@@ -878,7 +878,7 @@ class Options
 		drawInfo.dash_pattern[pattern.length] = 0.0;
 	}
 	///ditto
-	double[] strokeDashPattern()
+	double[] strokeDashPattern() const
 	{
 		size_t x;
 		for (x = 0; drawInfo.dash_pattern[x] == 0.0; x++ ) {}
@@ -897,7 +897,7 @@ class Options
 		drawInfo.linecap = cap;
 	}
 	///ditto
-	LineCap lineCap()
+	LineCap lineCap() const
 	{
 		return drawInfo.linecap;
 	}
@@ -910,7 +910,7 @@ class Options
 		drawInfo.linejoin = join;
 	}
 	///ditto
-	LineJoin lineJoin()
+	LineJoin lineJoin() const
 	{
 		return drawInfo.linejoin;
 	}
@@ -928,7 +928,7 @@ class Options
 		drawInfo.miterlimit = limit;
 	}
 	///ditto
-	size_t strokeMiterlimit()
+	size_t strokeMiterlimit() const
 	{
 		return drawInfo.miterlimit;
 	}
@@ -945,7 +945,7 @@ class Options
 		drawInfo.stroke_pattern = ReferenceImage(pattern.imageRef);
 	}
 	///ditto
-	dmagick.Image.Image fillPattern()
+	dmagick.Image.Image strokePattern()
 	{
 		return new dmagick.Image.Image(ReferenceImage(drawInfo.stroke_pattern));
 	}
@@ -958,7 +958,7 @@ class Options
 		drawInfo.stroke_width = width;
 	}
 	///ditto
-	double strokeWidth()
+	double strokeWidth() const
 	{
 		return drawInfo.stroke_width;
 	}
@@ -976,7 +976,7 @@ class Options
 		textDensity(geometry.toString);
 	}
 	///ditto
-	Geometry textDensity()
+	Geometry textDensity() const
 	{
 		return Geometry( to!(string)(imageInfo.density) );
 	}
@@ -995,7 +995,7 @@ class Options
 		copyString(drawInfo.encoding, str);
 	}
 	///ditto
-	string textEncoding()
+	string textEncoding() const
 	{
 		return to!(string)(drawInfo.encoding);
 	}
@@ -1046,7 +1046,7 @@ class Options
 		quantizeInfo.number_colors = colors;
 	}
 	///ditto
-	size_t quantizeColors()
+	size_t quantizeColors() const
 	{
 		return quantizeInfo.number_colors;
 	}
@@ -1064,7 +1064,7 @@ class Options
 		quantizeInfo.colorspace = type;
 	}
 	///ditto
-	ColorspaceType quantizeColorSpace()
+	ColorspaceType quantizeColorSpace() const
 	{
 		return quantizeInfo.colorspace;
 	}
@@ -1080,7 +1080,7 @@ class Options
 		quantizeInfo.tree_depth = depth;
 	}
 	///ditto
-	size_t quantizeTreeDepth()
+	size_t quantizeTreeDepth() const
 	{
 		return quantizeInfo.tree_depth;
 	}

@@ -18,11 +18,15 @@ import dmagick.Utils;
 import dmagick.c.attribute;
 import dmagick.c.blob;
 import dmagick.c.constitute;
+import dmagick.c.colormap;
+import dmagick.c.colorspace;
 import dmagick.c.effect;
 import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.memory;
+import dmagick.c.pixel;
 import dmagick.c.resize;
 import dmagick.c.resource;
 
@@ -322,7 +326,7 @@ class Image
 	{
 		imageRef.delay = delay;
 	}
-	size_t annimationDelay()
+	size_t annimationDelay() const
 	{
 		return imageRef.delay;
 	}
@@ -331,7 +335,7 @@ class Image
 	{
 		imageRef.iterations = iterations;
 	}
-	size_t animationIterations()
+	size_t animationIterations() const
 	{
 		return imageRef.iterations;
 	}
@@ -348,10 +352,10 @@ class Image
 	{
 		options.backgroundColor(color);
 
-		imageRef.background_color = *(color.pixelPacket);
+		imageRef.background_color = color.pixelPacket;
 	}
 	///ditto
-	Color backgroundColor()
+	Color backgroundColor() //const
 	{
 		return options.backgroundColor;
 	}
@@ -368,15 +372,15 @@ class Image
 	{
 		options.borderColor = color;
 
-		imageRef.border_color = *(color.pixelPacket);
+		imageRef.border_color = color.pixelPacket;
 	}
 	///ditto
-	Color borderColor()
+	Color borderColor() //const
 	{
 		return options.borderColor;
 	}
 
-	Geometry boundingBox()
+	Geometry boundingBox() const
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
 		RectangleInfo box = GetImageBoundingBox(imageRef, exception);
@@ -397,7 +401,7 @@ class Image
 	{
 		SetImageChannelDepth(imageRef, channel, depth);
 	}
-	size_t channelDepth(ChannelType channel)
+	size_t channelDepth(ChannelType channel) const
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
 		size_t depth = GetImageChannelDepth(imageRef, channel, exception);
@@ -412,7 +416,7 @@ class Image
 	{
 		imageRef.chromaticity = chroma;
 	}
-	ChromaticityInfo chromaticity()
+	ChromaticityInfo chromaticity() const
 	{
 		return imageRef.chromaticity;
 	}
@@ -422,7 +426,7 @@ class Image
 	{
 		imageRef.storage_class = type;
 	}
-	ClassType classType()
+	ClassType classType() const
 	{
 		return imageRef.storage_class;
 	}
@@ -441,7 +445,7 @@ class Image
 
 		SetImageClipMask(imageRef, image.imageRef);
 	}
-	Image clipMask()
+	Image clipMask() const
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
 		MagickCoreImage* image = CloneImage(imageRef.clip_mask, 0, 0, true, exception);
@@ -452,39 +456,66 @@ class Image
 		return new Image(image);
 	}
 
-	auto colorMap()
+	auto colormap()
 	{
-		struct ColorMap
+		struct Colormap
 		{
+			Image img;
+
+			this(Image img)
+			{
+				this.img = img;
+			}
+
 			Color opIndex(uint index)
 			{
-				if ( index >= colorMapSize )
+				if ( index >= img.colormapSize )
 					throw new Exception("Index out of bounds");
 
-				return new Color(imageRef.colormap[index]);
+				return new Color(img.imageRef.colormap[index]);
 			}
 
 			void opIndexAssign(Color value, uint index)
 			{
-				if ( index > colorMapSize )
+				if ( index >= img.colormapSize )
 					throw new Exception("Index out of bounds");
 
-				if ( index == colorMapSize )
-					colorMapSize = index + 1;
-
-				imageRef.colormap[index] = *(vaule.pixelPacket)
+				img.imageRef.colormap[index] = value.pixelPacket;
 			}
 
-			size_t opDollar()
+			void opOpAssign(string op)(Color color) if ( op == "~" )
 			{
-				return imageRef.colors;
+				img.colormapSize = img.colormapSize + 1;
+
+				this[img.colormapSize] = color;
+			}
+
+			void opOpAssign(string op)(Color[] colors) if ( op == "~" )
+			{
+				uint oldSize = img.colormapSize;
+
+				img.colormapSize = oldSize + colors.length;
+
+				foreach ( i; oldSize..img.colormapSize)
+				{
+					this[i] = colors[i];
+				}
+			}
+
+			uint size()
+			{
+				return img.colormapSize;
+			}
+			void size(uint s)
+			{
+				img.colormapSize = s;
 			}
 		}
 
-		return ColorMap();
+		return Colormap(this);
 	}
 
-	void colorMapSize(uint size)
+	void colormapSize(uint size)
 	{
 		if ( size > MaxColormapSize )
 			throw new OptionException(
@@ -512,9 +543,18 @@ class Image
 
 		imageRef.colors = size;
 	}
-	uint colorMapSize() const
+	uint colormapSize() const
 	{
 		return cast(uint)imageRef.colors;
+	}
+
+	void colorspace(ColorspaceType type)
+	{
+		TransformImageColorspace(imageRef, type);
+	}
+	ColorspaceType colorspace() const
+	{
+		return imageRef.colorspace;
 	}
 
 	size_t columns() const
@@ -534,7 +574,7 @@ class Image
 		imageRef.fuzz = f;
 	}
 	///ditto
-	double fuzz()
+	double fuzz() //const
 	{
 		return options.fuzz;
 	}

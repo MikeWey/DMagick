@@ -23,14 +23,14 @@ import dmagick.c.quantum;
  */
 class Color
 {
-	PixelPacket* pixelPacket;
+	PixelPacket* packet;
 
 	/** */
 	this()
 	{
-		pixelPacket = new PixelPacket;
+		packet = new PixelPacket;
 
-		pixelPacket.opacity = TransparentOpacity;
+		packet.opacity = TransparentOpacity;
 	}
 
 	/**
@@ -40,10 +40,10 @@ class Color
 	{
 		this();
 
-		pixelPacket.red     = red;
-		pixelPacket.green   = green;
-		pixelPacket.blue    = blue;
-		pixelPacket.opacity = opacity;
+		packet.red     = red;
+		packet.green   = green;
+		packet.blue    = blue;
+		packet.opacity = opacity;
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Color
 		ExceptionInfo* exception = AcquireExceptionInfo();
 		const(char)* name = toStringz(color);
 
-		QueryColorDatabase(name, pixelPacket, exception);
+		QueryColorDatabase(name, packet, exception);
 		DMagickException.throwException(exception);
 
 		DestroyExceptionInfo(exception);
@@ -69,10 +69,10 @@ class Color
 	{
 		this();
 
-		pixelPacket.red     = packet.red;
-		pixelPacket.green   = packet.green;
-		pixelPacket.blue    = packet.blue;
-		pixelPacket.opacity = packet.opacity;
+		packet.red     = packet.red;
+		packet.green   = packet.green;
+		packet.blue    = packet.blue;
+		packet.opacity = packet.opacity;
 	}
 
 	/**
@@ -81,12 +81,17 @@ class Color
 	 */
 	this(PixelPacket* packet)
 	{
-		pixelPacket = packet;
+		packet = packet;
+	}
+
+	PixelPacket pixelPacket()
+	{
+		return *packet;
 	}
 
 	bool opEquals(Color color)
 	{
-		return *pixelPacket == *(color.pixelPacket);
+		return pixelPacket == color.pixelPacket;
 	}
 
 	override string toString()
@@ -98,12 +103,12 @@ class Color
 		else
 			string frm = "%08X";
 
-		if ( pixelPacket.opacity == 0 )
+		if ( packet.opacity == 0 )
 			frm = "#" ~ frm ~ frm ~ frm;
 		else
 			frm = "#" ~ frm ~ frm ~ frm ~ frm;
 
-		return format(frm, pixelPacket.red, pixelPacket.green, pixelPacket.blue, pixelPacket.opacity);
+		return format(frm, packet.red, packet.green, packet.blue, packet.opacity);
 	}
 
 	/**
@@ -111,12 +116,12 @@ class Color
 	 */
 	void redQuantum(Quantum red)
 	{
-		pixelPacket.red = red;
+		packet.red = red;
 	}
 	///ditto
 	Quantum redQuantum()
 	{
-		return pixelPacket.red;
+		return packet.red;
 	}
 
 	/**
@@ -124,12 +129,12 @@ class Color
 	 */
 	void greenQuantum(Quantum green)
 	{
-		pixelPacket.green = green;
+		packet.green = green;
 	}
 	///ditto
 	Quantum greenQuantum()
 	{
-		return pixelPacket.green;
+		return packet.green;
 	}
 
 	/**
@@ -137,12 +142,12 @@ class Color
 	 */
 	void blueQuantum(Quantum blue)
 	{
-		pixelPacket.blue = blue;
+		packet.blue = blue;
 	}
 	///ditto
 	Quantum blueQuantum()
 	{
-		return pixelPacket.blue;
+		return packet.blue;
 	}
 
 	/**
@@ -150,12 +155,12 @@ class Color
 	 */
 	void opacityByte(ubyte opacity)
 	{
-		pixelPacket.opacity = ScaleCharToQuantum(opacity);
+		packet.opacity = ScaleCharToQuantum(opacity);
 	}
 	///ditto
 	ubyte opacityByte()
 	{
-		return ScaleQuantumToChar(pixelPacket.opacity);
+		return ScaleQuantumToChar(packet.opacity);
 	}
 
 	/**
@@ -163,12 +168,12 @@ class Color
 	 */
 	void opacityQuantum(Quantum opacity)
 	{
-		pixelPacket.opacity = opacity;
+		packet.opacity = opacity;
 	}
 	///ditto
 	Quantum opacityQuantum()
 	{
-		return pixelPacket.opacity;
+		return packet.opacity;
 	}
 
 	/**
@@ -176,12 +181,12 @@ class Color
 	 */
 	void opacity(double opacity)
 	{
-		pixelPacket.opacity = scaleDoubleToQuantum(opacity);
+		packet.opacity = scaleDoubleToQuantum(opacity);
 	}
 	///ditto
 	double opacity()
 	{
-		return scaleQuantumToDouble(pixelPacket.opacity);
+		return scaleQuantumToDouble(packet.opacity);
 	}
 
 	/**
@@ -192,7 +197,7 @@ class Color
 		//The Constants used here are derived from BT.709 Which standardizes HDTV
 
 		return scaleQuantumToDouble(cast(Quantum)(
-			0.2126*pixelPacket.red+0.7152*pixelPacket.green+0.0722*pixelPacket.blue));
+			0.2126*packet.red+0.7152*packet.green+0.0722*packet.blue));
 	}
 
 	/**
@@ -200,7 +205,7 @@ class Color
 	 */
 	Color clone()
 	{
-		return new Color(*pixelPacket);
+		return new Color(pixelPacket);
 	}
 
 	/**
@@ -223,8 +228,8 @@ class Color
 
 			MagickPixelPacket color = colorList[i].color;
 
-			if ( pixelPacket.red == color.red && pixelPacket.green == color.green
-				&& pixelPacket.blue == color.blue && pixelPacket.opacity == color.opacity )
+			if ( packet.red == color.red && packet.green == color.green
+				&& packet.blue == color.blue && packet.opacity == color.opacity )
 					return to!(string)(colorList[i].name);
 		}
 
