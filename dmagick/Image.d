@@ -6,6 +6,8 @@
 
 module dmagick.Image;
 
+import std.conv;
+import std.math;
 import std.string;
 import core.sys.posix.sys.types;
 
@@ -20,6 +22,8 @@ import dmagick.c.blob;
 import dmagick.c.constitute;
 import dmagick.c.colormap;
 import dmagick.c.colorspace;
+import dmagick.c.composite;
+import dmagick.c.compress;
 import dmagick.c.effect;
 import dmagick.c.exception;
 import dmagick.c.geometry;
@@ -27,6 +31,7 @@ import dmagick.c.image;
 import dmagick.c.magickType;
 import dmagick.c.memory;
 import dmagick.c.pixel;
+import dmagick.c.quantum;
 import dmagick.c.resize;
 import dmagick.c.resource;
 
@@ -551,6 +556,8 @@ class Image
 	void colorspace(ColorspaceType type)
 	{
 		TransformImageColorspace(imageRef, type);
+
+		options.colorspace = type;
 	}
 	ColorspaceType colorspace() const
 	{
@@ -560,6 +567,74 @@ class Image
 	size_t columns() const
 	{
 		return imageRef.columns;
+	}
+
+	void compose(CompositeOperator op)
+	{
+		imageRef.compose = op;
+	}
+	CompositeOperator compose() const
+	{
+		return imageRef.compose;
+	}
+
+	void compression(CompressionType type)
+	{
+		imageRef.compression = type;
+		options.compression = type;
+	}
+	CompressionType compression() const
+	{
+		return imageRef.compression;
+	}
+
+	void density(Geometry value)
+	{
+		options.density = value;
+
+		imageRef.x_resolution = value.width;
+		imageRef.y_resolution = ( value.width != 0 ) ? value.width : value.height;
+	}
+	Geometry density() const
+	{
+		ssize_t width  = 72;
+		ssize_t height = 72;
+
+		if ( imageRef.x_resolution > 0 )
+			width = cast(ssize_t)rndtol(imageRef.x_resolution);
+
+		if ( imageRef.y_resolution > 0 )
+			height = cast(ssize_t)rndtol(imageRef.y_resolution);
+
+		return Geometry(width, height);
+	}
+
+	void depth(size_t value)
+	{
+		if ( value > MagickQuantumDepth)
+			value = MagickQuantumDepth;
+
+		imageRef.depth = value;
+		options.depth = value;
+	}
+	size_t depth() const
+	{
+		return imageRef.depth;
+	}
+
+	string directory() const
+	{
+		return to!(string)(imageRef.directory);
+	}
+
+	void endian(EndianType type)
+	{
+		imageRef.endian = type;
+		options.endian = type;
+	}
+	EndianType endian() const
+	{
+		return imageRef.endian;
 	}
 
 	/**

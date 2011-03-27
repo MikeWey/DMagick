@@ -10,6 +10,7 @@ module dmagick.Options;
 
 import std.conv;
 import std.math;
+import std.string;
 import core.stdc.stdio;
 import core.stdc.string;
 
@@ -27,6 +28,7 @@ import dmagick.c.image;
 import dmagick.c.list;
 import dmagick.c.magickType;
 import dmagick.c.memory;
+import dmagick.c.option;
 import dmagick.c.quantize;
 import dmagick.c.quantum;
 
@@ -138,7 +140,7 @@ class Options
 	}
 
 	/**
-	 * Set the image border color. The default is "#dfdfdf".
+	 * Specifies the image pixel interpretation.
 	 */
 	void colorspace(ColorspaceType space)
 	{
@@ -176,6 +178,42 @@ class Options
 	//{
 	//
 	//}
+
+	/**
+	 * Define an option. Use this method to set options for
+	 * reading or writing certain image formats. The list of
+	 * supported options changes from release to release.
+	 * For a list of the valid image formats, keys, and values,
+	 * refer to the documentation for the -define option for the
+	 * release of ImageMagick installed on your system.
+	 * Params:
+	 *     format = An image format name such as "ps" or "tiff".
+	 *     key    = A string that identifies the option.
+	 *     vaule  = The value of the option.
+	 */
+	void define(string format, string key, string value = "")
+	{
+		string option = format ~":"~ key ~ "\0";
+
+		SetImageOption(imageInfo, option.ptr, toStringz(value));
+	}
+
+	//TODO: opindex / opiindexassign for the options.
+
+	/**
+	 * Delete an option definition set by define.
+	 * This is not the same as setting the option to a null value.
+	 * The undefine method removes the option name from the list
+	 * of options for the specified format.
+	 *     format = An image format name such as "ps" or "tiff".
+	 *     key    = A string that identifies the option.
+	 */
+	void undefine(string format, string key)
+	{
+		string option = format ~":"~ key ~ "\0";
+
+		DeleteImageOption(imageInfo, option.ptr);
+	}
 
 	/**
 	 * Specifies the vertical and horizontal resolution in pixels.
