@@ -597,14 +597,8 @@ class Image
 	}
 	Geometry density() const
 	{
-		ssize_t width  = 72;
-		ssize_t height = 72;
-
-		if ( imageRef.x_resolution > 0 )
-			width = cast(ssize_t)rndtol(imageRef.x_resolution);
-
-		if ( imageRef.y_resolution > 0 )
-			height = cast(ssize_t)rndtol(imageRef.y_resolution);
+		ssize_t width  = cast(ssize_t)rndtol(imageRef.x_resolution);
+		ssize_t height = cast(ssize_t)rndtol(imageRef.y_resolution);
 
 		return Geometry(width, height);
 	}
