@@ -9,6 +9,7 @@ module dmagick.Image;
 import std.conv;
 import std.math;
 import std.string;
+import core.stdc.string;
 import core.sys.posix.sys.types;
 
 import dmagick.Color;
@@ -17,6 +18,7 @@ import dmagick.Geometry;
 import dmagick.Options;
 import dmagick.Utils;
 
+import dmagick.c.annotate;
 import dmagick.c.attribute;
 import dmagick.c.blob;
 import dmagick.c.constitute;
@@ -24,14 +26,21 @@ import dmagick.c.colormap;
 import dmagick.c.colorspace;
 import dmagick.c.composite;
 import dmagick.c.compress;
+import dmagick.c.draw;
 import dmagick.c.effect;
+import dmagick.c.enhance;
 import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.image;
+import dmagick.c.layer;
+import dmagick.c.magick;
+import dmagick.c.magickString;
 import dmagick.c.magickType;
 import dmagick.c.memory;
 import dmagick.c.pixel;
+import dmagick.c.profile;
 import dmagick.c.quantum;
+import dmagick.c.resample;
 import dmagick.c.resize;
 import dmagick.c.resource;
 
@@ -206,6 +215,40 @@ class Image
 		DestroyExceptionInfo(exception);
 
 		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Returns the TypeMetric class witch provides the information
+	 * regarding font metrics such as ascent, descent, text width,
+	 * text height, and maximum horizontal advance. The units of
+	 * these font metrics are in pixels, and that the metrics are
+	 * dependent on the current Image font (default Ghostscript's
+	 * "Helvetica"), pointsize (default 12 points), and x/y resolution
+	 * (default 72 DPI) settings.
+	 * 
+	 * The pixel units may be converted to points (the standard
+	 * resolution-independent measure used by the typesetting industry)
+	 * via the following equation:
+	 * ----------------------------------
+	 * sizePoints = (sizePixels * 72)/resolution
+	 * ----------------------------------
+	 * where resolution is in dots-per-inch (DPI). This means that at the
+	 * default image resolution, there is one pixel per point.
+	 * See_Also:
+	 *     $(LINK2 http://freetype.sourceforge.net/freetype2/docs/glyphs/index.html
+	 *         FreeType Glyph Conventions) for a detailed description of
+	 *     font metrics related issues.
+	 */
+	TypeMetric getTypeMetrics(string text)
+	{
+		TypeMetric metric;
+		DrawInfo* drawInfo = options.drawInfo;
+
+		copyString(drawInfo.text, text);
+		GetTypeMetrics(imageRef, drawInfo, &metric);
+		copyString(drawInfo.text, null);
+
+		return metric;
 	}
 
 	/**
@@ -631,6 +674,60 @@ class Image
 		return imageRef.endian;
 	}
 
+	void exifProfile(void[] blob)
+	{
+		StringInfo* profile = AcquireStringInfo(blob.length);
+		SetStringInfoDatum(profile, cast(ubyte*)blob.ptr);
+
+		SetImageProfile(imageRef, "exif", profile);
+
+		DestroyStringInfo(profile);		
+	}
+	void[] exifProfile() const
+	{
+		const(StringInfo)* profile = GetImageProfile(imageRef, "exif");
+
+		if ( profile is null )
+			return null;
+
+		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)];
+	}
+
+	void filename(string str)
+	{
+		copyString(imageRef.filename, str);
+		options.filename = str;
+	}
+	string filename() const
+	{
+		return options.filename;
+	}
+
+	MagickSizeType fileSize() const
+	{
+		return GetBlobSize(imageRef);
+	}
+
+	void filter(FilterTypes type)
+	{
+		imageRef.filter = type;
+	}
+	FilterTypes filter() const
+	{
+		return imageRef.filter;
+	}
+
+	string format() const
+	{
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		const(MagickInfo)* info = GetMagickInfo(imageRef.magick.ptr, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		return to!(string)( info.description );
+	}
+
 	/**
 	 * Colors within this distance are considered equal. 
 	 * A number of algorithms search for a target  color.
@@ -648,8 +745,144 @@ class Image
 		return options.fuzz;
 	}
 
+	/**
+	 * GammaImage() gamma-corrects a particular image channel.
+	 * The same image viewed on different devices will have perceptual
+	 * differences in the way the image's intensities are represented
+	 * on the screen.  Specify individual gamma levels for the red,
+	 * green, and blue channels, or adjust all three with the gamma
+	 * parameter.  Values typically range from 0.8 to 2.3.
+	 * 
+	 * You can also reduce the influence of a particular channel
+	 * with a gamma value of 0.
+	 */
+	void gamma(double value)
+	{
+		GammaImageChannel(imageRef,
+			( ChannelType.RedChannel | ChannelType.GreenChannel | ChannelType.BlueChannel ),
+			value);
+	}
+	///ditto
+	void gamma(double red, double green, double blue)
+	{
+		GammaImageChannel(imageRef, ChannelType.RedChannel, red);
+		GammaImageChannel(imageRef, ChannelType.GreenChannel, green);
+		GammaImageChannel(imageRef, ChannelType.BlueChannel, blue);
+	}
+
+	/**
+	 * Gamma level of the image. The same color image displayed on
+	 * two different workstations may look different due to differences
+	 * in the display monitor. Use gamma correction to adjust for this
+	 * color difference.
+	 */
+	double gamma() const
+	{
+		return imageRef.gamma;
+	}
+
+	void geometry(string str)
+	{
+		copyString(imageRef.geometry, str);
+	}
+	///ditto
+	void geometry(Geometry value)
+	{
+		geometry(value.toString());
+	}
+	///ditto
+	Geometry geometry() const
+	{
+		return Geometry( to!(string)(imageRef.geometry) );
+	}
+
+	void gifDisposeMethod(DisposeType type)
+	{
+		imageRef.dispose = type;
+	}
+	DisposeType gifDisposeMethod() const
+	{
+		return imageRef.dispose;
+	}
+
+	void iccColorProfile(void[] blob)
+	{
+		//TODO: implement profile function.
+		throw new Exception("void iccColorProfile(void[] blob) not implemented");
+		//profile("icm", blob)	
+	}
+	void[] iccColorProfile() const
+	{
+		const(StringInfo)* profile = GetImageProfile(imageRef, "icm");
+
+		if ( profile is null )
+			return null;
+
+		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)];
+	}
+
+	/**
+	 * Specify the _type of interlacing scheme for raw image formats
+	 * such as RGB or YUV. NoInterlace means do not _interlace,
+	 * LineInterlace uses scanline interlacing, and PlaneInterlace
+	 * uses plane interlacing. PartitionInterlace is like PlaneInterlace
+	 * except the different planes are saved to individual files
+	 * (e.g. image.R, image.G, and image.B). Use LineInterlace or
+	 * PlaneInterlace to create an interlaced GIF or
+	 * progressive JPEG image. The default is NoInterlace.
+	 */
+	void interlace(InterlaceType type)
+	{
+		imageRef.interlace = type;
+		options.interlace = type;
+	}
+	///ditto
+	InterlaceType interlace() const
+	{
+		return imageRef.interlace;
+	}
+
+	void iptcProfile(void[] blob)
+	{
+		//TODO: implement profile function.
+		throw new Exception("void iccColorProfile(void[] blob) not implemented");
+		//profile("iptc", blob)	
+	}
+	void[] iptcProfile() const
+	{
+		const(StringInfo)* profile = GetImageProfile(imageRef, "iptc");
+
+		if ( profile is null )
+			return null;
+
+		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)];
+	}
+
+	/**
+	 * Image format (e.g. "GIF")
+	 */
+	void magick(string str)
+	{
+		copyString(imageRef.magick, str);
+		options.magick = str;
+	}
+	///ditto
+	string magick() const
+	{
+		if ( imageRef.magick !is null )
+			return imageRef.magick[0 .. strlen(imageRef.magick.ptr)].idup;
+
+		return options.magick;
+	}
+
 	size_t rows() const
 	{
 		return imageRef.rows;
 	}
+
+	//Image properties - set via SetImageProterties
+	//Should we implement these as actual properties?
+	//attribute
+	//comment
+	//label
 }
