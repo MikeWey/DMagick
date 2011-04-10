@@ -875,6 +875,67 @@ class Image
 		return options.magick;
 	}
 
+	void matte(bool flag)
+	{
+		// If the image has a matte channel, and it's
+		// not desired set the matte channel to fully opaque.
+		if ( !flag && imageRef.matte )
+			SetImageOpacity(imageRef, OpaqueOpacity);
+
+		imageRef.matte = flag;
+	}
+	bool matte() const
+	{
+		return imageRef.matte;
+	}
+
+	/**
+	 * Set the image transparent color. The default is "#bdbdbd".
+	 */
+	void matteColor(string color)
+	{
+		matteColor = new Color(color);
+	}
+	///ditto
+	void matteColor(Color color)
+	{
+		imageRef.matte_color = color.pixelPacket;
+		options.matteColor = color.pixelPacket;
+	}
+	///ditto
+	Color matteColor() const
+	{
+		return new Color(imageRef.matte_color);
+	}
+
+	double meanErrorPerPixel() const
+	{
+		return imageRef.error.mean_error_per_pixel;
+	}
+
+	void modulusDepth(size_t depth)
+	{
+		SetImageDepth(imageRef, depth);
+		options.depth = depth;
+	}
+	size_t modulusDepth() const
+	{
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		size_t depth = GetImageDepth(imageRef, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		return depth;
+	}
+
+	Geometry montageGeometry() const
+	{
+		return Geometry( to!(string)(imageRef.geometry) );
+	}
+
+	
+
 	size_t rows() const
 	{
 		return imageRef.rows;
