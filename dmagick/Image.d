@@ -21,6 +21,7 @@ import dmagick.Utils;
 import dmagick.c.annotate;
 import dmagick.c.attribute;
 import dmagick.c.blob;
+import dmagick.c.cacheView;
 import dmagick.c.constitute;
 import dmagick.c.colormap;
 import dmagick.c.colorspace;
@@ -31,6 +32,7 @@ import dmagick.c.effect;
 import dmagick.c.enhance;
 import dmagick.c.exception;
 import dmagick.c.geometry;
+import dmagick.c.histogram;
 import dmagick.c.image;
 import dmagick.c.layer;
 import dmagick.c.magick;
@@ -43,6 +45,7 @@ import dmagick.c.quantum;
 import dmagick.c.resample;
 import dmagick.c.resize;
 import dmagick.c.resource;
+import dmagick.c.transform;
 
 /**
  * The image
@@ -370,6 +373,23 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
+	/**
+	 * Splice the background color into the image as defined by the geometry.
+	 * This method is the opposite of chop.
+	 */
+	void splice(Geometry geometry)
+	{
+		RectangleInfo rectangle = geometry.rectangleInfo;
+		ExceptionInfo* exception = AcquireExceptionInfo();
+
+		MagickCoreImage* image = SpliceImage(imageRef, &rectangle, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		imageRef = ImageRef(image);
+	}
+
 	void animationDelay(size_t delay)
 	{
 		imageRef.delay = delay;
@@ -469,9 +489,21 @@ class Image
 		return imageRef.chromaticity;
 	}
 
-	//TODO: Should setting the classType convert the image.
 	void classType(ClassType type)
 	{
+		if ( imageRef.storage_class == ClassType.PseudoClass && type == ClassType.DirectClass )
+		{
+			SyncImage(imageRef);
+			colormap() = null;
+		}
+		else if ( imageRef.storage_class == ClassType.DirectClass && type == ClassType.PseudoClass )
+		{
+			options.quantizeColors = MaxColormapSize;
+			//TODO: implement quantize function.
+			//quantize();
+			assert(false);
+		}
+
 		imageRef.storage_class = type;
 	}
 	ClassType classType() const
@@ -531,6 +563,17 @@ class Image
 				img.imageRef.colormap[index] = value.pixelPacket;
 			}
 
+			void opAssign(Color[] colors)
+			{
+				img.colormapSize = colors.length;
+
+				if ( colors.length == 0 )
+					return;
+
+				foreach(i, color; colors)
+					this[i] = color;
+			}
+
 			void opOpAssign(string op)(Color color) if ( op == "~" )
 			{
 				img.colormapSize = img.colormapSize + 1;
@@ -545,9 +588,7 @@ class Image
 				img.colormapSize = oldSize + colors.length;
 
 				foreach ( i; oldSize..img.colormapSize)
-				{
 					this[i] = colors[i];
-				}
 			}
 
 			uint size()
@@ -568,6 +609,14 @@ class Image
 		if ( size > MaxColormapSize )
 			throw new OptionException(
 				"the size of the colormap can't exceed MaxColormapSize");
+
+		if ( size == 0 && imageRef.colors > 0 )
+		{
+			imageRef.colormap = cast(PixelPacket*)RelinquishMagickMemory( imageRef.colormap );
+			imageRef.colors = 0;
+
+			return;
+		}
 
 		if ( imageRef.colormap is null )
 		{
@@ -607,6 +656,10 @@ class Image
 		return imageRef.colorspace;
 	}
 
+	void columns(size_t width)
+	{
+		imageRef.columns = width;
+	}
 	size_t columns() const
 	{
 		return imageRef.columns;
@@ -690,7 +743,7 @@ class Image
 		if ( profile is null )
 			return null;
 
-		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)];
+		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)].dup;
 	}
 
 	void filename(string str)
@@ -807,9 +860,7 @@ class Image
 
 	void iccColorProfile(void[] blob)
 	{
-		//TODO: implement profile function.
-		throw new Exception("void iccColorProfile(void[] blob) not implemented");
-		//profile("icm", blob)	
+		profile("icm", blob);
 	}
 	void[] iccColorProfile() const
 	{
@@ -818,7 +869,7 @@ class Image
 		if ( profile is null )
 			return null;
 
-		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)];
+		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)].dup;
 	}
 
 	/**
@@ -844,9 +895,7 @@ class Image
 
 	void iptcProfile(void[] blob)
 	{
-		//TODO: implement profile function.
-		throw new Exception("void iccColorProfile(void[] blob) not implemented");
-		//profile("iptc", blob)	
+		profile("iptc", blob);
 	}
 	void[] iptcProfile() const
 	{
@@ -855,7 +904,7 @@ class Image
 		if ( profile is null )
 			return null;
 
-		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)];
+		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)].dup;
 	}
 
 	/**
@@ -886,7 +935,7 @@ class Image
 	}
 	bool matte() const
 	{
-		return imageRef.matte;
+		return imageRef.matte != 0;
 	}
 
 	/**
@@ -900,7 +949,7 @@ class Image
 	void matteColor(Color color)
 	{
 		imageRef.matte_color = color.pixelPacket;
-		options.matteColor = color.pixelPacket;
+		options.matteColor = color;
 	}
 	///ditto
 	Color matteColor() const
@@ -934,11 +983,162 @@ class Image
 		return Geometry( to!(string)(imageRef.geometry) );
 	}
 
-	
+	double normalizedMaxError() const
+	{
+		return imageRef.error.normalized_maximum_error;
+	}
 
+	double normalizedMeanError() const
+	{
+		return imageRef.error.normalized_mean_error;
+	}
+
+	void orientation(OrientationType orientation)
+	{
+		imageRef.orientation = orientation;
+	}
+	OrientationType orientation() const
+	{
+		return imageRef.orientation;
+	}
+
+	void page(Geometry geometry)
+	{
+		options.page = geometry;
+		imageRef.page = geometry.rectangleInfo;
+	}
+	Geometry page() const
+	{
+		return Geometry(imageRef.page);
+	}
+
+	void profile(string name, void[] blob)
+	{
+		ProfileImage(imageRef, toStringz(name), blob.ptr, blob.length, false);
+	}
+	void[] profile(string name) const
+	{
+		const(StringInfo)* profile = GetImageProfile(imageRef, toStringz(name));
+
+		if ( profile is null )
+			return null;
+
+		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)].dup;
+	}
+
+	void quality(size_t )
+	{
+		imageRef.quality = quality;
+		options.quality = quality;
+	}
+	size_t quality() const
+	{
+		return imageRef.quality;
+	}
+
+	void renderingIntent(RenderingIntent intent)
+	{
+		imageRef.rendering_intent = intent;
+	}
+	RenderingIntent renderingIntent() const
+	{
+		return imageRef.rendering_intent;
+	}
+
+	void resolutionUnits(ResolutionType type)
+	{
+		imageRef.units = type;
+		options.resolutionUnits = type;
+	}
+	ResolutionType resolutionUnits() const
+	{
+		return options.resolutionUnits;
+	}
+
+	void scene(size_t value)
+	{
+		imageRef.scene = value;
+	}
+	size_t scene() const
+	{
+		return imageRef.scene;
+	}
+
+	void rows(size_t height)
+	{
+		imageRef.rows = height;
+	}
 	size_t rows() const
 	{
 		return imageRef.rows;
+	}
+
+	void size(Geometry geometry)
+	{
+		options.size = geometry;
+
+		imageRef.rows = geometry.height;
+		imageRef.columns = geometry.width;
+	}
+	Geometry size() const
+	{
+		return Geometry(imageRef.columns, imageRef.rows);
+	}
+
+	//TODO: Statistics ?
+
+	size_t totalColors() const
+	{
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		size_t colors = GetNumberColors(imageRef, null, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		return colors;
+	}
+
+	void type(ImageType imageType)
+	{
+		options.type = imageType;
+		SetImageType(imageRef, imageType);
+	}
+	ImageType type() const
+	{
+		if (options.type != ImageType.UndefinedType )
+			return options.type;
+
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		ImageType imageType = GetImageType(imageRef, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		return imageType;
+	}
+
+	/**
+	 * Image virtual pixel _method.
+	 */
+	void virtualPixelMethod(VirtualPixelMethod method)
+	{
+		options.virtualPixelMethod = method;
+		SetImageVirtualPixelMethod(imageRef, method);
+	}
+	///ditto
+	VirtualPixelMethod virtualPixelMethod() const
+	{
+		return GetImageVirtualPixelMethod(imageRef);
+	}
+
+	double xResolution() const
+	{
+		return imageRef.x_resolution;
+	}
+
+	double yResolution() const
+	{
+		return imageRef.y_resolution;
 	}
 
 	//Image properties - set via SetImageProterties
@@ -946,4 +1146,8 @@ class Image
 	//attribute
 	//comment
 	//label
+	//signature
+
+	//Other unimplemented porperties
+	//pixelColor
 }

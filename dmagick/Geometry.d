@@ -120,6 +120,18 @@ struct Geometry
 		assert( geo.toString == "200x150!-50+25");
 	}
 
+	RectangleInfo rectangleInfo()
+	{
+		RectangleInfo info;
+
+		info.width  = width;
+		info.height = height;
+		info.x = xOffset;
+		info.y = yOffset;
+
+		return info;
+	}
+
 	int opCmp(ref const Geometry geometry)
 	{
 		return width*height - geometry.width*geometry.height;
