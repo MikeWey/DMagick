@@ -373,6 +373,8 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
+	//TODO: set process monitor.
+
 	/**
 	 * Splice the background color into the image as defined by the geometry.
 	 * This method is the opposite of chop.
@@ -390,19 +392,29 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
-	void animationDelay(size_t delay)
+	/**
+	 * Number of ticks which must expire before displaying the
+	 * next image in an animated sequence. The default number
+	 * of ticks is 0. By default there are 100 ticks per second.
+	 */
+	void animationDelay(ushort delay)
 	{
 		imageRef.delay = delay;
 	}
-	size_t annimationDelay() const
+	///ditto
+	ushort annimationDelay() const
 	{
-		return imageRef.delay;
+		return cast(ushort)imageRef.delay;
 	}
 
+	/**
+	 * Number of iterations to loop an animation.
+	 */
 	void animationIterations(size_t iterations)
 	{
 		imageRef.iterations = iterations;
 	}
+	///ditto
 	size_t animationIterations() const
 	{
 		return imageRef.iterations;
@@ -448,6 +460,10 @@ class Image
 		return options.borderColor;
 	}
 
+	/**
+	 * Return smallest bounding box enclosing non-border pixels.
+	 * The current fuzz value is used when discriminating between pixels.
+	 */
 	Geometry boundingBox() const
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
@@ -459,16 +475,34 @@ class Image
 		return Geometry(box);
 	}
 
+	/**
+	 * Pixel cache threshold in megabytes. Once this threshold is exceeded,
+	 * all subsequent pixels cache operations are to/from disk.
+	 * This is a static method and the attribute it sets is shared
+	 * by all Image objects
+	 */
 	static void cacheThreshold(size_t threshold)
 	{
 		SetMagickResourceLimit(ResourceType.MemoryResource, threshold);
 	}
 
+	/**
+	 * Channel modulus depth. The channel modulus depth represents
+	 * the minimum number of bits required to support the channel without loss.
+	 * Setting the channel's modulus depth modifies the channel (i.e. discards
+	 * resolution) if the requested modulus depth is less than the current
+	 * modulus depth, otherwise the channel is not altered. There is no
+	 * attribute associated with the modulus depth so the current modulus
+	 * depth is obtained by inspecting the pixels. As a result, the depth
+	 * returned may be less than the most recently set channel depth.
+	 * Subsequent image processing may result in increasing the channel depth.
+	 */
 	//TODO: Is this a property?
 	void channelDepth(ChannelType channel, size_t depth)
 	{
 		SetImageChannelDepth(imageRef, channel, depth);
 	}
+	///ditto
 	size_t channelDepth(ChannelType channel) const
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
@@ -480,15 +514,24 @@ class Image
 		return depth;
 	}
 
+	/**
+	 * The red, green, blue, and white-point chromaticity values.
+	 */
 	void chromaticity(ChromaticityInfo chroma)
 	{
 		imageRef.chromaticity = chroma;
 	}
+	///ditto
 	ChromaticityInfo chromaticity() const
 	{
 		return imageRef.chromaticity;
 	}
 
+	/**
+	 * The image's storage class. If DirectClass then the pixels
+	 * contain valid RGB or CMYK colors. If PseudoClass then the
+	 * image has a colormap referenced by the pixel's index member.
+	 */
 	void classType(ClassType type)
 	{
 		if ( imageRef.storage_class == ClassType.PseudoClass && type == ClassType.DirectClass )
@@ -506,11 +549,19 @@ class Image
 
 		imageRef.storage_class = type;
 	}
+	///ditto
 	ClassType classType() const
 	{
 		return imageRef.storage_class;
 	}
 
+	/**
+	 * Associate a clip mask image with the current image.
+	 * The clip mask image must have the same dimensions as the current
+	 * image or an exception is thrown. Clipping occurs wherever pixels are
+	 * transparent in the clip mask image. Clipping Pass an invalid image
+	 * to unset an existing clip mask.
+	 */
 	void clipMask(const(Image) image)
 	{
 		if ( image is null )
@@ -525,6 +576,7 @@ class Image
 
 		SetImageClipMask(imageRef, image.imageRef);
 	}
+	///ditto
 	Image clipMask() const
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
@@ -536,6 +588,23 @@ class Image
 		return new Image(image);
 	}
 
+	/**
+	 * Access the image color map.
+	 * Only ClassType.PsseudoClass images have a colormap.
+	 * ----------------------------------
+	 * Color color = image.colormap[2];
+	 * image.colormap()[2] = color;
+	 * 
+	 * Color[] colors = new Colors[255];
+	 *
+	 * image.colormap() = colors;
+	 * //Or
+	 * image.colormap.size = 255;
+	 * foreach(i, color; colors)
+	 *     image.colormap()[i] = color;
+	 * ----------------------------------
+	 * Bugs: because of dmd bug 2152 the parentheses are needed when assigning;
+	 */
 	auto colormap()
 	{
 		struct Colormap
@@ -604,6 +673,17 @@ class Image
 		return Colormap(this);
 	}
 
+	/**
+	 * The number of colors in the colormap. Only meaningful for PseudoClass images.
+	 * 
+	 * Setting the colormap size may extend or truncate the colormap.
+	 * The maximum number of supported entries is specified by the
+	 * MaxColormapSize constant, and is dependent on the value of
+	 * QuantumDepth when ImageMagick is compiled. An exception is thrown
+	 * if more entries are requested than may be supported.
+	 * Care should be taken when truncating the colormap to ensure that
+	 * the image colormap indexes reference valid colormap entries.
+	 */
 	void colormapSize(uint size)
 	{
 		if ( size > MaxColormapSize )
@@ -640,50 +720,72 @@ class Image
 
 		imageRef.colors = size;
 	}
+	///ditto
 	uint colormapSize() const
 	{
 		return cast(uint)imageRef.colors;
 	}
 
+	/**
+	 * The colorspace used to represent the image pixel colors.
+	 * Image pixels are always stored as RGB(A) except for the case of CMY(K).
+	 */
 	void colorspace(ColorspaceType type)
 	{
 		TransformImageColorspace(imageRef, type);
 
 		options.colorspace = type;
 	}
+	///ditto
 	ColorspaceType colorspace() const
 	{
 		return imageRef.colorspace;
 	}
 
-	void columns(size_t width)
-	{
-		imageRef.columns = width;
-	}
+	/**
+	 * The width of the image in pixels.
+	 */
 	size_t columns() const
 	{
 		return imageRef.columns;
 	}
 
+	/**
+	 * Composition operator to be used when composition is
+	 * implicitly used (such as for image flattening).
+	 */
 	void compose(CompositeOperator op)
 	{
 		imageRef.compose = op;
 	}
+	///ditto
 	CompositeOperator compose() const
 	{
 		return imageRef.compose;
 	}
 
+	/**
+	 * The image compression type. The default is the
+	 * compression type of the specified image file.
+	 */
 	void compression(CompressionType type)
 	{
 		imageRef.compression = type;
 		options.compression = type;
 	}
+	///ditto
 	CompressionType compression() const
 	{
 		return imageRef.compression;
 	}
 
+	/**
+	 * The vertical and horizontal resolution in pixels of the image.
+	 * This option specifies an image density when decoding
+	 * a Postscript or Portable Document page.
+	 * 
+	 * The default is "72x72".
+	 */
 	void density(Geometry value)
 	{
 		options.density = value;
@@ -691,6 +793,7 @@ class Image
 		imageRef.x_resolution = value.width;
 		imageRef.y_resolution = ( value.width != 0 ) ? value.width : value.height;
 	}
+	///ditto
 	Geometry density() const
 	{
 		ssize_t width  = cast(ssize_t)rndtol(imageRef.x_resolution);
@@ -699,6 +802,11 @@ class Image
 		return Geometry(width, height);
 	}
 
+	/**
+	 * Image depth. Used to specify the bit depth when reading or writing
+	 * raw images or when the output format supports multiple depths.
+	 * Defaults to the quantum depth that ImageMagick is compiled with.
+	 */
 	void depth(size_t value)
 	{
 		if ( value > MagickQuantumDepth)
@@ -707,26 +815,39 @@ class Image
 		imageRef.depth = value;
 		options.depth = value;
 	}
+	///ditto
 	size_t depth() const
 	{
 		return imageRef.depth;
 	}
 
+	/**
+	 * Tile names from within an image montage.
+	 * Only valid after calling montage or reading a MIFF file
+	 * which contains a directory.
+	 */
 	string directory() const
 	{
 		return to!(string)(imageRef.directory);
 	}
 
+	/**
+	 * Specify (or obtain) endian option for formats which support it.
+	 */
 	void endian(EndianType type)
 	{
 		imageRef.endian = type;
 		options.endian = type;
 	}
+	///ditto
 	EndianType endian() const
 	{
 		return imageRef.endian;
 	}
 
+	/**
+	 * The EXIF profile.
+	 */
 	void exifProfile(void[] blob)
 	{
 		StringInfo* profile = AcquireStringInfo(blob.length);
@@ -736,6 +857,7 @@ class Image
 
 		DestroyStringInfo(profile);		
 	}
+	///ditto
 	void[] exifProfile() const
 	{
 		const(StringInfo)* profile = GetImageProfile(imageRef, "exif");
@@ -746,30 +868,42 @@ class Image
 		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)].dup;
 	}
 
+	/**
+	 * The image filename.
+	 */
 	void filename(string str)
 	{
 		copyString(imageRef.filename, str);
 		options.filename = str;
 	}
-	string filename() const
-	{
-		return options.filename;
-	}
 
+	/**
+	 * The image filesize in bytes.
+	 */
 	MagickSizeType fileSize() const
 	{
 		return GetBlobSize(imageRef);
 	}
 
+	/**
+	 * Filter to use when resizing image. The reduction filter employed
+	 * has a significant effect on the time required to resize an image
+	 * and the resulting quality. The default filter is Lanczos which has
+	 * been shown to produce high quality results when reducing most images.
+	 */
 	void filter(FilterTypes type)
 	{
 		imageRef.filter = type;
 	}
+	///ditto
 	FilterTypes filter() const
 	{
 		return imageRef.filter;
 	}
 
+	/**
+	 * The image encoding format. For example, "GIF" or "PNG".
+	 */
 	string format() const
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
@@ -834,6 +968,9 @@ class Image
 		return imageRef.gamma;
 	}
 
+	/**
+	 * Preferred size of the image when encoding.
+	 */
 	void geometry(string str)
 	{
 		copyString(imageRef.geometry, str);
@@ -849,19 +986,29 @@ class Image
 		return Geometry( to!(string)(imageRef.geometry) );
 	}
 
+	/**
+	 * GIF disposal method. This attribute is used to control how
+	 * successive images are rendered (how the preceding image
+	 * is disposed of) when creating a GIF animation.
+	 */
 	void gifDisposeMethod(DisposeType type)
 	{
 		imageRef.dispose = type;
 	}
+	///ditto
 	DisposeType gifDisposeMethod() const
 	{
 		return imageRef.dispose;
 	}
 
+	/**
+	 * ICC color profile.
+	 */
 	void iccColorProfile(void[] blob)
 	{
 		profile("icm", blob);
 	}
+	///ditto
 	void[] iccColorProfile() const
 	{
 		const(StringInfo)* profile = GetImageProfile(imageRef, "icm");
@@ -893,10 +1040,14 @@ class Image
 		return imageRef.interlace;
 	}
 
+	/**
+	 * The International Press Telecommunications Council profile.
+	 */
 	void iptcProfile(void[] blob)
 	{
 		profile("iptc", blob);
 	}
+	///ditto
 	void[] iptcProfile() const
 	{
 		const(StringInfo)* profile = GetImageProfile(imageRef, "iptc");
@@ -924,6 +1075,11 @@ class Image
 		return options.magick;
 	}
 
+	/**
+	 * If true, honor the opacity values in the image pixels.
+	 * If set True, store matte channel if the image
+	 * has one otherwise create an opaque one.
+	 */
 	void matte(bool flag)
 	{
 		// If the image has a matte channel, and it's
@@ -933,6 +1089,7 @@ class Image
 
 		imageRef.matte = flag;
 	}
+	///ditto
 	bool matte() const
 	{
 		return imageRef.matte != 0;
@@ -957,16 +1114,30 @@ class Image
 		return new Color(imageRef.matte_color);
 	}
 
+	/**
+	 * The mean error per pixel computed when an image is color reduced.
+	 * This parameter is only valid if verbose is set to true and the
+	 * image has just been quantized.
+	 */
 	double meanErrorPerPixel() const
 	{
 		return imageRef.error.mean_error_per_pixel;
 	}
 
+	/**
+	 * Image modulus depth (minimum number of bits required to
+	 * support red/green/blue components without loss of accuracy).
+	 * The pixel modulus depth may be decreased by supplying a value
+	 * which is less than the current value, updating the pixels
+	 * (reducing accuracy) to the new depth. The pixel modulus depth
+	 * can not be increased over the current value using this method.
+	 */
 	void modulusDepth(size_t depth)
 	{
 		SetImageDepth(imageRef, depth);
 		options.depth = depth;
 	}
+	///ditto
 	size_t modulusDepth() const
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
@@ -978,44 +1149,97 @@ class Image
 		return depth;
 	}
 
+	/**
+	 * Tile size and offset within an image montage.
+	 * Only valid for images produced by montage.
+	 */
 	Geometry montageGeometry() const
 	{
 		return Geometry( to!(string)(imageRef.geometry) );
 	}
 
+	/**
+	 * The normalized max error per pixel computed when
+	 * an image is color reduced. This parameter is only
+	 * valid if verbose is set to true and the image
+	 * has just been quantized.
+	 */
 	double normalizedMaxError() const
 	{
 		return imageRef.error.normalized_maximum_error;
 	}
 
+	/**
+	 * The normalized mean error per pixel computed when
+	 * an image is color reduced. This parameter is only
+	 * valid if verbose is set to true and the image
+	 * has just been quantized.
+	 */
 	double normalizedMeanError() const
 	{
 		return imageRef.error.normalized_mean_error;
 	}
 
+	/**
+	 * Image orientation.  Supported by some file formats
+	 * such as DPX and TIFF. Useful for turning the right way up.
+	 */
 	void orientation(OrientationType orientation)
 	{
 		imageRef.orientation = orientation;
 	}
+	///ditto
 	OrientationType orientation() const
 	{
 		return imageRef.orientation;
 	}
 
+	/**
+	 * When compositing, this attribute describes the position
+	 * of this image with respect to the underlying image.
+	 * 
+	 * Use this option to specify the dimensions and position of
+	 * the Postscript page in dots per inch or a TEXT page in pixels.
+	 * This option is typically used in concert with density.
+	 * 
+	 * Page may also be used to position a GIF image
+	 * (such as for a scene in an animation).
+	 */
 	void page(Geometry geometry)
 	{
 		options.page = geometry;
 		imageRef.page = geometry.rectangleInfo;
 	}
+	///ditto
 	Geometry page() const
 	{
 		return Geometry(imageRef.page);
 	}
 
+	/**
+	 * The pixel color interpolation method. Some methods (such
+	 * as wave, swirl, implode, and composite) use the pixel color
+	 * interpolation method to determine how to blend adjacent pixels.
+	 */
+	void pixelInterpolationMethod(InterpolatePixelMethod method)
+	{
+		imageRef.interpolate = method;
+	}
+	///ditto
+	InterpolatePixelMethod pixelInterpolationMethod() const
+	{
+		return imageRef.interpolate;
+	}
+
+	/**
+	 * Get/set/remove a named profile. Valid names include "*",
+	 * "8BIM", "ICM", "IPTC", or a user/format-defined profile name. 
+	 */
 	void profile(string name, void[] blob)
 	{
 		ProfileImage(imageRef, toStringz(name), blob.ptr, blob.length, false);
 	}
+	///ditto
 	void[] profile(string name) const
 	{
 		const(StringInfo)* profile = GetImageProfile(imageRef, toStringz(name));
@@ -1026,60 +1250,74 @@ class Image
 		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)].dup;
 	}
 
+	/**
+	 * JPEG/MIFF/PNG compression level (default 75).
+	 */
 	void quality(size_t )
 	{
 		imageRef.quality = quality;
 		options.quality = quality;
 	}
+	///ditto
 	size_t quality() const
 	{
 		return imageRef.quality;
 	}
 
+	/**
+	 * The type of rendering intent.
+	 * See_Also: 
+	 * $(LINK http://www.cambridgeincolour.com/tutorials/color-space-conversion.htm)
+	 */
 	void renderingIntent(RenderingIntent intent)
 	{
 		imageRef.rendering_intent = intent;
 	}
+	///ditto
 	RenderingIntent renderingIntent() const
 	{
 		return imageRef.rendering_intent;
 	}
 
+	/**
+	 * Units of image resolution
+	 */
 	void resolutionUnits(ResolutionType type)
 	{
 		imageRef.units = type;
 		options.resolutionUnits = type;
 	}
+	///ditto
 	ResolutionType resolutionUnits() const
 	{
 		return options.resolutionUnits;
 	}
 
+	/**
+	 * The scene number assigned to the image the last
+	 * time the image was written to a multi-image image file.
+	 */
 	void scene(size_t value)
 	{
 		imageRef.scene = value;
 	}
+	///ditto
 	size_t scene() const
 	{
 		return imageRef.scene;
 	}
 
-	void rows(size_t height)
-	{
-		imageRef.rows = height;
-	}
+	/**
+	 * The height of the image in pixels.
+	 */
 	size_t rows() const
 	{
 		return imageRef.rows;
 	}
 
-	void size(Geometry geometry)
-	{
-		options.size = geometry;
-
-		imageRef.rows = geometry.height;
-		imageRef.columns = geometry.width;
-	}
+	/**
+	 * Width and height of a image.
+	 */
 	Geometry size() const
 	{
 		return Geometry(imageRef.columns, imageRef.rows);
@@ -1087,6 +1325,9 @@ class Image
 
 	//TODO: Statistics ?
 
+	/**
+	 * Number of colors in the image.
+	 */
 	size_t totalColors() const
 	{
 		ExceptionInfo* exception = AcquireExceptionInfo();
@@ -1098,11 +1339,15 @@ class Image
 		return colors;
 	}
 
+	/**
+	 * Image type.
+	 */
 	void type(ImageType imageType)
 	{
 		options.type = imageType;
 		SetImageType(imageRef, imageType);
 	}
+	///ditto
 	ImageType type() const
 	{
 		if (options.type != ImageType.UndefinedType )
@@ -1118,7 +1363,9 @@ class Image
 	}
 
 	/**
-	 * Image virtual pixel _method.
+	 * Specify how "virtual pixels" behave. Virtual pixels are
+	 * pixels that are outside the boundaries of the image.
+	 * Methods such as blurImage, sharpen, and wave use virtual pixels.
 	 */
 	void virtualPixelMethod(VirtualPixelMethod method)
 	{
@@ -1131,11 +1378,17 @@ class Image
 		return GetImageVirtualPixelMethod(imageRef);
 	}
 
+	/**
+	 * Horizontal resolution of the image.
+	 */
 	double xResolution() const
 	{
 		return imageRef.x_resolution;
 	}
 
+	/**
+	 * Vertical resolution of the image.
+	 */
 	double yResolution() const
 	{
 		return imageRef.y_resolution;
