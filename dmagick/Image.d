@@ -393,6 +393,19 @@ class Image
 	}
 
 	/**
+	 * Set a flag to indicate whether or not to use alpha channel data.
+	 */
+	void alpha(AlphaChannelType type)
+	{
+		SetImageAlphaChannel(imageRef, type);
+	}
+	///ditto
+	bool alpha() const
+	{
+		GetImageAlphaChannel(imageRef);
+	}
+
+	/**
 	 * Number of ticks which must expire before displaying the
 	 * next image in an animated sequence. The default number
 	 * of ticks is 0. By default there are 100 ticks per second.
@@ -1073,26 +1086,6 @@ class Image
 			return imageRef.magick[0 .. strlen(imageRef.magick.ptr)].idup;
 
 		return options.magick;
-	}
-
-	/**
-	 * If true, honor the opacity values in the image pixels.
-	 * If set True, store matte channel if the image
-	 * has one otherwise create an opaque one.
-	 */
-	void matte(bool flag)
-	{
-		// If the image has a matte channel, and it's
-		// not desired set the matte channel to fully opaque.
-		if ( !flag && imageRef.matte )
-			SetImageOpacity(imageRef, OpaqueOpacity);
-
-		imageRef.matte = flag;
-	}
-	///ditto
-	bool matte() const
-	{
-		return imageRef.matte != 0;
 	}
 
 	/**
