@@ -221,6 +221,55 @@ class Image
 	}
 
 	/**
+	 * Adaptively sharpens the image by sharpening more intensely near
+	 * image edges and less intensely far from edges. The adaptiveSharpen
+	 * method sharpens the image with a Gaussian operator of the given
+	 * radius and standard deviation (sigma). For reasonable results,
+	 * radius should be larger than sigma. Use a radius of 0 and
+	 * adaptiveSharpen selects a suitable radius for you.
+	 *
+	 * Params:
+	 *     radius  = The radius of the Gaussian in pixels,
+	 *               not counting the center pixel.
+	 *     sigma   = The standard deviation of the Laplacian, in pixels.
+	 *     channel = If no channels are specified, blurs all the channels.
+	 */
+	void adaptiveSharpen(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		MagickCoreImage* image =
+			AdaptiveSharpenImageChannel(imageRef, channel, radius, sigma, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Selects an individual threshold for each pixel based on the range
+	 * of intensity values in its local neighborhood. This allows for
+	 * thresholding of an image whose global intensity histogram doesn't
+	 * contain distinctive peaks.
+	 *
+	 * Params:
+	 *     width  = define the width of the local neighborhood.
+	 *     heigth = define the height of the local neighborhood.
+	 *     offset = constant to subtract from pixel neighborhood mean.
+	 */
+	void adaptiveThreshold(size_t width = 3, size_t height = 3, ssize_t offset = 0)
+	{
+		ExceptionInfo* exception = AcquireExceptionInfo();
+		MagickCoreImage* image =
+			AdaptiveThresholdImage(imageRef, width, height, offset, exception);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
 	 * Returns the TypeMetric class witch provides the information
 	 * regarding font metrics such as ascent, descent, text width,
 	 * text height, and maximum horizontal advance. The units of
@@ -402,7 +451,7 @@ class Image
 	///ditto
 	bool alpha() const
 	{
-		GetImageAlphaChannel(imageRef);
+		return GetImageAlphaChannel(imageRef) != 0;
 	}
 
 	/**
@@ -607,9 +656,10 @@ class Image
 	 * ----------------------------------
 	 * Color color = image.colormap[2];
 	 * image.colormap()[2] = color;
-	 * 
+	 * ----------------------------------
+	 * To asign the complete colormap at once:
+	 * ----------------------------------
 	 * Color[] colors = new Colors[255];
-	 *
 	 * image.colormap() = colors;
 	 * //Or
 	 * image.colormap.size = 255;
