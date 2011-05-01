@@ -1,6 +1,6 @@
 /**
  * Copyright: Mike Wey 2011
- * License:   To be determined
+ * License:   zlib (See accompanying LICENSE file)
  * Authors:   Mike Wey
  */
 
