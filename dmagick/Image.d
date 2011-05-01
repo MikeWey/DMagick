@@ -9,6 +9,7 @@ module dmagick.Image;
 import std.conv;
 import std.math;
 import std.string;
+import core.memory;
 import core.stdc.string;
 import core.sys.posix.sys.types;
 
@@ -46,6 +47,7 @@ import dmagick.c.resample;
 import dmagick.c.resize;
 import dmagick.c.resource;
 import dmagick.c.transform;
+import dmagick.c.threshold;
 
 /**
  * The image
@@ -270,6 +272,68 @@ class Image
 	}
 
 	/**
+	 * Extracts the pixel data from the specified rectangle.
+	 *
+	 * Params:
+	 *     width   = Width in pixels of the region to extract.
+	 *     height  = Height in pixels of the region to extract.
+	 *     xOffset = Horizontal ordinate of left-most coordinate
+	 *               of region to extract.
+	 *     yOffset = Vertical ordinate of top-most coordinate of
+	 *               region to extract.
+	 *     map     = This character string can be any combination
+	 *               or order of R = red, G = green, B = blue, A = alpha,
+	 *               C = cyan, Y = yellow, M = magenta, and K = black.
+	 *               The ordering reflects the order of the pixels in
+	 *               the supplied pixel array.
+	 * 
+	 * Returns: An array of values contain the pixel components as
+	 *          defined by the map parameter and the Type.
+	 */
+	T[] exportPixels(T)(size_t width, size_t height, ssize_t xOffset = 0, ssize_t yOffset = 0, string map = "RGBA") const
+	{
+		StorageType storage;
+		void[] pixels = new T[width*height];
+		ExceptionInfo* exception = AcquireExceptionInfo();
+
+		static if ( is( T == byte) )
+		{
+			storage = CharPixel;
+		}
+		else static if ( is( T == short) )
+		{
+			storage = ShortPixel;
+		}
+		else static if ( is( T == int) )
+		{
+			storage = IntegerPixel;
+		}
+		else static if ( is( T == long) )
+		{
+			storage = LongPixel;
+		}
+		else static if ( is( T == float) )
+		{
+			storage = FloatPixel;
+		}
+		else static if ( is( T == double) )
+		{
+			storage = DoublePixel;
+		}
+		else
+		{
+			assert(false, "Unsupported type");
+		}
+
+		ExportImagePixels(imageRef, xOffset, yOffset, width, height, map, storage, pixels.ptr);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		return pixels;
+	}
+
+	/**
 	 * Returns the TypeMetric class witch provides the information
 	 * regarding font metrics such as ascent, descent, text width,
 	 * text height, and maximum horizontal advance. The units of
@@ -422,6 +486,43 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
+	///ditto
+	void readPixels(T)(size_t width, size_t height, string map, T[] pixels)
+	{
+		StorageType storage;
+
+		static if ( is( T == byte) )
+		{
+			storage = CharPixel;
+		}
+		else static if ( is( T == short) )
+		{
+			storage = ShortPixel;
+		}
+		else static if ( is( T == int) )
+		{
+			storage = IntegerPixel;
+		}
+		else static if ( is( T == long) )
+		{
+			storage = LongPixel;
+		}
+		else static if ( is( T == float) )
+		{
+			storage = FloatPixel;
+		}
+		else static if ( is( T == double) )
+		{
+			storage = DoublePixel;
+		}
+		else
+		{
+			assert(false, "Unsupported type");
+		}
+
+		read(width, height, map, storage, pixels);
+	}
+
 	//TODO: set process monitor.
 
 	/**
@@ -439,6 +540,65 @@ class Image
 		DestroyExceptionInfo(exception);
 
 		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Creates a Binary Large OBject, a direct-to-memory
+	 * version of the image.
+	 *
+	 * if an image format is selected which is capable of supporting
+	 * fewer colors than the original image or quantization has been
+	 * requested, the original image will be quantized to fewer colors.
+	 * Use a copy of the original if this is a problem.
+	 * 
+	 * Params:
+	 *     magick = specifies the image format to write.
+	 *     depth  = specifies the image depth.
+	 */
+	void[] toBlob(string magick = null, size_t depth = 0)
+	{
+		size_t length;
+		ExceptionInfo* exception = AcquireExceptionInfo();
+
+		AcquireMemoryHandler oldMalloc;
+		ResizeMemoryHandler  oldRealloc;
+		DestroyMemoryHandler oldFree;
+
+		if ( magick !is null )
+			this.magick = magick;
+		if ( depth != 0 )
+			this.depth = depth;
+
+		//Use the D GC to accolate the blob.
+		GetMagickMemoryMethods(&oldMalloc, &oldRealloc, &oldFree);
+		SetMagickMemoryMethods(&GC.malloc, &GC.realloc, &GC.free);
+
+		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, exception);
+
+		//Set the memory methods back to the originals.
+		SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
+
+		DMagickException.throwException(exception);
+		DestroyExceptionInfo(exception);
+
+		return blob[0 .. length];	
+	}
+
+	/**
+	 * Writes the image to the specified file. ImageMagick
+	 * determines image format from the prefix or extension.
+	 * 
+	 * if an image format is selected which is capable of supporting
+	 * fewer colors than the original image or quantization has been
+	 * requested, the original image will be quantized to fewer colors.
+	 * Use a copy of the original if this is a problem.
+	 */
+	void write(string filename)
+	{
+		options.filename = filename;
+		WriteImage(options.imageInfo, imageRef);
+
+		DMagickException.throwException(&(imageRef.exception));
 	}
 
 	/**
