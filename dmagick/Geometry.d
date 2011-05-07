@@ -132,7 +132,7 @@ struct Geometry
 		return info;
 	}
 
-	int opCmp(ref const Geometry geometry)
+	size_t opCmp(ref const Geometry geometry)
 	{
 		return width*height - geometry.width*geometry.height;
 	}

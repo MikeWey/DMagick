@@ -19,20 +19,28 @@ endif
 
 ifeq ("$(DC)","dmd")
     DCFLAGS=-O
+    LINKERFLAG=-L
     output=-of$@
 else ifeq ("$(DC)","ldc")
     DCFLAGS=-O
+    LINKERFLAG=-L
     output=-of$@
 else
     DCFLAGS=-O2
+    LINKERFLAG=-Xlinker
     output=-o $@
 endif
 
 ifeq ("$(OS)","Darwin")
     LDFLAGS+=-Wl,-undefined,dynamic_lookup
 else ifeq ("$(OS)","Linux")
-    LDFLAGS+=-L-ldl
+    LDFLAGS+=$(LINKERFLAG)-ldl
 endif
+
+ifeq ("$(ARCH)", "x86_64") 
+    DCFLAGS+=-m64
+    LDFLAGS+=-m64
+endif 
 
 AR=ar
 RANLIB=ranlib

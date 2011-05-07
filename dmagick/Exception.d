@@ -135,3 +135,63 @@ mixin(
 	return exceptions;
 }());
 
+/**
+ * This struct is used to wrap the ImageMagick exception handling.
+ * Needs dmd >= 2.053
+ * Usage:
+ * --------------------
+ * CFunctionCall(param1, param2, DExceptionInfo());
+ * --------------------
+ */
+struct DMagickExcepionInfo
+{
+	ExceptionInfo* exceptionInfo;
+
+	private bool isInitialized;
+	private size_t* refcount;
+
+	alias exceptionInfo this;
+
+	static DMagickExcepionInfo opCall()
+	{
+		DMagickExcepionInfo info;
+
+		info.exceptionInfo = AcquireExceptionInfo();
+		info.refcount = new size_t;
+
+		*(info.refcount) = 1;
+		info.isInitialized = true;
+
+		return info;
+	}
+
+	this(this)
+	{
+		if ( isInitialized )
+			(*refcount)++;
+	}
+
+	~this()
+	{
+		if ( !isInitialized )
+			return;
+
+		(*refcount)--;
+
+		if ( *refcount == 0 )
+		{
+			DMagickException.throwException(exceptionInfo);
+			exceptionInfo = DestroyExceptionInfo(exceptionInfo);
+		}
+	}
+}
+
+unittest
+{
+	void testDMagickExcepionInfo(ExceptionInfo* info)
+	{
+		assert(info !is null);
+	}
+
+	testDMagickExcepionInfo(DMagickExceptionInfo());
+}

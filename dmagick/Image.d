@@ -31,7 +31,6 @@ import dmagick.c.compress;
 import dmagick.c.draw;
 import dmagick.c.effect;
 import dmagick.c.enhance;
-import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.histogram;
 import dmagick.c.image;
@@ -184,12 +183,8 @@ class Image
 	 */
 	void adaptiveBlur(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
 		MagickCoreImage* image =
-			AdaptiveBlurImageChannel(imageRef, channel, radius, sigma, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+			AdaptiveBlurImageChannel(imageRef, channel, radius, sigma, DMagickExcepionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -210,14 +205,9 @@ class Image
 		size_t width  = columns;
 		size_t height = rows;
 
-		ExceptionInfo* exception = AcquireExceptionInfo();
 		ParseMetaGeometry(toStringz(size.toString), &x, &y, &width, &height);
-
 		MagickCoreImage* image =
-			AdaptiveResizeImage(imageRef, width, height, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+			AdaptiveResizeImage(imageRef, width, height, DMagickExcepionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -238,12 +228,8 @@ class Image
 	 */
 	void adaptiveSharpen(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
 		MagickCoreImage* image =
-			AdaptiveSharpenImageChannel(imageRef, channel, radius, sigma, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+			AdaptiveSharpenImageChannel(imageRef, channel, radius, sigma, DMagickExcepionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -261,12 +247,8 @@ class Image
 	 */
 	void adaptiveThreshold(size_t width = 3, size_t height = 3, ssize_t offset = 0)
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
 		MagickCoreImage* image =
-			AdaptiveThresholdImage(imageRef, width, height, offset, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+			AdaptiveThresholdImage(imageRef, width, height, offset, DMagickExcepionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -282,8 +264,8 @@ class Image
 	 *     yOffset = Vertical ordinate of top-most coordinate of
 	 *               region to extract.
 	 *     map     = This character string can be any combination
-	 *               or order of R = red, G = green, B = blue, A = alpha,
-	 *               C = cyan, Y = yellow, M = magenta, and K = black.
+	 *               or order of R = red, G = green, B = blue, A = 
+	 *               alpha, C = cyan, Y = yellow, M = magenta, and K = black.
 	 *               The ordering reflects the order of the pixels in
 	 *               the supplied pixel array.
 	 * 
@@ -294,7 +276,6 @@ class Image
 	{
 		StorageType storage;
 		void[] pixels = new T[width*height];
-		ExceptionInfo* exception = AcquireExceptionInfo();
 
 		static if ( is( T == byte) )
 		{
@@ -325,10 +306,7 @@ class Image
 			assert(false, "Unsupported type");
 		}
 
-		ExportImagePixels(imageRef, xOffset, yOffset, width, height, map, storage, pixels.ptr);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		ExportImagePixels(imageRef, xOffset, yOffset, width, height, map, storage, pixels.ptr, DMagickExcepionInfo());
 
 		return pixels;
 	}
@@ -375,11 +353,7 @@ class Image
 	{
 		options.filename = filename;
 
-		ExceptionInfo* exception = AcquireExceptionInfo();
-		MagickCoreImage* image = ReadImage(options.imageInfo, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		MagickCoreImage* image = ReadImage(options.imageInfo, DMagickExcepionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -409,12 +383,8 @@ class Image
 	 */
 	void read(void[] blob)
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
 		MagickCoreImage* image = 
-			BlobToImage(options.imageInfo, blob.ptr, blob.length, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+			BlobToImage(options.imageInfo, blob.ptr, blob.length, DMagickExcepionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -476,12 +446,8 @@ class Image
 	 */
 	void read(size_t width, size_t height, string map, StorageType storage, void[] pixels)
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
 		MagickCoreImage* image = 
-			ConstituteImage(width, height, toStringz(map), storage, pixels.ptr, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+			ConstituteImage(width, height, toStringz(map), storage, pixels.ptr, DMagickExcepionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -532,12 +498,8 @@ class Image
 	void splice(Geometry geometry)
 	{
 		RectangleInfo rectangle = geometry.rectangleInfo;
-		ExceptionInfo* exception = AcquireExceptionInfo();
-
-		MagickCoreImage* image = SpliceImage(imageRef, &rectangle, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		
+		MagickCoreImage* image = SpliceImage(imageRef, &rectangle, DMagickExcepionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -558,7 +520,6 @@ class Image
 	void[] toBlob(string magick = null, size_t depth = 0)
 	{
 		size_t length;
-		ExceptionInfo* exception = AcquireExceptionInfo();
 
 		AcquireMemoryHandler oldMalloc;
 		ResizeMemoryHandler  oldRealloc;
@@ -573,13 +534,10 @@ class Image
 		GetMagickMemoryMethods(&oldMalloc, &oldRealloc, &oldFree);
 		SetMagickMemoryMethods(&GC.malloc, &GC.realloc, &GC.free);
 
-		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, exception);
+		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, DMagickExcepionInfo());
 
 		//Set the memory methods back to the originals.
 		SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
 
 		return blob[0 .. length];	
 	}
@@ -688,11 +646,7 @@ class Image
 	 */
 	Geometry boundingBox() const
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
-		RectangleInfo box = GetImageBoundingBox(imageRef, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		RectangleInfo box = GetImageBoundingBox(imageRef, DMagickExcepionInfo());
 
 		return Geometry(box);
 	}
@@ -727,11 +681,7 @@ class Image
 	///ditto
 	size_t channelDepth(ChannelType channel) const
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
-		size_t depth = GetImageChannelDepth(imageRef, channel, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		size_t depth = GetImageChannelDepth(imageRef, channel, DMagickExcepionInfo());
 
 		return depth;
 	}
@@ -801,11 +751,7 @@ class Image
 	///ditto
 	Image clipMask() const
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
-		MagickCoreImage* image = CloneImage(imageRef.clip_mask, 0, 0, true, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		MagickCoreImage* image = CloneImage(imageRef.clip_mask, 0, 0, true, DMagickExcepionInfo());
 
 		return new Image(image);
 	}
@@ -847,7 +793,7 @@ class Image
 				return new Color(img.imageRef.colormap[index]);
 			}
 
-			void opIndexAssign(Color value, uint index)
+			void opIndexAssign(Color value, size_t index)
 			{
 				if ( index >= img.colormapSize )
 					throw new Exception("Index out of bounds");
@@ -883,11 +829,11 @@ class Image
 					this[i] = colors[i];
 			}
 
-			uint size()
+			size_t size()
 			{
 				return img.colormapSize;
 			}
-			void size(uint s)
+			void size(size_t s)
 			{
 				img.colormapSize = s;
 			}
@@ -907,7 +853,7 @@ class Image
 	 * Care should be taken when truncating the colormap to ensure that
 	 * the image colormap indexes reference valid colormap entries.
 	 */
-	void colormapSize(uint size)
+	void colormapSize(size_t size)
 	{
 		if ( size > MaxColormapSize )
 			throw new OptionException(
@@ -944,9 +890,9 @@ class Image
 		imageRef.colors = size;
 	}
 	///ditto
-	uint colormapSize() const
+	size_t colormapSize() const
 	{
-		return cast(uint)imageRef.colors;
+		return imageRef.colors;
 	}
 
 	/**
@@ -1129,11 +1075,7 @@ class Image
 	 */
 	string format() const
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
-		const(MagickInfo)* info = GetMagickInfo(imageRef.magick.ptr, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		const(MagickInfo)* info = GetMagickInfo(imageRef.magick.ptr, DMagickExcepionInfo());
 
 		return to!(string)( info.description );
 	}
@@ -1343,11 +1285,7 @@ class Image
 	///ditto
 	size_t modulusDepth() const
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
-		size_t depth = GetImageDepth(imageRef, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		size_t depth = GetImageDepth(imageRef, DMagickExcepionInfo());
 
 		return depth;
 	}
@@ -1533,11 +1471,7 @@ class Image
 	 */
 	size_t totalColors() const
 	{
-		ExceptionInfo* exception = AcquireExceptionInfo();
-		size_t colors = GetNumberColors(imageRef, null, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		size_t colors = GetNumberColors(imageRef, null, DMagickExcepionInfo());
 
 		return colors;
 	}
@@ -1556,11 +1490,7 @@ class Image
 		if (options.type != ImageType.UndefinedType )
 			return options.type;
 
-		ExceptionInfo* exception = AcquireExceptionInfo();
-		ImageType imageType = GetImageType(imageRef, exception);
-
-		DMagickException.throwException(exception);
-		DestroyExceptionInfo(exception);
+		ImageType imageType = GetImageType(imageRef, DMagickExcepionInfo());
 
 		return imageType;
 	}

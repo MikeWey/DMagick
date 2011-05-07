@@ -13,7 +13,6 @@ import dmagick.Exception;
 import dmagick.Utils;
 
 import dmagick.c.color;
-import dmagick.c.exception;
 import dmagick.c.magickType;
 import dmagick.c.pixel;
 import dmagick.c.quantum;
@@ -53,13 +52,9 @@ class Color
 	{
 		this();
 
-		ExceptionInfo* exception = AcquireExceptionInfo();
 		const(char)* name = toStringz(color);
 
-		QueryColorDatabase(name, packet, exception);
-		DMagickException.throwException(exception);
-
-		DestroyExceptionInfo(exception);
+		QueryColorDatabase(name, packet, DMagickExcepionInfo());
 	}
 
 	/**
@@ -216,10 +211,8 @@ class Color
 		size_t numberOfColors;
 		const(ColorInfo)** colorList;
 		const(char)* pattern = toStringz("*");
-		ExceptionInfo* exception = AcquireExceptionInfo();
 
-		colorList = GetColorInfoList(pattern, &numberOfColors, exception);
-		DMagickException.throwException(exception);
+		colorList = GetColorInfoList(pattern, &numberOfColors, DMagickExcepionInfo());
 
 		for ( int i = 0; i < numberOfColors; i++ )
 		{
