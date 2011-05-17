@@ -70,7 +70,7 @@ public import dmagick.c.resize;
 public import dmagick.c.resource;
 public import dmagick.c.segment;
 public import dmagick.c.semaphore;
-public import dmagick.c.sheer;
+public import dmagick.c.shear;
 public import dmagick.c.signature;
 public import dmagick.c.splayTree;
 public import dmagick.c.statistic;

@@ -1,4 +1,4 @@
-module dmagick.c.sheer;
+module dmagick.c.shear;
 
 import dmagick.c.exception;
 import dmagick.c.geometry;

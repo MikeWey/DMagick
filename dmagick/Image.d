@@ -31,6 +31,7 @@ import dmagick.c.compress;
 import dmagick.c.draw;
 import dmagick.c.effect;
 import dmagick.c.enhance;
+import dmagick.c.fx;
 import dmagick.c.geometry;
 import dmagick.c.histogram;
 import dmagick.c.image;
@@ -45,6 +46,7 @@ import dmagick.c.quantum;
 import dmagick.c.resample;
 import dmagick.c.resize;
 import dmagick.c.resource;
+import dmagick.c.shear;
 import dmagick.c.transform;
 import dmagick.c.threshold;
 
@@ -254,6 +256,34 @@ class Image
 	}
 
 	/**
+	 * Adds random noise to the specified channel or channels in the image.
+	 * The amount of time addNoise requires depends on the NoiseType argument.
+	 *
+	 * Params:
+	 *     type    = A NoiseType value.
+	 *     channel = 0 or more ChannelType arguments. If no channels are
+	 *               specified, adds noise to all the channels
+	 */
+	void addNoise(NoiseType type, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickCoreImage* image =
+			AddNoiseImageChannel(imageRef, channel, type, DMagickExcepionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Transforms the image as specified by the affine matrix.
+	 */
+	void affineTransform(AffineMatrix affine)
+	{
+		MagickCoreImage* image =
+			AffineTransformImage(imageRef, &affine, DMagickExcepionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
 	 * Extracts the pixel data from the specified rectangle.
 	 *
 	 * Params:
@@ -339,7 +369,7 @@ class Image
 		DrawInfo* drawInfo = options.drawInfo;
 
 		copyString(drawInfo.text, text);
-		GetTypeMetrics(imageRef, drawInfo, &metric);
+		GetMultilineTypeMetrics(imageRef, drawInfo, &metric);
 		copyString(drawInfo.text, null);
 
 		return metric;
@@ -533,11 +563,9 @@ class Image
 		//Use the D GC to accolate the blob.
 		GetMagickMemoryMethods(&oldMalloc, &oldRealloc, &oldFree);
 		SetMagickMemoryMethods(&GC.malloc, &GC.realloc, &GC.free);
+		scope(exit) SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
 
 		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, DMagickExcepionInfo());
-
-		//Set the memory methods back to the originals.
-		SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
 
 		return blob[0 .. length];	
 	}
