@@ -10,6 +10,7 @@ import std.conv;
 import std.math;
 import std.string;
 import core.memory;
+import core.runtime;
 import core.stdc.string;
 import core.sys.posix.sys.types;
 
@@ -312,8 +313,8 @@ class Image
 	 *--------------------
 	 * Params:
 	 *     text    = The text.
-	 *     boundingArea 
-	 *             = The location/bounding area for the text,
+	 *     boundingArea = 
+	 *              The location/bounding area for the text,
 	 *               if the height and width are 0 the height and
 	 *               with of the image are used to calculate
 	 *               the bounding area.
@@ -1626,4 +1627,28 @@ class Image
 
 	//Other unimplemented porperties
 	//pixelColor
+}
+
+
+/*
+ * Initialize ImageMagick, only needed on Windows.
+ */
+version (Windows)
+{
+	private bool isInitialized = false;
+
+	static this
+	{
+		if ( !isInitialized )
+		{
+			MagickCoreGenesis(toStringz(Runtime.args[0]) , false);
+			isInitialized = true;
+		}
+	}
+
+	static ~this
+	{
+		if ( isInitialized )
+			MagickCoreTerminus();
+	}
 }
