@@ -1635,20 +1635,13 @@ class Image
  */
 version (Windows)
 {
-	private bool isInitialized = false;
-
 	static this
 	{
-		if ( !isInitialized )
-		{
 			MagickCoreGenesis(toStringz(Runtime.args[0]) , false);
-			isInitialized = true;
-		}
 	}
 
 	static ~this
 	{
-		if ( isInitialized )
 			MagickCoreTerminus();
 	}
 }
