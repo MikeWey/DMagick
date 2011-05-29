@@ -143,7 +143,7 @@ mixin(
  * CFunctionCall(param1, param2, DExceptionInfo());
  * --------------------
  */
-struct DMagickExcepionInfo
+struct DMagickExceptionInfo
 {
 	ExceptionInfo* exceptionInfo;
 
@@ -152,9 +152,9 @@ struct DMagickExcepionInfo
 
 	alias exceptionInfo this;
 
-	static DMagickExcepionInfo opCall()
+	static DMagickExceptionInfo opCall()
 	{
-		DMagickExcepionInfo info;
+		DMagickExceptionInfo info;
 
 		info.exceptionInfo = AcquireExceptionInfo();
 		info.refcount = new size_t;

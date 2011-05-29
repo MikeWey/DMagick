@@ -54,7 +54,7 @@ class Color
 
 		const(char)* name = toStringz(color);
 
-		QueryColorDatabase(name, packet, DMagickExcepionInfo());
+		QueryColorDatabase(name, packet, DMagickExceptionInfo());
 	}
 
 	/**
@@ -212,7 +212,7 @@ class Color
 		const(ColorInfo)** colorList;
 		const(char)* pattern = toStringz("*");
 
-		colorList = GetColorInfoList(pattern, &numberOfColors, DMagickExcepionInfo());
+		colorList = GetColorInfoList(pattern, &numberOfColors, DMagickExceptionInfo());
 
 		for ( int i = 0; i < numberOfColors; i++ )
 		{

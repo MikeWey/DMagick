@@ -186,7 +186,7 @@ class Image
 	void adaptiveBlur(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
 	{
 		MagickCoreImage* image =
-			AdaptiveBlurImageChannel(imageRef, channel, radius, sigma, DMagickExcepionInfo());
+			AdaptiveBlurImageChannel(imageRef, channel, radius, sigma, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -209,7 +209,7 @@ class Image
 
 		ParseMetaGeometry(toStringz(size.toString), &x, &y, &width, &height);
 		MagickCoreImage* image =
-			AdaptiveResizeImage(imageRef, width, height, DMagickExcepionInfo());
+			AdaptiveResizeImage(imageRef, width, height, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -231,7 +231,7 @@ class Image
 	void adaptiveSharpen(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
 	{
 		MagickCoreImage* image =
-			AdaptiveSharpenImageChannel(imageRef, channel, radius, sigma, DMagickExcepionInfo());
+			AdaptiveSharpenImageChannel(imageRef, channel, radius, sigma, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -250,7 +250,7 @@ class Image
 	void adaptiveThreshold(size_t width = 3, size_t height = 3, ssize_t offset = 0)
 	{
 		MagickCoreImage* image =
-			AdaptiveThresholdImage(imageRef, width, height, offset, DMagickExcepionInfo());
+			AdaptiveThresholdImage(imageRef, width, height, offset, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -267,7 +267,7 @@ class Image
 	void addNoise(NoiseType type, ChannelType channel = ChannelType.DefaultChannels)
 	{
 		MagickCoreImage* image =
-			AddNoiseImageChannel(imageRef, channel, type, DMagickExcepionInfo());
+			AddNoiseImageChannel(imageRef, channel, type, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -278,9 +278,71 @@ class Image
 	void affineTransform(AffineMatrix affine)
 	{
 		MagickCoreImage* image =
-			AffineTransformImage(imageRef, &affine, DMagickExcepionInfo());
+			AffineTransformImage(imageRef, &affine, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Annotates an image with text.  Optionally you can include any 
+	 * of the following bits of information about the image by embedding
+	 * the appropriate special characters:
+	 * --------------------
+	 *     %b   file size in bytes.
+	 *     %c   comment.
+	 *     %d   directory in which the image resides.
+	 *     %e   extension of the image file.
+	 *     %f   original filename of the image.
+	 *     %h   height of image.
+	 *     %i   filename of the image.
+	 *     %k   number of unique colors.
+	 *     %l   image label.
+	 *     %m   image file format.
+	 *     %n   number of images in a image sequence.
+	 *     %o   output image filename.
+	 *     %p   page number of the image.
+	 *     %q   image depth (8 or 16).
+	 *     %q   image depth (8 or 16).
+	 *     %s   image scene number.
+	 *     %t   image filename without any extension.
+	 *     %u   a unique temporary filename.
+	 *     %w   image width.
+	 *     %x   x resolution of the image.
+	 *     %y   y resolution of the image.
+	 *--------------------
+	 * Params:
+	 *     text    = The text.
+	 *     boundingArea 
+	 *             = The location/bounding area for the text,
+	 *               if the height and width are 0 the height and
+	 *               with of the image are used to calculate
+	 *               the bounding area.
+	 *     gravity = Placement gravity.
+	 *     degrees = The angle of the Text.
+	 */
+	void annotate(string text, Geometry boundingArea = Geometry.init, GravityType gravity = GravityType.NorthWestGravity, double degrees = 0.0)
+	{
+		DrawInfo* drawInfo = options.drawInfo;
+		AffineMatrix oldAffine = options.affine;
+
+		copyString(drawInfo.text, text);
+		copyString(drawInfo.geometry, boundingArea.toString());
+
+		drawInfo.gravity = gravity;
+		options.transformRotation(degrees);
+
+		scope(exit)
+		{
+			copyString(drawInfo.text, null);
+			copyString(drawInfo.geometry, null);
+
+			drawInfo.gravity = GravityType.NorthWestGravity;
+			options.affine = oldAffine;
+		}
+
+		AnnotateImage(imageRef, drawInfo);
+
+		DMagickException.throwException(&(imageRef.exception));
 	}
 
 	/**
@@ -336,7 +398,7 @@ class Image
 			assert(false, "Unsupported type");
 		}
 
-		ExportImagePixels(imageRef, xOffset, yOffset, width, height, map, storage, pixels.ptr, DMagickExcepionInfo());
+		ExportImagePixels(imageRef, xOffset, yOffset, width, height, map, storage, pixels.ptr, DMagickExceptionInfo());
 
 		return pixels;
 	}
@@ -383,7 +445,7 @@ class Image
 	{
 		options.filename = filename;
 
-		MagickCoreImage* image = ReadImage(options.imageInfo, DMagickExcepionInfo());
+		MagickCoreImage* image = ReadImage(options.imageInfo, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -414,7 +476,7 @@ class Image
 	void read(void[] blob)
 	{
 		MagickCoreImage* image = 
-			BlobToImage(options.imageInfo, blob.ptr, blob.length, DMagickExcepionInfo());
+			BlobToImage(options.imageInfo, blob.ptr, blob.length, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -477,7 +539,7 @@ class Image
 	void read(size_t width, size_t height, string map, StorageType storage, void[] pixels)
 	{
 		MagickCoreImage* image = 
-			ConstituteImage(width, height, toStringz(map), storage, pixels.ptr, DMagickExcepionInfo());
+			ConstituteImage(width, height, toStringz(map), storage, pixels.ptr, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -529,7 +591,7 @@ class Image
 	{
 		RectangleInfo rectangle = geometry.rectangleInfo;
 		
-		MagickCoreImage* image = SpliceImage(imageRef, &rectangle, DMagickExcepionInfo());
+		MagickCoreImage* image = SpliceImage(imageRef, &rectangle, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -565,7 +627,7 @@ class Image
 		SetMagickMemoryMethods(&GC.malloc, &GC.realloc, &GC.free);
 		scope(exit) SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
 
-		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, DMagickExcepionInfo());
+		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, DMagickExceptionInfo());
 
 		return blob[0 .. length];	
 	}
@@ -674,7 +736,7 @@ class Image
 	 */
 	Geometry boundingBox() const
 	{
-		RectangleInfo box = GetImageBoundingBox(imageRef, DMagickExcepionInfo());
+		RectangleInfo box = GetImageBoundingBox(imageRef, DMagickExceptionInfo());
 
 		return Geometry(box);
 	}
@@ -709,7 +771,7 @@ class Image
 	///ditto
 	size_t channelDepth(ChannelType channel) const
 	{
-		size_t depth = GetImageChannelDepth(imageRef, channel, DMagickExcepionInfo());
+		size_t depth = GetImageChannelDepth(imageRef, channel, DMagickExceptionInfo());
 
 		return depth;
 	}
@@ -779,7 +841,7 @@ class Image
 	///ditto
 	Image clipMask() const
 	{
-		MagickCoreImage* image = CloneImage(imageRef.clip_mask, 0, 0, true, DMagickExcepionInfo());
+		MagickCoreImage* image = CloneImage(imageRef.clip_mask, 0, 0, true, DMagickExceptionInfo());
 
 		return new Image(image);
 	}
@@ -1103,7 +1165,7 @@ class Image
 	 */
 	string format() const
 	{
-		const(MagickInfo)* info = GetMagickInfo(imageRef.magick.ptr, DMagickExcepionInfo());
+		const(MagickInfo)* info = GetMagickInfo(imageRef.magick.ptr, DMagickExceptionInfo());
 
 		return to!(string)( info.description );
 	}
@@ -1313,7 +1375,7 @@ class Image
 	///ditto
 	size_t modulusDepth() const
 	{
-		size_t depth = GetImageDepth(imageRef, DMagickExcepionInfo());
+		size_t depth = GetImageDepth(imageRef, DMagickExceptionInfo());
 
 		return depth;
 	}
@@ -1499,7 +1561,7 @@ class Image
 	 */
 	size_t totalColors() const
 	{
-		size_t colors = GetNumberColors(imageRef, null, DMagickExcepionInfo());
+		size_t colors = GetNumberColors(imageRef, null, DMagickExceptionInfo());
 
 		return colors;
 	}
@@ -1518,7 +1580,7 @@ class Image
 		if (options.type != ImageType.UndefinedType )
 			return options.type;
 
-		ImageType imageType = GetImageType(imageRef, DMagickExcepionInfo());
+		ImageType imageType = GetImageType(imageRef, DMagickExceptionInfo());
 
 		return imageType;
 	}
