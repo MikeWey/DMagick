@@ -323,7 +323,11 @@ class Image
 	 *     gravity = Placement gravity.
 	 *     degrees = The angle of the Text.
 	 */
-	void annotate(string text, Geometry boundingArea = Geometry.init, GravityType gravity = GravityType.NorthWestGravity, double degrees = 0.0)
+	void annotate(
+		string text,
+		Geometry boundingArea = Geometry.init,
+		GravityType gravity = GravityType.NorthWestGravity,
+		double degrees = 0.0)
 	{
 		DrawInfo* drawInfo = options.drawInfo;
 		AffineMatrix oldAffine = options.affine;
@@ -410,7 +414,12 @@ class Image
 	}
 
 	///ditto
-	void blackThreshold(Quantum red, Quantum green, Quantum blue, Quantum opacity = 0, ChannelType channel = ChannelType.DefaultChannels)
+	void blackThreshold(
+		Quantum red,
+		Quantum green,
+		Quantum blue,
+		Quantum opacity = 0,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		string thresholds = std.string.format("%s,%s,%s,%s", red, green, blue, opacity);
 
@@ -434,7 +443,12 @@ class Image
 	 *     yOffset       = The y offset to use for the overlay.
 	 *     gravity       = The gravity to use for the overlay.
 	 */
-	void blend(const(Image) overlay, int srcPercentage, int dstPercentage, ssize_t xOffset = 0, ssize_t yOffset = 0)
+	void blend(
+		const(Image) overlay,
+		int srcPercentage,
+		int dstPercentage,
+		ssize_t xOffset = 0,
+		ssize_t yOffset = 0)
 	{
 		SetImageArtifact(imageRef, "compose:args",
 			toStringz(std.string.format("%s,%s", srcPercentage, dstPercentage)));
@@ -446,7 +460,11 @@ class Image
 	}
 
 	///ditto
-	void blend(const(Image) overlay, int srcPercentage, int dstPercentage, GravityType gravity = GravityType.NorthWestGravity)
+	void blend(
+		const(Image) overlay,
+		int srcPercentage,
+		int dstPercentage,
+		GravityType gravity = GravityType.NorthWestGravity)
 	{
 		RectangleInfo geometry;
 
@@ -529,7 +547,8 @@ class Image
 	 * Returns: An array of values contain the pixel components as
 	 *          defined by the map parameter and the Type.
 	 */
-	T[] exportPixels(T)(size_t width, size_t height, ssize_t xOffset = 0, ssize_t yOffset = 0, string map = "RGBA") const
+	T[] exportPixels(T)
+		(size_t width, size_t height, ssize_t xOffset = 0, ssize_t yOffset = 0, string map = "RGBA") const
 	{
 		StorageType storage;
 		void[] pixels = new T[width*height];
