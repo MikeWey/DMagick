@@ -20,6 +20,7 @@ import dmagick.Geometry;
 import dmagick.Options;
 import dmagick.Utils;
 
+import dmagick.c.artifact;
 import dmagick.c.annotate;
 import dmagick.c.attribute;
 import dmagick.c.blob;
@@ -29,6 +30,7 @@ import dmagick.c.colormap;
 import dmagick.c.colorspace;
 import dmagick.c.composite;
 import dmagick.c.compress;
+import dmagick.c.decorate;
 import dmagick.c.draw;
 import dmagick.c.effect;
 import dmagick.c.enhance;
@@ -182,7 +184,7 @@ class Image
 	 *     radius  = The radius of the Gaussian in pixels,
 	 *               not counting the center pixel.
 	 *     sigma   = The standard deviation of the Laplacian, in pixels.
-	 *     channel = If no channels are specified, blurs all the channels.
+	 *     channel = The channels to blur.
 	 */
 	void adaptiveBlur(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
 	{
@@ -344,6 +346,168 @@ class Image
 		AnnotateImage(imageRef, drawInfo);
 
 		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * extract the 'mean' from the image and adjust the image
+	 * to try make set its gamma appropriatally.
+	 * 
+	 * Params:
+	 *     channel = One or more channels to adjust.
+	 */
+	void autoGamma(ChannelType channel = ChannelType.DefaultChannels)
+	{
+		AutoGammaImageChannel(imageRef, channel);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * adjusts the levels of a particular image channel by scaling
+	 * the minimum and maximum values to the full quantum range.
+	 * 
+	 * Params:
+	 *     channel = One or more channels to adjust.
+	 */
+	void autoLevel(ChannelType channel = ChannelType.DefaultChannels)
+	{
+		AutoLevelImageChannel(imageRef, channel);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Changes the value of individual pixels based on the intensity
+	 * of each pixel channel. The result is a high-contrast image.
+	 *
+	 * More precisely each channel value of the image is 'thresholded'
+	 * so that if it is equal to or less than the given value it is set
+	 * to zero, while any value greater than that give is set to it
+	 * maximum or QuantumRange.
+	 * 
+	 * Params:
+	 *     threshold = The threshold value.
+	 *     channel = One or more channels to adjust.
+	 */
+	void bilevel(Quantum threshold, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		BilevelImageChannel(imageRef, channel, threshold);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Forces all pixels below the threshold into black while leaving
+	 * all pixels above the threshold unchanged.
+	 * 
+	 * Params:
+	 *     threshold = The threshold value for red green and blue.
+	 *     channel = One or more channels to adjust.
+	 */
+	void blackThreshold(Quantum threshold, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		blackThreshold(threshold, threshold, threshold, 0, channel);
+	}
+
+	///ditto
+	void blackThreshold(Quantum red, Quantum green, Quantum blue, Quantum opacity = 0, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		string thresholds = std.string.format("%s,%s,%s,%s", red, green, blue, opacity);
+
+		BlackThresholdImageChannel(
+			imageRef, channel, toStringz(thresholds), DMagickExceptionInfo()
+		);
+	}
+
+	/**
+	 * Adds the overlay image to the target image according to
+	 * srcpercent and dstpercent.
+	 * 
+	 * This method corresponds to the -blend option of ImageMagick's
+	 * composite command.
+	 * 
+	 * Params:
+	 *     overlay       = The source image for the composite operation.
+	 *     srcPercentage = Percentage for the source image.
+	 *     dstPercentage = Percentage for this image.
+	 *     xOffset       = The x offset to use for the overlay.
+	 *     yOffset       = The y offset to use for the overlay.
+	 *     gravity       = The gravity to use for the overlay.
+	 */
+	void blend(const(Image) overlay, int srcPercentage, int dstPercentage, ssize_t xOffset = 0, ssize_t yOffset = 0)
+	{
+		SetImageArtifact(imageRef, "compose:args",
+			toStringz(std.string.format("%s,%s", srcPercentage, dstPercentage)));
+
+		scope(exit) RemoveImageArtifact(imageRef, "compose:args");
+
+		CompositeImage(imageRef, CompositeOperator.BlendCompositeOp, overlay.imageRef, xOffset, yOffset);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	///ditto
+	void blend(const(Image) overlay, int srcPercentage, int dstPercentage, GravityType gravity = GravityType.NorthWestGravity)
+	{
+		RectangleInfo geometry;
+
+		SetGeometry(overlay.imageRef, &geometry);
+		GravityAdjustGeometry(columns, rows, gravity, &geometry);
+
+		blend(overlay, srcPercentage, dstPercentage, geometry.x, geometry.y);
+	}
+
+	/**
+	 * mutes the colors of the image to simulate a scene at
+	 * nighttime in the moonlight.
+	 * 
+	 * Params:
+	 *     factor = The shift factor, larger values increase the effect.
+	 */
+	void blueShift(double factor = 1.5)
+	{
+		MagickCoreImage* image =
+			BlueShiftImage(imageRef, factor, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Blurs the specified channel. We convolve the image with a Gaussian
+	 * operator of the given radius and standard deviation (sigma).
+	 * The blur method differs from gaussianBlur in that it uses a
+	 * separable kernel which is faster but mathematically equivalent
+	 * to the non-separable kernel.
+	 *
+	 * Params:
+	 *     radius  = The radius of the Gaussian in pixels,
+	 *               not counting the center pixel.
+	 *     sigma   = The standard deviation of the Laplacian, in pixels.
+	 *     channel = The channels to blur.
+	 */
+	void blur(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickCoreImage* image =
+			BlurImageChannel(imageRef, channel, radius, sigma, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Surrounds the image with a border of the color defined
+	 * by the borderColor property.
+	 *
+	 * Params:
+	 *     width  = Border width in pixels.
+	 *     height = Border height in pixels.
+	 */
+	void border(size_t width, size_t height)
+	{
+		RectangleInfo borderInfo = RectangleInfo(width, height);
+
+		MagickCoreImage* image =
+			BorderImage(imageRef, &borderInfo, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
 	}
 
 	/**
@@ -1635,12 +1799,12 @@ class Image
  */
 version (Windows)
 {
-	static this
+	static this()
 	{
 			MagickCoreGenesis(toStringz(Runtime.args[0]) , false);
 	}
 
-	static ~this
+	static ~this()
 	{
 			MagickCoreTerminus();
 	}

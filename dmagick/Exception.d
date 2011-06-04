@@ -55,6 +55,8 @@ class DMagickException : Exception
 		string reason      = to!(string)(exception.reason);
 		string description = to!(string)(exception.description);
 
+		scope(exit) exception = DestroyExceptionInfo(exception);
+
 		mixin(
 		{
 			string exceptions =
@@ -181,7 +183,6 @@ struct DMagickExceptionInfo
 		if ( *refcount == 0 )
 		{
 			DMagickException.throwException(exceptionInfo);
-			exceptionInfo = DestroyExceptionInfo(exceptionInfo);
 		}
 	}
 }
