@@ -71,10 +71,19 @@ class Image
 		imageRef = ImageRef(AcquireImage(options.imageInfo));
 	}
 
-	this(MagickCoreImage* image)
+	this(MagickCoreImage* image, Options options = null)
 	{
-		options = new Options();
-		imageRef = ImageRef(image);
+		this(ImageRef(image), options);
+	}
+
+	this(ImageRef image, Options options = null)
+	{
+		if ( options is null )
+			this.options = new Options();
+		else
+			this.options = options;
+
+		imageRef = image;
 	}
 
 	/**
@@ -529,6 +538,94 @@ class Image
 	}
 
 	/**
+	 * Extract channel from image. Use this option to extract a
+	 * particular channel from the image. ChannelType.MatteChannel for
+	 * example, is useful for extracting the opacity values from an image.
+	 */
+	Image channel(ChannelType channel) const
+	{
+		MagickCoreImage* image =
+			SeparateImages(imageRef, channel, DMagickExceptionInfo());
+
+		return new Image(image);
+	}
+
+	/**
+	 * Adds a "charcoal" effect to the image. You can alter the
+	 * intensity of the effect by changing the radius and sigma arguments.
+	 *
+	 * Params:
+	 *     radius = The radius of the pixel neighborhood.
+	 *     sigma  = The standard deviation of the Gaussian, in pixels.
+	 */
+	void charcoal(double radius = 0, double sigma = 1)
+	{
+		MagickCoreImage* image =
+			CharcoalImage(imageRef, radius, sigma, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Removes the specified rectangle and collapses the rest of
+	 * the image to fill the removed portion.
+	 *
+	 * Params:
+	 *     geometry = The horizontal and/or vertical subregion to remove.
+	 */
+	void chop(Geometry geometry)
+	{
+		RectangleInfo rectangle = geometry.rectangleInfo;
+
+		MagickCoreImage* image =
+			ChopImage(imageRef, &rectangle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);		
+	}
+
+	/**
+	 * Returns a copy of the image.
+	 */
+	Image clone() const
+	{
+		MagickCoreImage* image =
+			CloneImage(imageRef, 0, 0, true, DMagickExceptionInfo());
+
+		return new Image(image, options.clone());
+	}
+
+	/**
+	 * Applies a lightweight Color Correction Collection (CCC) file
+	 * to the image. The file solely contains one or more color corrections.
+	 * Here is a sample:
+	 * --------------------
+	 * <ColorCorrectionCollection xmlns="urn:ASC:CDL:v1.2">
+	 *     <ColorCorrection id="cc03345">
+	 *         <SOPNode>
+	 *             <Slope> 0.9 1.2 0.5 </Slope>
+	 *             <Offset> 0.4 -0.5 0.6 </Offset>
+	 *             <Power> 1.0 0.8 1.5 </Power>
+	 *         </SOPNode>
+	 *         <SATNode>
+	 *             <Saturation> 0.85 </Saturation>
+	 *         </SATNode>
+	 *     </ColorCorrection>
+	 * </ColorCorrectionCollection>
+	 * --------------------
+	 * which includes the slop, offset, and power for each of
+	 * the RGB channels as well as the saturation.
+	 * 
+	 * See_Also: $(LINK2 http://http://en.wikipedia.org/wiki/ASC_CDL
+	 *         Wikipedia: ASC CDL).
+	 */
+	void colorDecisionList(string colorCorrectionCollection)
+	{
+		ColorDecisionListImage(imageRef, toStringz(colorCorrectionCollection));
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
 	 * Extracts the pixel data from the specified rectangle.
 	 *
 	 * Params:
@@ -544,7 +641,7 @@ class Image
 	 *               The ordering reflects the order of the pixels in
 	 *               the supplied pixel array.
 	 * 
-	 * Returns: An array of values contain the pixel components as
+	 * Returns: An array of values containing the pixel components as
 	 *          defined by the map parameter and the Type.
 	 */
 	T[] exportPixels(T)
@@ -934,6 +1031,15 @@ class Image
 	static void cacheThreshold(size_t threshold)
 	{
 		SetMagickResourceLimit(ResourceType.MemoryResource, threshold);
+	}
+
+	/**
+	 * returns true if any pixel in the image has been altered
+	 * since it was first constituted.
+	 */
+	bool changed() const
+	{
+		return IsTaintImage(imageRef) != 0;
 	}
 
 	/**

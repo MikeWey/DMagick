@@ -70,6 +70,11 @@ class Options
 		drawInfo = DestroyDrawInfo(drawInfo);
 	}
 
+	Options clone() const
+	{
+		return new Options(imageInfo, quantizeInfo, drawInfo);
+	}
+
 	/+***************************************************************
 	 * ImageInfo fields
 	 ***************************************************************+/
