@@ -43,6 +43,7 @@ import dmagick.c.magick;
 import dmagick.c.magickString;
 import dmagick.c.magickType;
 import dmagick.c.memory;
+import dmagick.c.morphology;
 import dmagick.c.pixel;
 import dmagick.c.profile;
 import dmagick.c.quantum;
@@ -400,7 +401,7 @@ class Image
 	 * 
 	 * Params:
 	 *     threshold = The threshold value.
-	 *     channel = One or more channels to adjust.
+	 *     channel   = One or more channels to adjust.
 	 */
 	void bilevel(Quantum threshold, ChannelType channel = ChannelType.DefaultChannels)
 	{
@@ -415,7 +416,7 @@ class Image
 	 * 
 	 * Params:
 	 *     threshold = The threshold value for red green and blue.
-	 *     channel = One or more channels to adjust.
+	 *     channel   = One or more channels to adjust.
 	 */
 	void blackThreshold(Quantum threshold, ChannelType channel = ChannelType.DefaultChannels)
 	{
@@ -595,6 +596,38 @@ class Image
 	}
 
 	/**
+	 * replaces each color value in the given image, by using it as an
+	 * index to lookup a replacement color value in a Color Look UP Table
+	 * in the form of an image.  The values are extracted along a diagonal
+	 * of the CLUT image so either a horizontal or vertial gradient image
+	 * can be used.
+	 * 
+	 * Typically this is used to either re-color a gray-scale image
+	 * according to a color gradient in the CLUT image, or to perform a
+	 * freeform histogram (level) adjustment according to the (typically
+	 * gray-scale) gradient in the CLUT image.
+	 * 
+	 * When the 'channel' mask includes the matte/alpha transparency
+	 * channel but one image has no such channel it is assumed that that
+	 * image is a simple gray-scale image that will effect the alpha channel
+	 * values, either for gray-scale coloring (with transparent or
+	 * semi-transparent colors), or a histogram adjustment of existing alpha
+	 * channel values. If both images have matte channels, direct and normal
+	 * indexing is applied, which is rarely used.
+	 *
+	 * Params:
+	 *     clutImage = the color lookup table image for replacement
+	 *                 color values.
+	 *     channel   = One or more channels to adjust.
+	 */
+	void clut(Image clutImage, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		ClutImageChannel(imageRef, channel, clutImage.imageRef);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
 	 * Applies a lightweight Color Correction Collection (CCC) file
 	 * to the image. The file solely contains one or more color corrections.
 	 * Here is a sample:
@@ -623,6 +656,61 @@ class Image
 		ColorDecisionListImage(imageRef, toStringz(colorCorrectionCollection));
 
 		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Blend the fill color with the image pixels. The opacityRed,
+	 * opacityGreen, opacityBlue and opacityAlpha arguments are the
+	 * percentage to blend with the red, green, blue and alpha channels.
+	 */
+	void colorize(Color fill, uint opacityRed, uint opacityGreen, uint opacityBlue, uint opacityAlpha = 0)
+	{
+		string opacity = std.string.format("%s/%s/%s/%s",
+			opacityRed, opacityGreen, opacityBlue, opacityAlpha);
+
+		MagickCoreImage* image =
+			ColorizeImage(imageRef, toStringz(opacity), fill.pixelPacket, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Applies color transformation to an image. This method permits
+	 * saturation changes, hue rotation, luminance to alpha, and various
+	 * other effects.  Although variable-sized transformation matrices can
+	 * be used, typically one uses a 5x5 matrix for an RGBA image and a 6x6
+	 * for CMYKA (or RGBA with offsets).  The matrix is similar to those
+	 * used by Adobe Flash except offsets are in column 6 rather than 5
+	 * (in support of CMYKA images) and offsets are normalized
+	 * (divide Flash offset by 255)
+	 *
+	 * Params:
+	 *     matrix = A tranformation matrix, with a maximum size of 6x6.
+	 */
+	void colorMatrix(double[][] matrix)
+	{
+		if ( matrix.length > 6 || matrix[0].length > 6 )
+			throw new DMagickException("Matrix must be 6x6 or smaller.");
+
+		KernelInfo* kernelInfo = AcquireKernelInfo("1");
+		scope(exit) DestroyKernelInfo(kernelInfo);
+
+		kernelInfo.width = matrix[0].length;
+		kernelInfo.height = matrix.length;
+		kernelInfo.values = cast(double*)AcquireQuantumMemory(kernelInfo.width*kernelInfo.height, double.sizeof);
+		scope(exit) kernelInfo.values = cast(double*)RelinquishMagickMemory(kernelInfo.values);
+
+		foreach ( i, row; matrix )
+		{
+			size_t offset = i * row.length;
+
+			kernelInfo.values[offset .. offset+row.length] = row;
+		}
+
+		MagickCoreImage* image =
+			ColorMatrixImage(imageRef, kernelInfo, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
 	}
 
 	/**
@@ -1544,6 +1632,31 @@ class Image
 	DisposeType gifDisposeMethod() const
 	{
 		return imageRef.dispose;
+	}
+
+	/**
+	 * Computes the number of times each unique color appears in the image.
+	 * You may want to quantize the image before using this property.
+	 * 
+	 * Returns: A associative array. Each key reprecents a color in the Image.
+	 *     The value is the number of times the color apears in the image.
+	 */
+	MagickSizeType[Color] histogram() const
+	{
+		size_t count;
+		MagickSizeType[Color] hashMap;
+		ColorPacket* colorPackets;
+
+		colorPackets = GetImageHistogram(imageRef, &count, DMagickExceptionInfo());
+
+		foreach ( packet; colorPackets[0 .. count] )
+		{
+			hashMap[new Color(packet.pixel)] = packet.count;
+		}
+
+		RelinquishMagickMemory(colorPackets);
+
+		return hashMap;
 	}
 
 	/**

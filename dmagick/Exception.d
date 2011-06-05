@@ -26,7 +26,7 @@ import dmagick.c.exception;
  */
 class DMagickException : Exception
 {
-	this(string reason, string description)
+	this(string reason, string description = null)
 	{
 		string message = to!(string)(GetClientName());
 
@@ -93,7 +93,7 @@ class DMagickException : Exception
  */
 class DMagickError : Error
 {
-	this(string reason, string description)
+	this(string reason, string description = null)
 	{
 		string message = to!(string)(GetClientName());
 
