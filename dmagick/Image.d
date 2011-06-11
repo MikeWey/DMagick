@@ -457,8 +457,8 @@ class Image
 		const(Image) overlay,
 		int srcPercentage,
 		int dstPercentage,
-		ssize_t xOffset = 0,
-		ssize_t yOffset = 0)
+		ssize_t xOffset,
+		ssize_t yOffset)
 	{
 		SetImageArtifact(imageRef, "compose:args",
 			toStringz(std.string.format("%s,%s", srcPercentage, dstPercentage)));
@@ -711,6 +711,56 @@ class Image
 			ColorMatrixImage(imageRef, kernelInfo, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Compare current image with another image. Sets meanErrorPerPixel,
+	 * normalizedMaxError , and normalizedMeanError in the current image.
+	 * false is returned if the images are identical. An ErrorOption
+	 * exception is thrown if the reference image columns, rows, colorspace,
+	 * or matte differ from the current image.
+	 */
+	bool compare(const(Image) referenceImage)
+	{
+		bool isEqual = IsImagesEqual(imageRef, referenceImage.ImageRef) == 1;
+		DMagickException.throwException(&(imageRef.exception));
+
+		return isEqual;
+	}
+
+	/**
+	 * Composites dest onto this image using the specified composite operator.
+	 *
+	 * Params:
+	 *     compositeImage =
+	 *               Image to use in to composite operation.
+	 *     compositeOp =
+	 *               The composite operation to use.
+	 *     xOffset = The x-offset of the composited image,
+	 *               measured from the upper-left corner
+	 *               of the image.
+	 *     yOffset = The y-offset of the composited image,
+	 *               measured from the upper-left corner
+	 *               of the image.
+	 *     gravity = The gravity that defines the location of the
+	 *               location of compositeImage.
+	 */
+	void composite(const(Image) compositeImage, CompositeOperator compositeOp, ssize_t xOffset, ssize_t yOffset)
+	{
+		CompositeImage(imageRef, compositeOp, overlay.imageRef, xOffset, yOffset);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	///ditto
+	void composite(const(Image) compositeImage, CompositeOperator compositeOp, GravityType gravity = GravityType.NorthWestGravity)
+	{
+		RectangleInfo geometry;
+
+		SetGeometry(overlay.imageRef, &geometry);
+		GravityAdjustGeometry(columns, rows, gravity, &geometry);
+
+		composite(overlay, geometry.x, geometry.y, compositeOp);
 	}
 
 	/**
@@ -2020,7 +2070,7 @@ class Image
 		return imageRef.y_resolution;
 	}
 
-	//Image properties - set via SetImageProterties
+	//Image properties - set via SetImageProperties
 	//Should we implement these as actual properties?
 	//attribute
 	//comment
