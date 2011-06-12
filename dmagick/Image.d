@@ -28,6 +28,7 @@ import dmagick.c.cacheView;
 import dmagick.c.constitute;
 import dmagick.c.colormap;
 import dmagick.c.colorspace;
+import dmagick.c.compare;
 import dmagick.c.composite;
 import dmagick.c.compress;
 import dmagick.c.decorate;
@@ -722,30 +723,32 @@ class Image
 	 */
 	bool compare(const(Image) referenceImage)
 	{
-		bool isEqual = IsImagesEqual(imageRef, referenceImage.ImageRef) == 1;
+		bool isEqual = IsImagesEqual(imageRef, referenceImage.imageRef) == 1;
 		DMagickException.throwException(&(imageRef.exception));
 
-		return isEqual;
+		return false; //isEqual;
 	}
 
 	/**
 	 * Composites dest onto this image using the specified composite operator.
 	 *
 	 * Params:
-	 *     compositeImage =
-	 *               Image to use in to composite operation.
-	 *     compositeOp =
-	 *               The composite operation to use.
-	 *     xOffset = The x-offset of the composited image,
-	 *               measured from the upper-left corner
-	 *               of the image.
-	 *     yOffset = The y-offset of the composited image,
-	 *               measured from the upper-left corner
-	 *               of the image.
-	 *     gravity = The gravity that defines the location of the
-	 *               location of compositeImage.
+	 *     overlay     = Image to use in to composite operation.
+	 *     compositeOp = The composite operation to use.
+	 *     xOffset     = The x-offset of the composited image,
+	 *                   measured from the upper-left corner
+	 *                   of the image.
+	 *     yOffset     = The y-offset of the composited image,
+	 *                   measured from the upper-left corner
+	 *                   of the image.
+	 *     gravity     = The gravity that defines the location of the
+	 *                   location of overlay.
 	 */
-	void composite(const(Image) compositeImage, CompositeOperator compositeOp, ssize_t xOffset, ssize_t yOffset)
+	void composite(
+		const(Image) overlay,
+		CompositeOperator compositeOp,
+		ssize_t xOffset,
+		ssize_t yOffset)
 	{
 		CompositeImage(imageRef, compositeOp, overlay.imageRef, xOffset, yOffset);
 
@@ -753,14 +756,85 @@ class Image
 	}
 
 	///ditto
-	void composite(const(Image) compositeImage, CompositeOperator compositeOp, GravityType gravity = GravityType.NorthWestGravity)
+	void composite(
+		const(Image) overlay,
+		CompositeOperator compositeOp,
+		GravityType gravity = GravityType.NorthWestGravity)
 	{
 		RectangleInfo geometry;
 
 		SetGeometry(overlay.imageRef, &geometry);
 		GravityAdjustGeometry(columns, rows, gravity, &geometry);
 
-		composite(overlay, geometry.x, geometry.y, compositeOp);
+		composite(overlay, compositeOp, geometry.x, geometry.y);
+	}
+
+	/**
+	 * Merge the source and destination images according to the
+	 * formula a*Sc*Dc + b*Sc + c*Dc + d where Sc is the source
+	 * pixel and Dc is the destination pixel.
+	 *
+	 * Params:
+	 *     overlay = Image to use in to composite operation.
+	 *     xOffset = The x-offset of the composited image,
+	 *               measured from the upper-left corner
+	 *               of the image.
+	 *     yOffset = The y-offset of the composited image,
+	 *               measured from the upper-left corner
+	 *               of the image.
+	 *     gravity = The gravity that defines the location of the
+	 *               location of overlay.
+	 */
+	void composite(
+		const(Image) overlay,
+		double a,
+		double b,
+		double c,
+		double d,
+		ssize_t xOffset,
+		ssize_t yOffset)
+	{
+		SetImageArtifact(imageRef, "compose:args",
+			toStringz(std.string.format("%s,%s,%s,%s", a, b, c, d)));
+		scope(exit) RemoveImageArtifact(imageRef, "compose:args");
+
+		composite(overlay, CompositeOperator.MathematicsCompositeOp, xOffset, yOffset);
+	}
+
+	///ditto
+	void composite(
+		const(Image) overlay,
+		double a,
+		double b,
+		double c,
+		double d,
+		GravityType gravity = GravityType.NorthWestGravity)
+	{
+		RectangleInfo geometry;
+
+		SetGeometry(overlay.imageRef, &geometry);
+		GravityAdjustGeometry(columns, rows, gravity, &geometry);
+
+		composite(overlay, a, b, c, d, geometry.x, geometry.y);
+	}
+
+	/**
+	 * Composites multiple copies of the source image across and down
+	 * the image, producing the same results as ImageMagick's composite
+	 * command with the -tile option.
+	 *
+	 * Params:
+	 *     overlay     = Image to use in to composite operation.
+	 *     compositeOp = The composite operation to use.
+	 */
+	void compositeTiled(const(Image) overlay, CompositeOperator compositeOp)
+	{
+		SetImageArtifact(imageRef, "compose:outside-overlay", "false");
+		scope(exit) RemoveImageArtifact(imageRef, "compose:outside-overlay");
+
+		for ( size_t y = 0; y < rows; y += overlay.rows )
+			for ( size_t x = 0; x < columns; x += overlay.columns )
+				composite(overlay, compositeOp, x, y);
 	}
 
 	/**
