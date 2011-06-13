@@ -47,6 +47,7 @@ import dmagick.c.memory;
 import dmagick.c.morphology;
 import dmagick.c.pixel;
 import dmagick.c.profile;
+import dmagick.c.quantize;
 import dmagick.c.quantum;
 import dmagick.c.resample;
 import dmagick.c.resize;
@@ -726,7 +727,7 @@ class Image
 		bool isEqual = IsImagesEqual(imageRef, referenceImage.imageRef) == 1;
 		DMagickException.throwException(&(imageRef.exception));
 
-		return false; //isEqual;
+		return isEqual;
 	}
 
 	/**
@@ -748,9 +749,10 @@ class Image
 		const(Image) overlay,
 		CompositeOperator compositeOp,
 		ssize_t xOffset,
-		ssize_t yOffset)
+		ssize_t yOffset,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
-		CompositeImage(imageRef, compositeOp, overlay.imageRef, xOffset, yOffset);
+		CompositeImageChannel(imageRef, channel, compositeOp, overlay.imageRef, xOffset, yOffset);
 
 		DMagickException.throwException(&(imageRef.exception));
 	}
@@ -759,14 +761,15 @@ class Image
 	void composite(
 		const(Image) overlay,
 		CompositeOperator compositeOp,
-		GravityType gravity = GravityType.NorthWestGravity)
+		GravityType gravity = GravityType.NorthWestGravity,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		RectangleInfo geometry;
 
 		SetGeometry(overlay.imageRef, &geometry);
 		GravityAdjustGeometry(columns, rows, gravity, &geometry);
 
-		composite(overlay, compositeOp, geometry.x, geometry.y);
+		composite(overlay, compositeOp, geometry.x, geometry.y, channel);
 	}
 
 	/**
@@ -792,13 +795,14 @@ class Image
 		double c,
 		double d,
 		ssize_t xOffset,
-		ssize_t yOffset)
+		ssize_t yOffset,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		SetImageArtifact(imageRef, "compose:args",
 			toStringz(std.string.format("%s,%s,%s,%s", a, b, c, d)));
 		scope(exit) RemoveImageArtifact(imageRef, "compose:args");
 
-		composite(overlay, CompositeOperator.MathematicsCompositeOp, xOffset, yOffset);
+		composite(overlay, CompositeOperator.MathematicsCompositeOp, xOffset, yOffset, channel);
 	}
 
 	///ditto
@@ -808,14 +812,15 @@ class Image
 		double b,
 		double c,
 		double d,
-		GravityType gravity = GravityType.NorthWestGravity)
+		GravityType gravity = GravityType.NorthWestGravity,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		RectangleInfo geometry;
 
 		SetGeometry(overlay.imageRef, &geometry);
 		GravityAdjustGeometry(columns, rows, gravity, &geometry);
 
-		composite(overlay, a, b, c, d, geometry.x, geometry.y);
+		composite(overlay, a, b, c, d, geometry.x, geometry.y, channel);
 	}
 
 	/**
@@ -827,14 +832,17 @@ class Image
 	 *     overlay     = Image to use in to composite operation.
 	 *     compositeOp = The composite operation to use.
 	 */
-	void compositeTiled(const(Image) overlay, CompositeOperator compositeOp)
+	void compositeTiled(
+		const(Image) overlay,
+		CompositeOperator compositeOp,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		SetImageArtifact(imageRef, "compose:outside-overlay", "false");
 		scope(exit) RemoveImageArtifact(imageRef, "compose:outside-overlay");
 
 		for ( size_t y = 0; y < rows; y += overlay.rows )
 			for ( size_t x = 0; x < columns; x += overlay.columns )
-				composite(overlay, compositeOp, x, y);
+				composite(overlay, compositeOp, x, y, channel);
 	}
 
 	/**
@@ -1419,6 +1427,16 @@ class Image
 
 				foreach ( i; oldSize..img.colormapSize)
 					this[i] = colors[i];
+			}
+
+			/**
+			 * compresses the colormap by removing any
+			 * duplicate or unused color entries.
+			 */
+			void compress()
+			{
+				CompressImageColormap(img.imageRef);
+				DMagickException.throwException(&(img.imageRef.exception));
 			}
 
 			size_t size()
