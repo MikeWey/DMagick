@@ -744,6 +744,7 @@ class Image
 	 *                   of the image.
 	 *     gravity     = The gravity that defines the location of the
 	 *                   location of overlay.
+	 *     channel     = One or more channels to compose.
 	 */
 	void composite(
 		const(Image) overlay,
@@ -787,6 +788,7 @@ class Image
 	 *               of the image.
 	 *     gravity = The gravity that defines the location of the
 	 *               location of overlay.
+	 *     channel = One or more channels to compose.
 	 */
 	void composite(
 		const(Image) overlay,
@@ -831,6 +833,7 @@ class Image
 	 * Params:
 	 *     overlay     = Image to use in to composite operation.
 	 *     compositeOp = The composite operation to use.
+	 *     channel     = One or more channels to compose.
 	 */
 	void compositeTiled(
 		const(Image) overlay,
@@ -843,6 +846,96 @@ class Image
 		for ( size_t y = 0; y < rows; y += overlay.rows )
 			for ( size_t x = 0; x < columns; x += overlay.columns )
 				composite(overlay, compositeOp, x, y, channel);
+	}
+
+	/**
+	 * enhances the intensity differences between the lighter and
+	 * darker elements of the image.
+	 *
+	 * Params:
+	 *     sharpen = If true increases the image contrast otherwise
+	 *               the contrast is reduced.
+	 */
+	void contrast(bool sharpen = false)
+	{
+		ContrastImage(imageRef, sharpen);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * This is a simple image enhancement technique that attempts to
+	 * improve the contrast in an image by `stretching' the range of
+	 * intensity values it contains to span a desired range of values.
+	 * It differs from the more sophisticated histogram equalization in
+	 * that it can only apply a linear scaling function to the image pixel
+	 * values. As a result the `enhancement' is less harsh.
+	 *
+	 * Params:
+	 *     blackPoint = Black out at most this many pixels.
+	 *                  Specify an apsulute number of pixels or an
+	 *                  percentage by passing a value between 1 and 0
+	 *     whitePoint = Burn at most this many pixels.
+	 *                  Specify an apsulute number of pixels or an
+	 *                  percentage by passing a value between 1 and 0
+	 *     channel    = One or more channels to adjust.
+	 */
+	void contrastStretch(double blackPoint, double whitePoint, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		if ( blackPoint < 1 )
+			blackPoint *= QuantumRange/100;
+		if ( whitePoint < 1 )
+			whitePoint *= QuantumRange/100;
+
+		ContrastStretchImageChannel(imageRef, channel, blackPoint, whitePoint);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Applies a custom convolution kernel to the image.
+	 * See_Also: $(LINK2 http://www.dai.ed.ac.uk/HIPR2/convolve.htm
+	 *         Convolution in the Hypermedia Image Processing Reference).
+	 */
+	void convolve(double[][] matrix, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		double[] kernel = new double[matrix.length * matrix[0].length];
+
+		foreach ( i, row; matrix )
+		{
+			size_t offset = i * row.length;
+
+			kernel[offset .. offset+row.length] = row;
+		}
+
+		MagickCoreImage* image =
+			ConvolveImageChannel(imageRef, channel, matrix.length, kernel.ptr,  DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Extract a region of the image starting at the offset defined by
+	 * geometry.  Region must be fully defined, and no special handling
+	 * of geometry flags is performed.
+	 */
+	void crop(Geometry geometry)
+	{
+		RectangleInfo rectangle = geometry.rectangleInfo;
+
+		MagickCoreImage* image =
+			CropImage(imageRef, &rectangle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * displaces an image's colormap by a given number of positions.
+	 * If you cycle the colormap a number of times you can produce
+	 * a psychodelic effect.
+	 */
+	void cycleColormap(ssize_t amount)
+	{
+		CycleColormapImage(imageRef, amount);
+		DMagickException.throwException(&(imageRef.exception));
 	}
 
 	/**
@@ -932,8 +1025,10 @@ class Image
 		DrawInfo* drawInfo = options.drawInfo;
 
 		copyString(drawInfo.text, text);
+		scope(exit) copyString(drawInfo.text, null);
+
 		GetMultilineTypeMetrics(imageRef, drawInfo, &metric);
-		copyString(drawInfo.text, null);
+		DMagickException.throwException(&(imageRef.exception));
 
 		return metric;
 	}
