@@ -442,7 +442,7 @@ class Image
 
 	/**
 	 * Adds the overlay image to the target image according to
-	 * srcpercent and dstpercent.
+	 * srcPercent and dstPercent.
 	 * 
 	 * This method corresponds to the -blend option of ImageMagick's
 	 * composite command.
@@ -464,11 +464,9 @@ class Image
 	{
 		SetImageArtifact(imageRef, "compose:args",
 			toStringz(std.string.format("%s,%s", srcPercentage, dstPercentage)));
-
 		scope(exit) RemoveImageArtifact(imageRef, "compose:args");
 
-		CompositeImage(imageRef, CompositeOperator.BlendCompositeOp, overlay.imageRef, xOffset, yOffset);
-		DMagickException.throwException(&(imageRef.exception));
+		composite(overlay, CompositeOperator.BlendCompositeOp, xOffset, yOffset);
 	}
 
 	///ditto
@@ -882,9 +880,9 @@ class Image
 	void contrastStretch(double blackPoint, double whitePoint, ChannelType channel = ChannelType.DefaultChannels)
 	{
 		if ( blackPoint < 1 )
-			blackPoint *= QuantumRange/100;
+			blackPoint *= QuantumRange;
 		if ( whitePoint < 1 )
-			whitePoint *= QuantumRange/100;
+			whitePoint *= QuantumRange;
 
 		ContrastStretchImageChannel(imageRef, channel, blackPoint, whitePoint);
 		DMagickException.throwException(&(imageRef.exception));
@@ -936,6 +934,142 @@ class Image
 	{
 		CycleColormapImage(imageRef, amount);
 		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Decipher an enciphered image.
+	 */
+	void decipher(string passphrase)
+	{
+		DecipherImage(imageRef, toStringz(passphrase), DMagickExceptionInfo());
+	}
+
+	/**
+	 * Straightens an image. A threshold of 40% works for most images.
+	 * 
+	 * Skew is an artifact that occurs in scanned images because of the
+	 * camera being misaligned, imperfections in the scanning or surface,
+	 * or simply because the paper was not placed completely flat when
+	 * scanned.
+	 * 
+	 * Params:
+	 *     threshold     = Specify an apsulute number of pixels or an
+	 *                     percentage by passing a value between 1 and 0.
+	 *     autoCropWidth = Specify a value for this argument to cause the
+	 *                     deskewed image to be auto-cropped.
+	 *                     The argument is the pixel width of the
+	 *                     image background (e.g. 40).
+	 *                     A width of 0 disables auto cropping.
+	 */
+	void deskew(double threshold = 0.40, size_t autoCropWidth = 0)
+	{
+		if ( autoCropWidth > 0 )
+		{
+			SetImageArtifact(imageRef, "deskew:auto-crop", toStringz(to!(string)(autoCropWidth)) );
+			scope(exit) RemoveImageArtifact(imageRef, "deskew:auto-crop");
+		}
+
+		if ( threshold < 1 )
+			threshold *= QuantumRange;
+
+		MagickCoreImage* image =
+			DeskewImage(imageRef, threshold, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Reduces the speckle noise in an image while perserving
+	 * the edges of the original image.
+	 */
+	void despeckle()
+	{
+		MagickCoreImage* image =
+			DespeckleImage(imageRef, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Display image on screen. 
+	 * $(RED Caution:) if an image format is is not compatible with
+	 * the display visual (e.g. JPEG on a colormapped display)
+	 * then the original image will be altered. Use a copy of the
+	 * original if this is a problem.
+	 */
+	void display()
+	{
+		DisplayImages(options.imageInfo, imageRef);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Composites the overlay image onto this image. The opacity
+	 * of this image is multiplied by dstPercentage and opacity of
+	 * overlay is multiplied by srcPercentage.
+	 * 
+	 * This method corresponds to the -dissolve option
+	 * of ImageMagick's composite command.
+	 * 
+	 * Params:
+	 *     overlay       = The source image for the composite operation.
+	 *     srcPercentage = Percentage for the source image.
+	 *     dstPercentage = Percentage for this image.
+	 *     xOffset       = The x offset to use for the overlay.
+	 *     yOffset       = The y offset to use for the overlay.
+	 *     gravity       = The gravity to use for the overlay.
+	 */
+	void dissolve(
+		const(Image) overlay,
+		int srcPercentage,
+		int dstPercentage,
+		ssize_t xOffset,
+		ssize_t yOffset)
+	{
+		SetImageArtifact(imageRef, "compose:args",
+			toStringz(std.string.format("%s,%s", srcPercentage, dstPercentage)));
+		scope(exit) RemoveImageArtifact(imageRef, "compose:args");
+
+		composite(overlay, CompositeOperator.DissolveCompositeOp, xOffset, yOffset);
+	}
+
+	///ditto
+	void dissolve(
+		const(Image) overlay,
+		int srcPercentage,
+		int dstPercentage,
+		GravityType gravity = GravityType.NorthWestGravity)
+	{
+		RectangleInfo geometry;
+
+		SetGeometry(overlay.imageRef, &geometry);
+		GravityAdjustGeometry(columns, rows, gravity, &geometry);
+
+		dissolve(overlay, srcPercentage, dstPercentage, geometry.x, geometry.y);
+	}
+
+	/**
+	 * Distort an image using the specified distortion type and its
+	 * required arguments. This method is equivalent to ImageMagick's
+	 * -distort option.
+	 * 
+	 * Params:
+	 *     method    = Distortion method to use.
+	 *     arguments = An array of numbers. The size of the array
+	 *                 depends on the distortion type.
+	 *     bestfit   = If enabled, and the distortion allows it,
+	 *                 the destination image is adjusted to ensure 
+	 *                 the whole source image will just fit within
+	 *                 the final destination image, which will be
+	 *                 sized and offset accordingly.
+	 */
+	void distort(DistortImageMethod method, double[] arguments, bool bestfit = false)
+	{
+		MagickCoreImage* image =
+			DistortImage(imageRef, method, arguments.length, arguments.ptr, bestfit, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
 	}
 
 	/**
@@ -1906,12 +2040,7 @@ class Image
 	///ditto
 	void[] iccColorProfile() const
 	{
-		const(StringInfo)* profile = GetImageProfile(imageRef, "icm");
-
-		if ( profile is null )
-			return null;
-
-		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)].dup;
+		return profile("icm");
 	}
 
 	/**
@@ -1945,12 +2074,7 @@ class Image
 	///ditto
 	void[] iptcProfile() const
 	{
-		const(StringInfo)* profile = GetImageProfile(imageRef, "iptc");
-
-		if ( profile is null )
-			return null;
-
-		return GetStringInfoDatum(profile)[0 .. GetStringInfoLength(profile)].dup;
+		return profile("iptc");
 	}
 
 	/**
