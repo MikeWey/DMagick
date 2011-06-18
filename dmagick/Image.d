@@ -25,6 +25,7 @@ import dmagick.c.annotate;
 import dmagick.c.attribute;
 import dmagick.c.blob;
 import dmagick.c.cacheView;
+import dmagick.c.cipher;
 import dmagick.c.constitute;
 import dmagick.c.colormap;
 import dmagick.c.colorspace;
@@ -32,6 +33,8 @@ import dmagick.c.compare;
 import dmagick.c.composite;
 import dmagick.c.compress;
 import dmagick.c.decorate;
+import dmagick.c.display;
+import dmagick.c.distort;
 import dmagick.c.draw;
 import dmagick.c.effect;
 import dmagick.c.enhance;
@@ -190,7 +193,7 @@ class Image
 	 * The adaptiveBlur method blurs the image with a Gaussian operator
 	 * of the given radius and standard deviation (sigma).
 	 * For reasonable results, radius should be larger than sigma.
-	 * Use a radius of 0 and adaptive_blur selects a suitable radius for you.
+	 * Use a radius of 0 and adaptiveBlur selects a suitable radius for you.
 	 *
 	 * Params:
 	 *     radius  = The radius of the Gaussian in pixels,
@@ -648,8 +651,8 @@ class Image
 	 * which includes the slop, offset, and power for each of
 	 * the RGB channels as well as the saturation.
 	 * 
-	 * See_Also: $(LINK2 http://http://en.wikipedia.org/wiki/ASC_CDL
-	 *         Wikipedia: ASC CDL).
+	 * See_Also: $(LINK2 http://http://en.wikipedia.org/wiki/ASC_CDL,
+	 *         Wikipedia ASC CDL).
 	 */
 	void colorDecisionList(string colorCorrectionCollection)
 	{
@@ -890,8 +893,8 @@ class Image
 
 	/**
 	 * Applies a custom convolution kernel to the image.
-	 * See_Also: $(LINK2 http://www.dai.ed.ac.uk/HIPR2/convolve.htm
-	 *         Convolution in the Hypermedia Image Processing Reference).
+	 * See_Also: $(LINK2 http://www.dai.ed.ac.uk/HIPR2/convolve.htm,
+	 *        Convolution in the Hypermedia Image Processing Reference).
 	 */
 	void convolve(double[][] matrix, ChannelType channel = ChannelType.DefaultChannels)
 	{
@@ -961,7 +964,7 @@ class Image
 	 *                     image background (e.g. 40).
 	 *                     A width of 0 disables auto cropping.
 	 */
-	void deskew(double threshold = 0.40, size_t autoCropWidth = 0)
+	void deskew(double threshold = 0.4, size_t autoCropWidth = 0)
 	{
 		if ( autoCropWidth > 0 )
 		{
@@ -991,7 +994,52 @@ class Image
 	}
 
 	/**
-	 * Display image on screen. 
+	 * Uses displacementMap to move color from img to the output image.
+	 * 
+	 * This method corresponds to the -displace option of ImageMagick's
+	 * composite command.
+	 * 
+	 * Params:
+	 *     displacementMap = 
+	 *                  The source image for the composite operation.
+	 *     xAmplitude = The maximum displacement on the x-axis.
+	 *     yAmplitude = The maximum displacement on the y-axis.
+	 *     xOffset    = The x offset to use.
+	 *     yOffset    = The y offset to use.
+	 *     gravity    = The gravity to use.
+	 */
+	void displace(
+		const(Image) displacementMap,
+		int xAmplitude,
+		int yAmplitude,
+		ssize_t xOffset,
+		ssize_t yOffset)
+	{
+		SetImageArtifact(imageRef, "compose:args",
+			toStringz(std.string.format("%s,%s", xAmplitude, yAmplitude)));
+		scope(exit) RemoveImageArtifact(imageRef, "compose:args");
+
+		composite(displacementMap, CompositeOperator.DisplaceCompositeOp, xOffset, yOffset);
+	}
+
+	///ditto
+	void displace(
+		const(Image) overlay,
+		int srcPercentage,
+		int dstPercentage,
+		GravityType gravity = GravityType.NorthWestGravity)
+	{
+		RectangleInfo geometry;
+
+		SetGeometry(overlay.imageRef, &geometry);
+		GravityAdjustGeometry(columns, rows, gravity, &geometry);
+
+		displace(overlay, srcPercentage, dstPercentage, geometry.x, geometry.y);
+	}	
+
+	/**
+	 * Display image on screen.
+	 * 
 	 * $(RED Caution:) if an image format is is not compatible with
 	 * the display visual (e.g. JPEG on a colormapped display)
 	 * then the original image will be altered. Use a copy of the
@@ -1047,7 +1095,7 @@ class Image
 		GravityAdjustGeometry(columns, rows, gravity, &geometry);
 
 		dissolve(overlay, srcPercentage, dstPercentage, geometry.x, geometry.y);
-	}
+	}	
 
 	/**
 	 * Distort an image using the specified distortion type and its
@@ -1149,7 +1197,7 @@ class Image
 	 * where resolution is in dots-per-inch (DPI). This means that at the
 	 * default image resolution, there is one pixel per point.
 	 * See_Also:
-	 *     $(LINK2 http://freetype.sourceforge.net/freetype2/docs/glyphs/index.html
+	 *     $(LINK2 http://freetype.sourceforge.net/freetype2/docs/glyphs/index.html,
 	 *         FreeType Glyph Conventions) for a detailed description of
 	 *     font metrics related issues.
 	 */
@@ -1265,6 +1313,7 @@ class Image
 	 *     storage = The pixel Staroage type (CharPixel,
 	 *               ShortPixel, IntegerPixel, FloatPixel, or DoublePixel).
 	 *     pixels  = The pixel data.
+	 * Bugs: DMD bug 2972 prevents readpixels from being named just read.
 	 */
 	void read(size_t width, size_t height, string map, StorageType storage, void[] pixels)
 	{
