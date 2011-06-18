@@ -1121,6 +1121,95 @@ class Image
 	}
 
 	/**
+	 * Finds edges in an image.
+	 * 
+	 * Params:
+	 *     radius = the radius of the convolution filter.
+	 *              If 0 a suitable default is selected.
+	 */
+	void edge(double radius = 0)
+	{
+		MagickCoreImage* image =
+			EdgeImage(imageRef, radius, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Emboss image (hilight edges with 3D effect).
+	 * 
+	 * Params:
+	 *     radius = The radius of the Gaussian, in pixels,
+	 *              not counting the center pixel.
+	 *     sigma  = The standard deviation of the Laplacian, in pixels.
+	 */
+	void emboss(double radius = 0, double sigma = 1)
+	{
+		MagickCoreImage* image =
+			EmbossImage(imageRef, radius, sigma, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Encipher an image.
+	 */
+	void encipher(string passphrase)
+	{
+		EncipherImage(imageRef, toStringz(passphrase), DMagickExceptionInfo());
+	}
+
+	/**
+	 * Applies a digital filter that improves the quality of a noisy image.
+	 */
+	void enhance()
+	{
+		MagickCoreImage* image =
+			EnhanceImage(imageRef, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Applies a histogram equalization to the image.
+	 */
+	void equalize(ChannelType channel = ChannelType.DefaultChannels)
+	{
+		EqualizeImageChannel(imageRef, channel);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Initializes the image pixels to the image background color.
+	 */
+	void erase()
+	{
+		SetImageBackgroundColor(imageRef);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * This method is very similar to crop. It extracts the rectangle
+	 * specified by its arguments from the image and returns it as a new
+	 * image. However, excerpt does not respect the virtual page offset and
+	 * does not update the page offset and is more efficient than cropping.
+	 * 
+	 * It is the caller's responsibility to ensure that the rectangle lies
+	 * entirely within the original image.
+	 */
+	void excerpt(Geometry geometry)
+	{
+		RectangleInfo rectangle = geometry.rectangleInfo;
+
+		MagickCoreImage* image =
+			ExcerptImage(imageRef, &rectangle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
 	 * Extracts the pixel data from the specified rectangle.
 	 *
 	 * Params:
@@ -1177,6 +1266,25 @@ class Image
 		ExportImagePixels(imageRef, xOffset, yOffset, width, height, map, storage, pixels.ptr, DMagickExceptionInfo());
 
 		return pixels;
+	}
+
+	/**
+	 * If the Geometry is larger than this Image, extends the image to
+	 * the specified geometry. And the new pixels are set to the
+	 * background color. If the Geometry is smaller than this image
+	 * crops the image.
+	 * 
+	 * The new image is composed over the background using
+	 * the composite operator specified by the compose property.
+	 */
+	void extent(Geometry geometry)
+	{
+		RectangleInfo rectangle = geometry.rectangleInfo;
+
+		MagickCoreImage* image =
+			ExtentImage(imageRef, &rectangle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
 	}
 
 	/**
