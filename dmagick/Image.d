@@ -20,44 +20,8 @@ import dmagick.Geometry;
 import dmagick.Options;
 import dmagick.Utils;
 
-import dmagick.c.artifact;
-import dmagick.c.annotate;
-import dmagick.c.attribute;
-import dmagick.c.blob;
-import dmagick.c.cacheView;
-import dmagick.c.cipher;
-import dmagick.c.constitute;
-import dmagick.c.colormap;
-import dmagick.c.colorspace;
-import dmagick.c.compare;
-import dmagick.c.composite;
-import dmagick.c.compress;
-import dmagick.c.decorate;
-import dmagick.c.display;
-import dmagick.c.distort;
-import dmagick.c.draw;
-import dmagick.c.effect;
-import dmagick.c.enhance;
-import dmagick.c.fx;
-import dmagick.c.geometry;
-import dmagick.c.histogram;
-import dmagick.c.image;
-import dmagick.c.layer;
-import dmagick.c.magick;
-import dmagick.c.magickString;
-import dmagick.c.magickType;
-import dmagick.c.memory;
-import dmagick.c.morphology;
-import dmagick.c.pixel;
-import dmagick.c.profile;
-import dmagick.c.quantize;
-import dmagick.c.quantum;
-import dmagick.c.resample;
-import dmagick.c.resize;
-import dmagick.c.resource;
-import dmagick.c.shear;
-import dmagick.c.transform;
-import dmagick.c.threshold;
+//Import all translated c headers.
+import dmagick.c.MagickCore;
 
 /**
  * The image
@@ -1283,6 +1247,74 @@ class Image
 
 		MagickCoreImage* image =
 			ExtentImage(imageRef, &rectangle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * This interesting method searches for a rectangle in the image that
+	 * is similar to the target. For the rectangle to be similar each pixel
+	 * in the rectangle must match the corresponding pixel in the target
+	 * image within the range specified by the fuzz property of this image
+	 * and the target image.
+	 *
+	 * Params:
+	 *     target  = An image that forms the target of the search.
+	 *     xOffset = The starting x position to search for a match.
+	 *     yOffset = The starting y position to search for a match.
+	 * Returns: The size and location of the match.
+	 */
+	Geometry findSimilarRegion(Image target, ssize_t xOffset, ssize_t yOffset)
+	{
+		IsImageSimilar(imageRef, target.imageRef, &xOffset, &yOffset, DMagickExceptionInfo());
+
+		return Geometry(target.columns, target.rows, xOffset, yOffset);
+	}
+
+	/**
+	 * creates a vertical mirror image by reflecting the pixels
+	 * around the central x-axis.
+	 */
+	void flip()
+	{
+		FlipImage(imageRef, DMagickExceptionInfo());
+	}
+
+	/**
+	 * creates a horizontal mirror image by reflecting the pixels
+	 * around the central y-axis.
+	 */
+	void flop()
+	{
+		FlopImage(imageRef, DMagickExceptionInfo());
+	}
+
+	/**
+	 * Adds a simulated 3D border.
+	 * The matteColor is used to draw the frame.
+	 * 
+	 * Params:
+	 *     geometry = The size portion indicates the width and height of
+	 *                the frame. If no offsets are given then the border
+	 *                added is a solid color. Offsets x and y, if present,
+	 *                specify that the width and height of the border is
+	 *                partitioned to form an outer bevel of thickness x
+	 *                pixels and an inner bevel of thickness y pixels.
+	 *                Negative offsets make no sense as frame arguments.
+	 */
+	void frame(Geometry geometry)
+	{
+		FrameInfo frameInfo;
+
+		frameInfo.width       = columns + ( 2 * geometry.width  );
+		frameInfo.height      = rows    + ( 2 * geometry.height );
+		frameInfo.x           = geometry.width;
+		frameInfo.y           = geometry.height;
+		frameInfo.inner_bevel = geometry.yOffset;
+		frameInfo.outer_bevel = geometry.xOffset;
+
+		MagickCoreImage* image =
+			FrameImage(imageRef, &frameInfo, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
