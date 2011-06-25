@@ -1262,6 +1262,7 @@ class Image
 	 *     target  = An image that forms the target of the search.
 	 *     xOffset = The starting x position to search for a match.
 	 *     yOffset = The starting y position to search for a match.
+	 * 
 	 * Returns: The size and location of the match.
 	 */
 	Geometry findSimilarRegion(Image target, ssize_t xOffset, ssize_t yOffset)
@@ -1278,6 +1279,99 @@ class Image
 	void flip()
 	{
 		FlipImage(imageRef, DMagickExceptionInfo());
+	}
+
+	/**
+	 * Changes the color value of any pixel that matches target and is an
+	 * immediate neighbor. To the fillColor or fillPattern set for this
+	 * image. If fillToBorder is true, the color value is changed
+	 * for any neighbor pixel that does not match the borderColor.
+	 * 
+	 * By default target must match a particular pixel color exactly.
+	 * However, in many cases two colors may differ by a small amount.
+	 * The fuzz property of image defines how much tolerance is acceptable
+	 * to consider two colors as the same. For example, set fuzz to 10 and
+	 * the color red at intensities of 100 and 102 respectively are now
+	 * interpreted as the same color for the purposes of the floodfill.
+	 * 
+	 * Params:
+	 *     xOffset      = Starting x location for the filling.
+	 *     xOffset      = Starting y location for the filling.
+	 *     fillToBorder = If true fill untill the borderColor, else only
+	 *                    the target color if affected.
+	 *     channel      = The affected channels.
+	 */
+	void floodFill(ssize_t xOffset, ssize_t yOffset, bool fillToBorder = false, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickPixelPacket target;
+
+		GetMagickPixelPacket(imageRef, &target);
+
+		if ( fillToBorder )
+		{
+			target.red   = borderColor.redQuantum;
+			target.green = borderColor.greenQuantum;
+			target.blue  = borderColor.blueQuantum;
+		}
+		else
+		{
+			PixelPacket packet;
+			GetOneAuthenticPixel(imageRef, xOffset, yOffset, &packet, DMagickExceptionInfo());
+
+			target.red   = packet.red;
+			target.green = packet.green;
+			target.blue  = packet.blue;
+		}
+
+		FloodfillPaintImage(imageRef, channel, options.drawInfo, &target, xOffset, yOffset, fillToBorder);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Fill the image like floodFill but use the specified colors.
+	 *
+	 * Params:
+	 *     xOffset     = Starting x location for the filling.
+	 *     xOffset     = Starting y location for the filling.
+	 *     fillColor   = Fill color to use.
+	 *     borderColor = borderColor to use.
+	 *     channel     = The affected channels.
+	 */
+	void floodFillColor(ssize_t xOffset, ssize_t yOffset, Color fillColor, Color borderColor = null, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		Color oldFillColor = options.fillColor;
+		options.fillColor = fillColor;
+		scope(exit) options.fillColor = oldFillColor;
+
+		floodFillPattern(xOffset, yOffset, null, borderColor, channel);
+	}
+
+	/**
+	 * Fill the image like floodFill but use the specified
+	 * pattern an borderColor.
+	 *
+	 * Params:
+	 *     xOffset     = Starting x location for the filling.
+	 *     xOffset     = Starting y location for the filling.
+	 *     fillPattern = Fill pattern to use.
+	 *     borderColor = borderColor to use.
+	 *     channel     = The affected channels.
+	 */
+	void floodFillPattern(ssize_t xOffset, ssize_t yOffset, Image fillPattern, Color borderColor = null, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		// Cast away const, so we can temporarily hold
+		// The image and asign it back to the fillPattern. 
+		Image oldFillPattern = cast(Image)options.fillPattern;
+		options.fillPattern = fillPattern;
+		scope(exit) options.fillPattern = oldFillPattern;
+
+		Color oldBorderColor = this.borderColor;
+		this.borderColor = borderColor;
+		scope(exit) this.borderColor = oldBorderColor;
+
+		// If the borderColor !is null, set fillToBorder to true.
+		floodFill(xOffset, yOffset, borderColor !is null, channel);
 	}
 
 	/**
@@ -1315,6 +1409,62 @@ class Image
 
 		MagickCoreImage* image =
 			FrameImage(imageRef, &frameInfo, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Applies a value to the image with an arithmetic, relational, or
+	 * logical operator to an image. Use these operations to lighten or
+	 * darken an image, to increase or decrease contrast in an image, or
+	 * to produce the "negative" of an image.
+	 *
+	 * This method is equivalent to the 
+	 * $(LINK2 http://www.imagemagick.org/script/command-line-options.php#function,
+	 *       convert -function) option.
+	 *
+	 * Params:
+	 *     function = The MagickFunction to use.
+	 *     params   = 
+	 *         An array of values to be used by the function.
+	 *         $(UL $(LI $(B PolynomialFunction)
+	 *             The Polynomial function takes an arbitrary number of
+	 *             parameters, these being the coefficients of a polynomial,
+	 *             in decreasing order of degree. That is, entering
+	 *             [aₙ, aₙ₋₁, ... a₁, a₀] will invoke a polynomial function
+	 *             given by: aₙ uⁿ + aₙ₋₁ uⁿ⁻¹ + ··· a₁ u + a₀, where where
+	 *             u is pixel's original normalized channel value.)
+	 *         $(LI $(B SinusoidFunction)
+	 *             These values are given as one to four parameters, as
+	 *             follows, [freq, phase, amp, bias] if omitted the default
+	 *             values will be used: [1.0, 0.0, 0.5, 0.5].)
+	 *         $(LI $(B ArcsinFunction)
+	 *             These values are given as one to four parameters, as
+	 *             follows, [width, center, range, bias] if omitted the
+	 *             default values will be used: [1.0, 0.5, 1.0, 0.5].)
+	 *         $(LI $(B ArctanFunction)
+	 *             These values are given as one to four parameters, as
+	 *             follows, [slope, center, range, bias] if omitted the
+	 *             default values will be used: [1.0, 0.5, 1.0, 0.5].))
+	 *     channel  = The channels this funtion aplies to.
+	 */
+	void functionImage(MagickFunction funct, double[] params, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		FunctionImageChannel(imageRef, channel, funct, params.length, params.ptr, DMagickExceptionInfo());
+	}
+
+	/**
+	 * Applies a mathematical expression to the specified image.
+	 * 
+	 * See_Aso:
+	 *     $(LINK2 http://www.imagemagick.org/script/fx.php,
+	 *     FX, The Special Effects Image Operator) for a detailed
+	 *     discussion of this option.
+	 */
+	void fx(string expression, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickCoreImage* image =
+			FxImageChannel(imageRef, channel, toStringz(expression), DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
