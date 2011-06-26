@@ -89,7 +89,7 @@ real degreesToRadians(real deg)
 
 
 /**
- * A template struct ot make pointers to ImageMagick structs
+ * A template struct to make pointers to ImageMagick structs
  * reference counted. Excepts a predicate pred which destroys
  * the struct pointer when refCount is 0.
  */

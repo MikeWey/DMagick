@@ -1295,13 +1295,17 @@ class Image
 	 * interpreted as the same color for the purposes of the floodfill.
 	 * 
 	 * Params:
-	 *     xOffset      = Starting x location for the filling.
-	 *     xOffset      = Starting y location for the filling.
+	 *     xOffset      = Starting x location for the operation.
+	 *     xOffset      = Starting y location for the operation.
 	 *     fillToBorder = If true fill untill the borderColor, else only
 	 *                    the target color if affected.
 	 *     channel      = The affected channels.
 	 */
-	void floodFill(ssize_t xOffset, ssize_t yOffset, bool fillToBorder = false, ChannelType channel = ChannelType.DefaultChannels)
+	void floodFill(
+		ssize_t xOffset,
+		ssize_t yOffset,
+		bool fillToBorder = false,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		MagickPixelPacket target;
 
@@ -1332,13 +1336,18 @@ class Image
 	 * Fill the image like floodFill but use the specified colors.
 	 *
 	 * Params:
-	 *     xOffset     = Starting x location for the filling.
-	 *     xOffset     = Starting y location for the filling.
+	 *     xOffset     = Starting x location for the operation.
+	 *     xOffset     = Starting y location for the operation.
 	 *     fillColor   = Fill color to use.
 	 *     borderColor = borderColor to use.
 	 *     channel     = The affected channels.
 	 */
-	void floodFillColor(ssize_t xOffset, ssize_t yOffset, Color fillColor, Color borderColor = null, ChannelType channel = ChannelType.DefaultChannels)
+	void floodFillColor(
+		ssize_t xOffset,
+		ssize_t yOffset,
+		Color fillColor,
+		Color borderColor = null,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		Color oldFillColor = options.fillColor;
 		options.fillColor = fillColor;
@@ -1352,13 +1361,18 @@ class Image
 	 * pattern an borderColor.
 	 *
 	 * Params:
-	 *     xOffset     = Starting x location for the filling.
-	 *     xOffset     = Starting y location for the filling.
+	 *     xOffset     = Starting x location for the operation.
+	 *     xOffset     = Starting y location for the operation.
 	 *     fillPattern = Fill pattern to use.
 	 *     borderColor = borderColor to use.
 	 *     channel     = The affected channels.
 	 */
-	void floodFillPattern(ssize_t xOffset, ssize_t yOffset, Image fillPattern, Color borderColor = null, ChannelType channel = ChannelType.DefaultChannels)
+	void floodFillPattern(
+		ssize_t xOffset,
+		ssize_t yOffset,
+		Image fillPattern,
+		Color borderColor = null,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		// Cast away const, so we can temporarily hold
 		// The image and asign it back to the fillPattern. 
@@ -2737,12 +2751,12 @@ class Image
  */
 version (Windows)
 {
-	static this()
+	shared static this()
 	{
 			MagickCoreGenesis(toStringz(Runtime.args[0]) , false);
 	}
 
-	static ~this()
+	shared static ~this()
 	{
 			MagickCoreTerminus();
 	}

@@ -48,16 +48,16 @@ RANLIB=ranlib
 #######################################################################
 
 LIBNAME_DMAGICK = libdmagick.a
-SOURCES_DMAGICK = $(shell find \
-        dmagick \
-        -name '*.d' )
-OBJECTS_DMAGICK = $(shell echo $(SOURCES_DMAGICK) | sed -e 's/\.d/\.o/g')
+SOURCES_DMAGICK = $(sort $(wildcard dmagick/*.d)) \
+                  $(sort $(wildcard dmagick/c/*.d))
+
+OBJECTS_DMAGICK = $(patsubst %.d,%.o,$(SOURCES_DMAGICK))
+DOCS_DMAGICK    = $(patsubst dmagick/%.d,docs/%.html,$(SOURCES_DMAGICK))
 
 #######################################################################
 
 lib: $(LIBNAME_DMAGICK)
 
-$(LIBNAME_DMAGICK): IMPORTS=-Idmagick
 $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 	$(AR) rcs $@ $^
 	$(RANLIB) $@
@@ -66,6 +66,15 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 
 %.o : %.d
 	$(DC) $(DCFLAGS) $(IMPORTS) -c $< $(output)
+
+#######################################################################
+
+docs: $(DOCS_DMAGICK)
+
+#######################################################################
+
+docs/%.html : dmagick/%.d
+	$(DC) $(DCFLAGS) $(IMPORTS) -o- $< -Df$@
 
 #######################################################################
 
@@ -80,4 +89,4 @@ uninstall:
 	rm -f $(DESTDIR)$(prefix)/lib/$(LIBNAME_DMAGICK)
 
 clean:
-	-rm -f $(LIBNAME_DMAGICK) $(OBJECTS_DMAGICK)
+	-rm -rf $(LIBNAME_DMAGICK) $(OBJECTS_DMAGICK) docs
