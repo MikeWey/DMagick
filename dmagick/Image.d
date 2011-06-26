@@ -148,7 +148,10 @@ class Image
 	{
 		options = new Options();
 
-		read(columns, rows, map, storage, pixels);
+		MagickCoreImage* image = 
+			ConstituteImage(columns, rows, toStringz(map), storage, pixels.ptr, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
 	}
 
 	/**
@@ -1177,57 +1180,25 @@ class Image
 	 * Extracts the pixel data from the specified rectangle.
 	 *
 	 * Params:
-	 *     width   = Width in pixels of the region to extract.
-	 *     height  = Height in pixels of the region to extract.
-	 *     xOffset = Horizontal ordinate of left-most coordinate
-	 *               of region to extract.
-	 *     yOffset = Vertical ordinate of top-most coordinate of
-	 *               region to extract.
-	 *     map     = This character string can be any combination
-	 *               or order of R = red, G = green, B = blue, A = 
-	 *               alpha, C = cyan, Y = yellow, M = magenta, and K = black.
-	 *               The ordering reflects the order of the pixels in
-	 *               the supplied pixel array.
+	 *     area = Area to extract.
+	 *     map  = This character string can be any combination
+	 *            or order of R = red, G = green, B = blue, A = 
+	 *            alpha, C = cyan, Y = yellow, M = magenta, and K = black.
+	 *            The ordering reflects the order of the pixels in
+	 *            the supplied pixel array.
 	 * 
 	 * Returns: An array of values containing the pixel components as
 	 *          defined by the map parameter and the Type.
 	 */
-	T[] exportPixels(T)
-		(size_t width, size_t height, ssize_t xOffset = 0, ssize_t yOffset = 0, string map = "RGBA") const
+	T[] exportPixels(T)(Geometry area, string map = "RGBA") const
 	{
-		StorageType storage;
-		void[] pixels = new T[width*height];
+		StorageType storage = getStorageType!(T);
+		void[] pixels = new T[area.width*area.height];
 
-		static if ( is( T == byte) )
-		{
-			storage = CharPixel;
-		}
-		else static if ( is( T == short) )
-		{
-			storage = ShortPixel;
-		}
-		else static if ( is( T == int) )
-		{
-			storage = IntegerPixel;
-		}
-		else static if ( is( T == long) )
-		{
-			storage = LongPixel;
-		}
-		else static if ( is( T == float) )
-		{
-			storage = FloatPixel;
-		}
-		else static if ( is( T == double) )
-		{
-			storage = DoublePixel;
-		}
-		else
-		{
-			assert(false, "Unsupported type");
-		}
-
-		ExportImagePixels(imageRef, xOffset, yOffset, width, height, map, storage, pixels.ptr, DMagickExceptionInfo());
+		ExportImagePixels(imageRef,
+			area.xOffset, area.yOffset,
+			area.width,   area.height,
+			toStringz(map), storage, pixels.ptr, DMagickExceptionInfo());
 
 		return pixels;
 	}
@@ -1484,6 +1455,53 @@ class Image
 	}
 
 	/**
+	 * gamma gamma-corrects a particular image channel.
+	 * The same image viewed on different devices will have perceptual
+	 * differences in the way the image's intensities are represented
+	 * on the screen.  Specify individual gamma levels for the red,
+	 * green, and blue channels, or adjust all three with the gamma
+	 * function. Values typically range from 0.8 to 2.3.
+	 * 
+	 * You can also reduce the influence of a particular channel
+	 * with a gamma value of 0.
+	 */
+	void gamma(double value, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		GammaImageChannel(imageRef, channel, value);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	///ditto
+	void gamma(double red, double green, double blue)
+	{
+		GammaImageChannel(imageRef, ChannelType.RedChannel, red);
+		GammaImageChannel(imageRef, ChannelType.GreenChannel, green);
+		GammaImageChannel(imageRef, ChannelType.BlueChannel, blue);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Blurs an image. We convolve the image with a Gaussian operator
+	 * of the given radius and standard deviation (sigma).
+	 * For reasonable results, the radius should be larger than sigma.
+	 * 
+	 * Params:
+	 *     radius  = The radius of the Gaussian, in pixels,
+	 *               not counting the center pixel.
+	 *     sigma   = the standard deviation of the Gaussian, in pixels.
+	 *     channel = The channels to blur.
+	 */
+	void gaussianBlur(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickCoreImage* image =
+			GaussianBlurImageChannel(imageRef, channel, radius, sigma, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
 	 * Returns the TypeMetric class witch provides the information
 	 * regarding font metrics such as ascent, descent, text width,
 	 * text height, and maximum horizontal advance. The units of
@@ -1520,6 +1538,46 @@ class Image
 	}
 
 	/**
+	 * applies a Hald color lookup table to the image. A Hald color lookup
+	 * table is a 3-dimensional color cube mapped to 2 dimensions. Create
+	 * it with the HALD coder. You can apply any color transformation to
+	 * the Hald image and then use this method to apply the transform to
+	 * the image.
+	 * 
+	 * Params:
+	 *     haldImage = The image, which is replaced by indexed CLUT values.
+	 *     channel   = The channels to aply the CLUT to.
+	 * 
+	 * See_Also:
+	 *     clut which provides color value replacement of the individual
+	 *     color channels, usally involving a simplier gray-scale image.
+	 *     E.g: gray-scale to color replacement, or modification by a
+	 *     histogram mapping.
+	 */
+	void haldClut(Image haldImage, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		HaldClutImageChannel(imageRef, channel, haldImage.imageRef);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * A funhouse mirror effect.
+	 * 
+	 * Params:
+	 *     amount = Defines the extend of the effect.
+	 *              The value may be positive for implosion,
+	 *              or negative for explosion.
+	 */
+	void implode(double amount = 0.5)
+	{
+		MagickCoreImage* image =
+			ImplodeImage(imageRef, amount, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
 	 * Read an Image by reading from the file or
 	 * URL specified by filename.
 	 */
@@ -1530,6 +1588,31 @@ class Image
 		MagickCoreImage* image = ReadImage(options.imageInfo, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Replaces the pixels in the specified area with pixel data
+	 * from the supplied array.
+	 * 
+	 * Params:
+	 *     area   = Location in the image to store the pixels. 
+	 *     pixels = An array of pixels defined by map.
+	 *     map    = This character string can be any combination
+	 *              or order of R = red, G = green, B = blue, A = 
+	 *              alpha, C = cyan, Y = yellow, M = magenta, and K = black.
+	 *              The ordering reflects the order of the pixels in
+	 *              the supplied pixel array.
+	 */
+	void importPixels(T)(Geometry area, T[] pixels, string map = "RGBA")
+	{
+		StorageType storage = getStorageType!(T);
+
+		ImportImagePixels(imageRef,
+			area.xOffset, area.yOffset,
+			area.width,   area.height,
+			toStringz(map), storage, pixels.ptr);
+
+		DMagickException.throwException(&(imageRef.exception));
 	}
 
 	/**
@@ -1619,49 +1702,14 @@ class Image
 	 *     pixels  = The pixel data.
 	 * Bugs: DMD bug 2972 prevents readpixels from being named just read.
 	 */
-	void read(size_t width, size_t height, string map, StorageType storage, void[] pixels)
+	void readPixels(T)(size_t width, size_t height, string map, T[] pixels)
 	{
+		StorageType storage = getStorageType!(T);
+
 		MagickCoreImage* image = 
 			ConstituteImage(width, height, toStringz(map), storage, pixels.ptr, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
-	}
-
-	///ditto
-	void readPixels(T)(size_t width, size_t height, string map, T[] pixels)
-	{
-		StorageType storage;
-
-		static if ( is( T == byte) )
-		{
-			storage = CharPixel;
-		}
-		else static if ( is( T == short) )
-		{
-			storage = ShortPixel;
-		}
-		else static if ( is( T == int) )
-		{
-			storage = IntegerPixel;
-		}
-		else static if ( is( T == long) )
-		{
-			storage = LongPixel;
-		}
-		else static if ( is( T == float) )
-		{
-			storage = FloatPixel;
-		}
-		else static if ( is( T == double) )
-		{
-			storage = DoublePixel;
-		}
-		else
-		{
-			assert(false, "Unsupported type");
-		}
-
-		read(width, height, map, storage, pixels);
 	}
 
 	//TODO: set process monitor.
@@ -2290,31 +2338,6 @@ class Image
 	}
 
 	/**
-	 * GammaImage() gamma-corrects a particular image channel.
-	 * The same image viewed on different devices will have perceptual
-	 * differences in the way the image's intensities are represented
-	 * on the screen.  Specify individual gamma levels for the red,
-	 * green, and blue channels, or adjust all three with the gamma
-	 * parameter.  Values typically range from 0.8 to 2.3.
-	 * 
-	 * You can also reduce the influence of a particular channel
-	 * with a gamma value of 0.
-	 */
-	void gamma(double value)
-	{
-		GammaImageChannel(imageRef,
-			( ChannelType.RedChannel | ChannelType.GreenChannel | ChannelType.BlueChannel ),
-			value);
-	}
-	///ditto
-	void gamma(double red, double green, double blue)
-	{
-		GammaImageChannel(imageRef, ChannelType.RedChannel, red);
-		GammaImageChannel(imageRef, ChannelType.GreenChannel, green);
-		GammaImageChannel(imageRef, ChannelType.BlueChannel, blue);
-	}
-
-	/**
 	 * Gamma level of the image. The same color image displayed on
 	 * two different workstations may look different due to differences
 	 * in the display monitor. Use gamma correction to adjust for this
@@ -2356,6 +2379,15 @@ class Image
 	DisposeType gifDisposeMethod() const
 	{
 		return imageRef.dispose;
+	}
+
+	/**
+	 * Returns true if all the pixels in the image have the same red,
+	 * green, and blue intensities.
+	 */
+	bool gray()
+	{
+		return dmagick.c.attribute.IsGrayImage(imageRef, DMagickExceptionInfo()) == 1;
 	}
 
 	/**
@@ -2743,6 +2775,45 @@ class Image
 
 	//Other unimplemented porperties
 	//pixelColor
+
+	private template getStorageType(T)
+	{
+		static if ( is( T == byte) )
+		{
+			enum getStorageType = StorageType.CharPixel;
+		}
+		else static if ( is( T == short) )
+		{
+			enum getStorageType  = StorageType.ShortPixel;
+		}
+		else static if ( is( T == int) )
+		{
+			enum getStorageType = StorageType.IntegerPixel;
+		}
+		else static if ( is( T == long) )
+		{
+			enum getStorageType = StorageType.LongPixel;
+		}
+		else static if ( is( T == float) )
+		{
+			enum getStorageType = StorageType.FloatPixel;
+		}
+		else static if ( is( T == double) )
+		{
+			enum getStorageType = StorageType.DoublePixel;
+		}
+		else
+		{
+			static assert(false, "Unsupported type");
+		}
+	}
+
+	unittest
+	{
+		StorageType storage = getStorageType!(int);
+
+		assert( storage == StorageType.IntegerPixel );
+	}
 }
 
 

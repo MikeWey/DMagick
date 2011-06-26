@@ -11,6 +11,9 @@ import dmagick.Color;
 import dmagick.c.magickType;
 import dmagick.c.quantum;
 
+/**
+ * An RGB(A) Color.
+ */
 class ColorRGB : Color
 {
 	this()
