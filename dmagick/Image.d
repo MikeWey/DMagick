@@ -1714,8 +1714,8 @@ class Image
 	 */
 	void liquidRescale(Geometry size, size_t rows, double deltaX = 0, double rigidity = 0)
 	{
-		size_t columns;
-		size_t rows;
+		size_t columns = this.columns;
+		size_t rows = this.rows;
 		ssize_t x;
 		ssize_t y;
 
