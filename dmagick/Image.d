@@ -155,6 +155,65 @@ class Image
 	}
 
 	/**
+	 * Constructs a description of the image as a string.
+	 * The string contains some or all of the following fields:
+	 * $(B filename) The current filename. $(BR)
+	 * $(B [scene]) The scene number, if the image is part of a secuence. $(BR)
+	 * $(B format) The image format. $(BR)
+	 * $(B width x height) $(BR)
+	 * $(B page width x height + xOffset + yOffset) $(BR)
+	 * $(B classType) DirectClass or PseudoClass $(BR)
+	 * $(B N-bit) bit depth. $(BR)
+	 * $(B blob size) if present.
+	 */
+	string toString()
+	{
+		string result;
+
+		result ~= to!(string)(imageRef.filename);
+
+		//Scene number.
+		ssize_t index = GetImageIndexInList(imageRef);
+		if ( index > 0 )
+		{
+			result ~= std.string.format("[%s]", index);
+		}
+
+		result ~= std.string.format(" %s ", format);
+		result ~= std.string.format("%sx%s ", columns, rows);
+
+		//Page size
+		if ( imageRef.page.width > 0 || imageRef.page.height > 0 
+			|| imageRef.page.x != 0 || imageRef.page.y != 0 )
+		{
+			result ~= std.string.format("%sx%s%+ld%+ld ",
+				imageRef.page.width, imageRef.page.height,
+				imageRef.page.x,     imageRef.page.y);
+		}
+
+		if ( classType == ClassType.DirectClass )
+			result ~= "DirectClass ";
+		else
+			result ~= "PseudoClass ";
+
+		result = std.string.format("%s-bit", GetImageQuantumDepth(imageRef true);
+
+		//Size of the image.
+		MagickSizeType size = GetBlobSize(imageRef);
+		if ( size > 0 )
+		{
+			if ( size > 2*1024*1024 )
+				result ~= std.string.format("%s MiB", size/1024/1024);
+			else if ( size > 2*1024 )
+				result ~= std.string.format("%s KiB", size/1024);
+			else
+				result ~= std.string.format("%s bytes", size);
+		}
+
+		return result;
+	}
+
+	/**
 	 * Adaptively blurs the image by blurring more intensely near
 	 * image edges and less intensely far from edges.
 	 * The adaptiveBlur method blurs the image with a Gaussian operator
@@ -1573,6 +1632,90 @@ class Image
 	{
 		MagickCoreImage* image =
 			ImplodeImage(imageRef, amount, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Adjusts the levels of an image by scaling the colors falling between
+	 * specified white and black points to the full available quantum range.
+	 * The parameters provided represent the black, mid, and white points.
+	 * Colors darker than the black point are set to zero. Colors brighter
+	 * than the white point are set to the maximum quantum value.
+	 * 
+	 * It is typically used to improve image contrast, or to provide a
+	 * controlled linear threshold for the image. If the black and white
+	 * points are set to the minimum and maximum values found in the image,
+	 * the image can be normalized. or by swapping black and white values,
+	 * negate the image.
+	 * 
+	 * Params: 
+	 *     blackPoint = Specifies the darkest color in the image.
+	 *     whitePoint = Specifies the lightest color in the image.
+	 *     gamma      = Specifies the gamma correction to apply to the image.
+	 *     channel    = The channels to level.
+	 */
+	void level(Quantum blackPoint = 0, Quantum whitePoint = QuantumRange, double gamma = 1, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		LevelImageChannel(imageRef, channel, blackPoint, whitePoint, gamma);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * applies the reversed level operation to just the channels specified.
+	 * It compresses the full range of color values, so that they lie between
+	 * the given black and white points. Gamma is applied before the values
+	 * are mapped.
+	 * 
+	 * It can be used for example de-contrast a greyscale image to the exact
+	 * levels specified. Or by using specific levels for each channel of an
+	 * image you can convert a gray-scale image to any linear color gradient,
+	 * according to those levels.
+	 * 
+	 * Params: 
+	 *     blackPoint = Specifies the darkest color in the image.
+	 *     whitePoint = Specifies the lightest color in the image.
+	 *     gamma      = Specifies the gamma correction to apply to the image.
+	 *     channel    = The channels to level.
+	 */
+	void levelize(Quantum blackPoint = 0, Quantum whitePoint = QuantumRange, double gamma = 1, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		LevelizeImageChannel(imageRef, channel, blackPoint, whitePoint, gamma);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Discards any pixels below the black point and above the white
+	 * point and levels the remaining pixels.
+	 * 
+	 * Params: 
+	 *     blackPoint = Specifies the darkest color in the image.
+	 *     whitePoint = Specifies the lightest color in the image.
+	 */
+	void linearStretch(blackPoint = 0, Quantum whitePoint)
+	{
+		LinearStretchImage(imageRef, blackPoint, whitePoint);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Rescale image with seam carving. To use this method, you must
+	 * have installed and configured ImageMagick to use the
+	 * $(LINK2 http://liblqr.wikidot.com/, Liquid Rescale Library).
+	 *
+	 * Params:
+	 *     columns  = The desired width.
+	 *     rows     = The desired height.
+	 *     deltaX   = Maximum seam transversal step (0 means straight seams).
+	 *     rigidity = Introduce a bias for non-straight seams (typically 0).
+	 */
+	void liquidRescale(size_t columns, size_t rows, double deltaX = 0, double rigidity = 0)
+	{
+		MagickCoreImage* image =
+			LiquidRescaleImage(imageRef, columns, rows, deltaX, rigidity, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
