@@ -1712,8 +1712,14 @@ class Image
 	 *     deltaX   = Maximum seam transversal step (0 means straight seams).
 	 *     rigidity = Introduce a bias for non-straight seams (typically 0).
 	 */
-	void liquidRescale(size_t columns, size_t rows, double deltaX = 0, double rigidity = 0)
+	void liquidRescale(Geometry size, size_t rows, double deltaX = 0, double rigidity = 0)
 	{
+		size_t columns;
+		size_t rows;
+		ssize_t x;
+		ssize_t y;
+
+		ParseMetaGeometry(size.toString(), &x, &y, &columns, &rows);
 		MagickCoreImage* image =
 			LiquidRescaleImage(imageRef, columns, rows, deltaX, rigidity, DMagickExceptionInfo());
 
