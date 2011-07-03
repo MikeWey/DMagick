@@ -1,10 +1,10 @@
 module dmagick.c.resample;
 
+import dmagick.c.cacheView;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
 import dmagick.c.pixel;
-import dmagick.c.cacheView;
 
 extern(C)
 {
@@ -36,19 +36,6 @@ extern(C)
 		Lanczos2DFilter,
 		RobidouxFilter,
 		SentinelFilter
-	}
-
-	enum InterpolatePixelMethod
-	{
-		UndefinedInterpolatePixel,
-		AverageInterpolatePixel,
-		BicubicInterpolatePixel,
-		BilinearInterpolatePixel,
-		FilterInterpolatePixel,
-		IntegerInterpolatePixel,
-		MeshInterpolatePixel,
-		NearestNeighborInterpolatePixel,
-		SplineInterpolatePixel
 	}
 
 	struct ResampleFilter {}

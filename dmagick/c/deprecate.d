@@ -76,10 +76,13 @@ deprecated extern(C)
 	Image* GetPreviousImage(const(Image)*);
 	Image* FlattenImages(Image*, ExceptionInfo*);
 	Image* MaximumImages(const(Image)*, ExceptionInfo*);
+	Image* MedianFilterImage(const Image*, const double, ExceptionInfo*);
+	Image* ModeImage(const(Image)*, const double, ExceptionInfo*);
 	Image* MinimumImages(const(Image)*, ExceptionInfo*);
 	Image* MosaicImages(Image*, ExceptionInfo*);
 	Image* PopImageList(Image**);
 	Image* RecolorImage(const(Image)*, const size_t, const(double)*, ExceptionInfo*);
+	Image* ReduceNoiseImage(const(Image)*, const double, ExceptionInfo*);
 	Image* ShiftImageList(Image**);
 	Image* SpliceImageList(Image*, const ssize_t, const size_t, const(Image)*, ExceptionInfo*);
 	Image* ZoomImage(const(Image)*, const size_t, const size_t, ExceptionInfo*);

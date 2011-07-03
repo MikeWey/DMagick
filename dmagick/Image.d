@@ -1746,11 +1746,11 @@ class Image
 	 *              longer than you want to wait, and will not have
 	 *              significantly better results than much smaller values.
 	 */
-	void medianFilter(double radius = 0)
+	//TODO: replace this with a statistic function?
+	void medianFilter(size_t radius = 0)
 	{
-		//TODO: Recently deprecated use StatisticImage. (Update the headers first)
 		MagickCoreImage* image = 
-			MedianFilterImage(imageRef, radius, DMagickExceptionInfo());
+			StatisticImage(imageRef, StatisticType.MedianStatistic, radius, radius, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}

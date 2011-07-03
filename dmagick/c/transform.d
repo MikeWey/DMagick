@@ -12,6 +12,7 @@ extern(C)
 	Image* ChopImage(const(Image)*, const(RectangleInfo)*, ExceptionInfo*);
 	Image* ConsolidateCMYKImages(const(Image)*, ExceptionInfo*);
 	Image* CropImage(const(Image)*, const(RectangleInfo)*, ExceptionInfo*);
+	Image* CropImageToTiles(const(Image)*, const(char)*, ExceptionInfo*);
 	Image* ExcerptImage(const(Image)*, const(RectangleInfo)*, ExceptionInfo*);
 	Image* ExtentImage(const(Image)*, const(RectangleInfo)*, ExceptionInfo*);
 	Image* FlipImage(const(Image)*, ExceptionInfo*);

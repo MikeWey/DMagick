@@ -45,7 +45,7 @@ extern(C)
 		LightenCompositeOp,
 		LinearLightCompositeOp,
 		LuminizeCompositeOp,
-		MinusCompositeOp,
+		MinusDstCompositeOp,
 		ModulateCompositeOp,
 		MultiplyCompositeOp,
 		OutCompositeOp,
@@ -64,7 +64,12 @@ extern(C)
 		ModulusSubtractCompositeOp,
 		ThresholdCompositeOp,
 		XorCompositeOp,
-		DivideCompositeOp,
+		/*
+		 * These are new operators, added after the above was last sorted.
+		 * The list should be re-sorted only when a new library version is
+		 * created.
+		 */
+		DivideDstCompositeOp,
 		DistortCompositeOp,
 		BlurCompositeOp,
 		PegtopLightCompositeOp,
@@ -72,7 +77,15 @@ extern(C)
 		PinLightCompositeOp,
 		LinearDodgeCompositeOp,
 		LinearBurnCompositeOp,
-		MathematicsCompositeOp
+		MathematicsCompositeOp,
+		DivideSrcCompositeOp,
+		MinusSrcCompositeOp,
+
+		/* Depreciated (renamed) Method Names for backward compatibility */
+		AddCompositeOp      = ModulusAddCompositeOp,
+		SubtractCompositeOp = ModulusSubtractCompositeOp,
+		MinusCompositeOp    = MinusDstCompositeOp,
+		DivideCompositeOp   = DivideDstCompositeOp		
 	}
 
 	MagickBooleanType CompositeImage(Image*, const CompositeOperator, const(Image)*, const ssize_t, const ssize_t);

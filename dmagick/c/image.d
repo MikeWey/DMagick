@@ -129,34 +129,34 @@ extern(C)
 			storage_class;
 
 		ColorspaceType
-			colorspace;
+			colorspace;      /* colorspace of image data */
 
 		CompressionType
-			compression;
+			compression;     /* compression of image when read/write */
 
 		size_t
-			quality;
+			quality;         /* compression quality setting, meaning varies */
 
 		OrientationType
-			orientation;
+			orientation;     /* photo orientation of image */
 
 		MagickBooleanType
-			taint,
-			matte;
+			taint,           /* has image been modified since reading */
+			matte;           /* is transparency channel defined and active */
 
 		size_t
-			columns,
+			columns,         /* physical size of image */
 			rows,
-			depth,
-			colors;
+			depth,           /* depth of image on read/write */
+			colors;          /* size of color table on read */
 
 		PixelPacket*
 			colormap;
 
 		PixelPacket
-			background_color,
-			border_color,
-			matte_color;
+			background_color, /* current background color attribute */
+			border_color,     /* current bordercolor attribute */
+			matte_color;      /* current mattecolor attribute */
 
 		double
 			gamma;
@@ -171,7 +171,7 @@ extern(C)
 			profiles;
 
 		ResolutionType
-			units;
+			units;           /* resolution/density  ppi or ppc */
 
 		char*
 			montage,
@@ -182,46 +182,46 @@ extern(C)
 			offset;
 
 		double
-			x_resolution,
+			x_resolution,    /* image resolution/density */
 			y_resolution;
 
 		RectangleInfo
-			page,
+			page,            /* virtual canvas size and offset of image */
 			extract_info,
-			tile_info;
+			tile_info;       /* deprecated */
 
 		double
 			bias,
-			blur,
-			fuzz;
+			blur,            /* deprecated */
+			fuzz;            /* current color fuzz attribute */
 
 		FilterTypes
-			filter;
+			filter;          /* resize/distort filter to apply */
 
 		InterlaceType
 			interlace;
 
 		EndianType
-			endian;
+			endian;          /* raw data integer ordering on read/write */
 
 		GravityType
-			gravity;
+			gravity;         /* Gravity attribute for positioning in image */
 
 		CompositeOperator
-			compose;
+			compose;         /* alpha composition method for layered images */
 
 		DisposeType
-			dispose;
+			dispose;         /* GIF animation disposal method */
 
 		Image*
 			clip_mask;
 
 		size_t
-			scene,
-			delay;
+			scene,           /* index of image in multi-image file */
+			delay;           /* Animation delay time */
 
 		ssize_t
-			ticks_per_second;
+			ticks_per_second;  /* units for delay time, default 100 for GIF */
 
 		size_t
 			iterations,
@@ -242,7 +242,7 @@ extern(C)
 		void*
 			client_data,
 			cache,
-			attributes;
+			attributes;      /* deprecated */
 
 		Ascii85Info*
 			ascii85;
@@ -251,7 +251,7 @@ extern(C)
 			blob;
 
 		char[MaxTextExtent]
-			filename,
+			filename,        /* images input filename */
 			magick_filename,
 			magick;
 
@@ -260,10 +260,10 @@ extern(C)
 			magick_rows;
 
 		ExceptionInfo
-			exception;
+			exception;       /* Error handling report */
 
 		MagickBooleanType
-			ddebug;
+			ddebug;          /* debug output attribute */
 
 		ssize_t
 			reference_count;
@@ -285,18 +285,18 @@ extern(C)
 			signature;
 
 		Image*
-			previous,
+			previous,        /* Image sequence list links */
 			list,
 			next;
 
 		InterpolatePixelMethod
-			interpolate;
+			interpolate;     /* Interpolation of color for between pixel lookups */
 
 		MagickBooleanType
 			black_point_compensation;
 
 		PixelPacket
-			transparent_color;
+			transparent_color; /* color for 'transparent' color index in GIF */
 
 		Image*
 			mask;
@@ -305,14 +305,14 @@ extern(C)
 			tile_offset;
 
 		void*
-			properties,
-			artifacts;
+			properties,      /* per image properities */
+			artifacts;       /* per image sequence image artifacts */
 
 		ImageType
 			type;
 
 		MagickBooleanType
-			dither;
+			dither;          /* dithering method during color reduction */
 
 		MagickSizeType
 			extent;

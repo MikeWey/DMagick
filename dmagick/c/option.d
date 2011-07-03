@@ -72,6 +72,7 @@ extern(C)
 		MagickResolutionOptions,
 		MagickResourceOptions,
 		MagickSparseColorOptions,
+		MagickStatisticOptions,
 		MagickStorageOptions,
 		MagickStretchOptions,
 		MagickStyleOptions,
