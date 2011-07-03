@@ -196,7 +196,7 @@ class Image
 		else
 			result ~= "PseudoClass ";
 
-		result = std.string.format("%s-bit", GetImageQuantumDepth(imageRef true);
+		result = std.string.format("%s-bit", GetImageQuantumDepth(imageRef, true));
 
 		//Size of the image.
 		MagickSizeType size = GetBlobSize(imageRef);
@@ -1694,7 +1694,7 @@ class Image
 	 *     blackPoint = Specifies the darkest color in the image.
 	 *     whitePoint = Specifies the lightest color in the image.
 	 */
-	void linearStretch(blackPoint = 0, Quantum whitePoint)
+	void linearStretch(Quantum blackPoint, Quantum whitePoint)
 	{
 		LinearStretchImage(imageRef, blackPoint, whitePoint);
 
@@ -1714,14 +1714,93 @@ class Image
 	 */
 	void liquidRescale(Geometry size, size_t rows, double deltaX = 0, double rigidity = 0)
 	{
-		size_t columns = this.columns;
-		size_t rows = this.rows;
-		ssize_t x;
-		ssize_t y;
+		ssize_t x, y;
+		size_t width  = columns;
+		size_t height = rows;
 
-		ParseMetaGeometry(size.toString(), &x, &y, &columns, &rows);
+		ParseMetaGeometry(toStringz(size.toString), &x, &y, &width, &height);
 		MagickCoreImage* image =
 			LiquidRescaleImage(imageRef, columns, rows, deltaX, rigidity, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * A convenience method that scales an image proportionally to
+	 * twice its size.
+	 */
+	void magnify()
+	{
+		MagickCoreImage* image = MagnifyImage(imageRef, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Applies a digital filter that improves the quality of a noisy image.
+	 * Each pixel is replaced by the median in a set of neighboring pixels
+	 * as defined by radius.
+	 * 
+	 * Params:
+	 *     radius = The filter radius. Values larger than 8 or 9 may take
+	 *              longer than you want to wait, and will not have
+	 *              significantly better results than much smaller values.
+	 */
+	void medianFilter(double radius = 0)
+	{
+		//TODO: Recently deprecated use StatisticImage. (Update the headers first)
+		MagickCoreImage* image = 
+			MedianFilterImage(imageRef, radius, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * A convenience method that scales an image proportionally to 
+	 * half its size.
+	 */
+	void minify()
+	{
+		MagickCoreImage* image = MinifyImage(imageRef, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Modulate percent hue, saturation, and brightness of an image.
+	 * Modulation of saturation and brightness is as a ratio of the current
+	 * value (1 ( == 100% ) for no change).
+	 * 
+	 * Params:
+	 *     brightness = The percentage of change in the brightness.
+	 *     saturation = The percentage of change in the saturation.
+	 *     hue        = The percentage of change in the hue.
+	 */
+	void modulate(double brightness = 1, double saturation = 1, double hue = 1)
+	{
+		string args = std.string.format("%s,%s,%s", brightness*100, saturation*100, hue*100);
+		ModulateImage(imageRef, toStringz(args));
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Simulates motion blur. We convolve the image with a Gaussian operator
+	 * of the given radius and standard deviation (sigma). Use a radius of 0
+	 * and motion_blur selects a suitable radius for you. Angle gives the
+	 * angle of the blurring motion.
+	 * 
+	 * Params:
+	 *     radius  = The radius of the Gaussian operator.
+	 *     sigma   = The standard deviation of the Gaussian operator.
+	 *               Must be non-0.
+	 *     angle   = The angle (in degrees) of the blurring motion.
+	 *     channel = The affected channels.
+	 */
+	void motionBlur(double radius = 0, double sigma = 1, double angle = 0, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickCoreImage* image = 
+			MotionBlurImageChannel(imageRef, channel, radius, sigma, angle, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
