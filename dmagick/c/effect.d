@@ -57,6 +57,7 @@ extern(C)
 	Image* GaussianBlurImage(const(Image)*, const double, const double, ExceptionInfo*);
 	Image* GaussianBlurImageChannel(const(Image)*, const ChannelType, const double, const double, ExceptionInfo*);
 	Image* MedianFilterImage(const(Image)*, const double, ExceptionInfo*);
+	Image* ModeImage(const(Image)*, const double, ExceptionInfo*);
 	Image* MotionBlurImage(const(Image)*, const double, const double, const double, ExceptionInfo*);
 	Image* MotionBlurImageChannel(const(Image)*, const ChannelType, const double, const double, const double, ExceptionInfo*);
 	Image* PreviewImage(const(Image)*, const PreviewType, ExceptionInfo*);

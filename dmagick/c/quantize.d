@@ -41,6 +41,7 @@ extern(C)
 	MagickBooleanType CompressImageColormap(Image*);
 	MagickBooleanType GetImageQuantizeError(Image*);
 	MagickBooleanType PosterizeImage(Image*, const size_t, const MagickBooleanType);
+	MagickBooleanType PosterizeImageChannel(Image*, const ChannelType, const size_t, const MagickBooleanType);
 	MagickBooleanType QuantizeImage(const(QuantizeInfo)*, Image*);
 	MagickBooleanType QuantizeImages(const(QuantizeInfo)*, Image*);
 	MagickBooleanType RemapImage(const(QuantizeInfo)*, Image*, const(Image)*);

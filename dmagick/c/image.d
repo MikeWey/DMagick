@@ -478,6 +478,7 @@ extern(C)
 	Image* NewMagickImage(const(ImageInfo)*, const size_t, const size_t, const(MagickPixelPacket)*);
 	Image* ReferenceImage(Image*);
 	Image* SeparateImages(const(Image)*, const ChannelType, ExceptionInfo*);
+	Image* SmushImages(const(Image)*, const MagickBooleanType, const ssize_t, ExceptionInfo*);
 
 	ImageInfo* AcquireImageInfo();
 	ImageInfo* CloneImageInfo(const(ImageInfo)*);
