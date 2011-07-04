@@ -80,6 +80,8 @@ extern(C)
 		MathematicsCompositeOp,
 		DivideSrcCompositeOp,
 		MinusSrcCompositeOp,
+		DarkenIntensityCompositeOp,
+		LightenIntensityCompositeOp,
 
 		/* Depreciated (renamed) Method Names for backward compatibility */
 		AddCompositeOp      = ModulusAddCompositeOp,

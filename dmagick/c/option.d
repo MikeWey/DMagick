@@ -9,7 +9,7 @@ import dmagick.c.magickType;
 
 extern(C)
 {
-	enum MagickOption
+	enum CommandOption
 	{
 		MagickUndefinedOptions = -1,
 		MagickAlignOptions = 0,
@@ -42,7 +42,6 @@ extern(C)
 		MagickFormatOptions,
 		MagickFunctionOptions,
 		MagickGravityOptions,
-		MagickImageListOptions,
 		MagickIntentOptions,
 		MagickInterlaceOptions,
 		MagickInterpolateOptions,
@@ -98,34 +97,52 @@ extern(C)
 		AllValidate = 0x7fffffff
 	}
 
+	enum CommandOptionFlags
+	{
+		UndefinedOptionFlag       = 0x0000,
+		FireOptionFlag            = 0x0001,  /* Option sequence firing point */
+		ImageInfoOptionFlag       = 0x0002,  /* Sets ImageInfo, no image needed */
+		DrawInfoOptionFlag        = 0x0004,  /* Sets DrawInfo, no image needed */
+		QuantizeInfoOptionFlag    = 0x0008,  /* Sets QuantizeInfo, no image needed */
+		GlobalOptionFlag          = 0x0010,  /* Sets Global Option, no image needed */
+		SimpleOperatorOptionFlag  = 0x0100,  /* Simple Image processing operator */
+		ListOperatorOptionFlag    = 0x0200,  /* Multi-Image List processing operator */
+		SpecialOperatorOptionFlag = 0x0400,  /* Specially handled Operator Option */
+		GenesisOptionFlag         = 0x0400,  /* Genesis Command Wrapper Option  */
+		NonConvertOptionFlag      = 0x4000,  /* Option not used by Convert */
+		DeprecateOptionFlag       = 0x8000   /* Deprecate option, give warning */
+	}
+
 	struct OptionInfo
 	{
 		const(char)*
 			mnemonic;
 
 		ssize_t
-			type;
+			type,
+			flags;
 
 		MagickBooleanType
 			stealth;
 	}
 
-	char** GetMagickOptions(const MagickOption);
+	char** GetCommandOptions(const CommandOption);
 	char*  GetNextImageOption(const(ImageInfo)*);
 	char*  RemoveImageOption(ImageInfo*, const(char)*);
 
+	const(char)* CommandOptionToMnemonic(const CommandOption, const ssize_t);
 	const(char)* GetImageOption(const(ImageInfo)*, const(char)*);
-	const(char)* MagickOptionToMnemonic(const MagickOption, const ssize_t);
 
 	MagickBooleanType CloneImageOptions(ImageInfo*, const(ImageInfo)*);
 	MagickBooleanType DefineImageOption(ImageInfo*, const(char)*);
 	MagickBooleanType DeleteImageOption(ImageInfo*, const(char)*);
-	MagickBooleanType IsMagickOption(const(char)*);
-	MagickBooleanType ListMagickOptions(FILE*, const MagickOption, ExceptionInfo*);
+	MagickBooleanType IsCommandOption(const(char)*);
+	MagickBooleanType ListCommandOptions(FILE*, const CommandOption, ExceptionInfo*);
 	MagickBooleanType SetImageOption(ImageInfo*, const(char)*, const(char)*);
 
+	ssize_t GetCommandOptionFlags(const CommandOption, const MagickBooleanType, const(char)*);
 	ssize_t ParseChannelOption(const(char)*);
-	ssize_t ParseMagickOption(const MagickOption, const MagickBooleanType,const(char)*);
+	ssize_t ParseCommandOption(const CommandOption, const MagickBooleanType, const(char)*);
 
 	void DestroyImageOptions(ImageInfo*);
 	void ResetImageOptions(const(ImageInfo)*);

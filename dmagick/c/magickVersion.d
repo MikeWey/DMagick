@@ -3,9 +3,9 @@ module dmagick.c.magickVersion;
 extern(C)
 {
 	/// Defines the version of ImageMagick where these headers are based on.
-	enum MagickLibVersion = 0x669;
+	enum MagickLibVersion = 0x670;
 	///ditto
-	enum MagickLibVersionText = "6.6.9"; 
+	enum MagickLibVersionText = "6.7.0"; 
 
 	char* GetMagickHomeURL();
 

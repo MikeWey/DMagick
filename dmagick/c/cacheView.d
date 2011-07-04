@@ -34,6 +34,10 @@ extern(C)
 
 	struct CacheView {}
 
+	CacheView* AcquireCacheView(const(Image)*);
+	CacheView* CloneCacheView(const(CacheView)*);
+	CacheView* DestroyCacheView(CacheView*);
+
 	ClassType GetCacheViewStorageClass(const(CacheView)*);
 
 	ColorspaceType GetCacheViewColorspace(const(CacheView)*);
@@ -56,11 +60,9 @@ extern(C)
 
 	MagickSizeType GetCacheViewExtent(const(CacheView)*);
 
+	size_t GetCacheViewChannels(const(CacheView)*);
+
 	PixelPacket* GetCacheViewAuthenticPixelQueue(CacheView*);
 	PixelPacket* GetCacheViewAuthenticPixels(CacheView*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
 	PixelPacket* QueueCacheViewAuthenticPixels(CacheView*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
-
-	CacheView* AcquireCacheView(const(Image)*);
-	CacheView* CloneCacheView(const(CacheView)*);
-	CacheView* DestroyCacheView(CacheView*);
 }

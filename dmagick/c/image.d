@@ -319,6 +319,9 @@ extern(C)
 
 		MagickBooleanType
 			ping;
+
+		size_t
+			channels;
 	}
 
 	struct ImageInfo
@@ -503,6 +506,7 @@ extern(C)
 	MagickBooleanType SetImageInfo(ImageInfo*, const uint, ExceptionInfo*);
 	MagickBooleanType SetImageMask(Image*, const(Image)*);
 	MagickBooleanType SetImageOpacity(Image*, const Quantum);
+	MagickBooleanType SetImageChannels(Image*, const size_t);
 	MagickBooleanType SetImageStorageClass(Image*, const ClassType);
 	MagickBooleanType SetImageType(Image*, const ImageType);
 	MagickBooleanType StripImage(Image*);
@@ -513,6 +517,8 @@ extern(C)
 	size_t InterpretImageFilename(const(ImageInfo)*, Image*, const(char)*, int, char*);
 
 	ssize_t GetImageReferenceCount(Image*);
+
+	size_t GetImageChannels(Image*);
 
 	VirtualPixelMethod GetImageVirtualPixelMethod(const(Image)*);
 	VirtualPixelMethod SetImageVirtualPixelMethod(const(Image)*, const VirtualPixelMethod);

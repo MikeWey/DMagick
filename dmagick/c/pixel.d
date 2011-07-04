@@ -24,6 +24,24 @@ extern(C)
 		SplineInterpolatePixel
 	}
 
+	enum PixelComponent
+	{
+		RedPixelComponent = 0,
+		CyanPixelComponent = 0,
+		GrayPixelComponent = 0,
+		YPixelComponent = 0,
+		GreenPixelComponent = 1,
+		MagentaPixelComponent = 1,
+		CbPixelComponent = 1,
+		BluePixelComponent = 2,
+		YellowPixelComponent = 2,
+		CrPixelComponent = 2,
+		AlphaPixelComponent = 3,
+		BlackPixelComponent = 4,
+		IndexPixelComponent = 4,
+		MaskPixelComponent = 5
+	}
+
 	struct DoublePixelPacket
 	{
 		double

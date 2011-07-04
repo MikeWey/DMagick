@@ -3,7 +3,6 @@ module dmagick.c.magickString;
 import core.stdc.stdio;
 import core.stdc.time;
 import core.sys.posix.sys.types;
-import core.vararg;
 
 import dmagick.c.exception;
 import dmagick.c.magickType;
@@ -51,8 +50,6 @@ extern(C)
 	size_t GetStringInfoLength(const(StringInfo)*);
 
 	ssize_t	FormatMagickSize(const MagickSizeType, const MagickBooleanType, char*);
-	ssize_t	FormatMagickString(char*, const size_t, const(char)*, ...);
-	ssize_t	FormatMagickStringList(char*, const size_t, const(char)*, va_list);
 	ssize_t	FormatMagickTime(const time_t, const size_t, char*);
 
 	StringInfo* AcquireStringInfo(const size_t);

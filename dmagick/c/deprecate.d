@@ -94,6 +94,8 @@ deprecated extern(C)
 	int GetImageGeometry(Image*, const(char)*, const uint, RectangleInfo*);
 	int ParseImageGeometry(const(char)*, ssize_t*, ssize_t*, size_t*, size_t*);
 
+	ssize_t FormatMagickString(char*, const size_t, const(char)*, ...);
+	ssize_t FormatMagickStringList(char*, const size_t, const(char)*, va_list);
 	ssize_t GetImageListIndex(const(Image)*);
 	ssize_t SetMagickRegistry(const RegistryType, const(void)*, const size_t, ExceptionInfo*);
 

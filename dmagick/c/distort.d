@@ -24,6 +24,7 @@ extern(C)
 		BarrelDistortion,
 		BarrelInverseDistortion,
 		ShepardsDistortion,
+		ResizeDistortion,
 		SentinelDistortion
 	}
 
@@ -35,9 +36,11 @@ extern(C)
 		PolynomialColorInterpolate =  DistortImageMethod.PolynomialDistortion,
 		ShepardsColorInterpolate =    DistortImageMethod.ShepardsDistortion,
 
-		VoronoiColorInterpolate =     DistortImageMethod.SentinelDistortion
+		VoronoiColorInterpolate =     DistortImageMethod.SentinelDistortion,
+		InverseColorInterpolate
 	}
 
 	Image* DistortImage(const(Image)*, const DistortImageMethod, const size_t, const(double)*, MagickBooleanType, ExceptionInfo* exception);
+	Image* DistortResizeImage(const(Image)*, const size_t, const size_t, ExceptionInfo*);
 	Image* SparseColorImage(const(Image)*, const ChannelType, const SparseColorMethod, const size_t, const(double)*, ExceptionInfo*);
 }

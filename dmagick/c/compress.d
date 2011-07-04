@@ -16,7 +16,7 @@ extern(C)
 		FaxCompression,
 		Group4Compression,
 		JPEGCompression,
-		JPEG2000Compression,
+		JPEG2000Compression,     /* ISO/IEC std 15444-1 */
 		LosslessJPEGCompression,
 		LZWCompression,
 		RLECompression,
@@ -25,7 +25,10 @@ extern(C)
 		PizCompression,
 		Pxr24Compression,
 		B44Compression,
-		B44ACompression
+		B44ACompression,
+		LZMACompression,         /* Lempel-Ziv-Markov chain algorithm */
+		JBIG1Compression,        /* ISO/IEC std 11544 / ITU-T rec T.82 */
+		JBIG2Compression         /* ISO/IEC std 14492 / ITU-T rec T.88 */
 	}
 
 	struct Ascii85Info {}

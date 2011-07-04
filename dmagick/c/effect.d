@@ -44,12 +44,14 @@ extern(C)
 	enum StatisticType
 	{
 		UndefinedStatistic,
+		GradientStatistic,
 		MaximumStatistic,
 		MeanStatistic,
 		MedianStatistic,
 		MinimumStatistic,
 		ModeStatistic,
-		NonpeakStatistic
+		NonpeakStatistic,
+		StandardDeviationStatistic
 	}
 
 	Image* AdaptiveBlurImage(const(Image)*, const double, const double, ExceptionInfo*);
