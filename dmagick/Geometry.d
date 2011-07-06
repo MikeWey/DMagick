@@ -7,7 +7,7 @@
 module dmagick.Geometry;
 
 import std.conv;
-import std.ctype;
+import std.ascii;
 import std.string;
 import core.sys.posix.sys.types;
 
@@ -39,7 +39,7 @@ struct Geometry
 		MagickStatusType flags;
 
 		//If the string starts with a letter assume it's a Page Geometry.
-		if ( isalpha(geometry[0]) )
+		if ( isAlpha(geometry[0]) )
 		{
 			char* geo = GetPageGeometry(toStringz(geometry));
 

@@ -84,8 +84,13 @@ class Color
 		return *packet;
 	}
 
-	bool opEquals(Color color)
+	override bool opEquals(Object obj)
 	{
+		Color color = cast(Color)obj;
+
+		if ( color is null )
+			return false;
+
 		return pixelPacket == color.pixelPacket;
 	}
 

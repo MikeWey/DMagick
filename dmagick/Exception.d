@@ -75,7 +75,10 @@ class DMagickException : Exception
 						break;";
 			}
 
-			return exceptions ~= "}";
+			return exceptions ~= 
+				"	default:
+						return;
+				}";
 		}());
 	}
 }
