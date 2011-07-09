@@ -1806,6 +1806,108 @@ class Image
 	}
 
 	/**
+	 * Negates the colors in the reference image.
+	 * 
+	 * Params:
+	 *     grayscale = If true, only negate grayscale pixels
+	 *                 within the image.
+	 *     channel   = The affected channels.
+	 */
+	void negate(bool grayscale = false, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		NegateImageChannel(imageRef, channel, grayscale);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Enhances the contrast of a color image by adjusting the pixel
+	 * color to span the entire range of colors available.
+	 */
+	void normalize(ChannelType channel = ChannelType.DefaultChannels)
+	{
+		NormalizeImageChannel(imageRef, channel);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Applies a special effect filter that simulates an oil painting.
+	 * Each pixel is replaced by the most frequent color occurring in a
+	 * circular region defined by radius.
+	 */
+	void oilPaint(double radius = 3)
+	{
+		MagickCoreImage* image = 
+			OilPaintImage(imageRef, radius, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Set or attenuate the opacity channel in the image.
+	 * If the image pixels are opaque then they are set to the specified
+	 * opacity value, otherwise they are blended with the supplied opacity
+	 * value.
+	 */
+	void opacity(Quantum value)
+	{
+		SetImageOpacity(imageRef, value);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Changes all pixels having the target color to the fill color.
+	 * 
+	 * Params:
+	 *     target  = The color to be replaced.
+	 *     fill    = The replacement color.
+	 *     invert  = If true, the target pixels are all the pixels
+	 *               that are not the target color.
+	 *     channel = The affected channels.
+	 */
+	void opaque(Color target, Color fill, bool invert = false, ChannelType channel = ChannelType.CompositeChannels)
+	{
+		MagickPixelPacket magickTarget;
+		MagickPixelPacket magickFill;
+		
+		GetMagickPixelPacket(imageRef, &magickTarget);
+		GetMagickPixelPacket(imageRef, &magickFill);
+
+		void setMagickPixelPacket(MagickPixelPacket* magick, Color color)
+		{
+			magick.red     = color.redQuantum;
+			magick.green   = color.greenQuantum;
+			magick.blue    = color.blueQuantum;
+			magick.opacity = color.opacityQuantum;
+		}
+
+		setMagickPixelPacket(&magickTarget, target);
+		setMagickPixelPacket(&magickFill, fill);
+
+		OpaquePaintImageChannel(imageRef, channel, &magickTarget, &magickFill, invert);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Dithers the image to a predefined pattern.
+	 * 
+	 * Params:
+	 *     map = The map argument can be any of the strings
+	 *           listed by this command:
+	 *           --------------------
+	 *           convert -list Threshold
+	 *           --------------------
+	 * See_Also: $(LINK2 http://www.imagemagick.org/script/command-line-options.php#ordered-dither,
+	 *     ImageMagick's -ordered-dither option).
+	 */
+	void orderedDither(string map)
+	{
+		OrderedPosterizeImage(imageRef, toStringz(map), DMagickExceptionInfo());
+	}
+
+	/**
 	 * Read an Image by reading from the file or
 	 * URL specified by filename.
 	 */
