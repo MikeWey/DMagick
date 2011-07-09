@@ -65,7 +65,18 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 #######################################################################
 
 %.o : %.d
-	$(DC) $(DCFLAGS) $(IMPORTS) -c $< $(output)
+	$(DC) $(DCFLAGS) -c $< $(output)
+
+#######################################################################
+
+/tmp/stubmain.o:
+	$(shell echo "void main(){}" > /tmp/stubmain.d)
+	$(DC) $(DCFLAGS) -c /tmp/stubmain.d $(output)
+
+unittest: DCFLAGS+=-unittest
+unittest: /tmp/stubmain.o $(SOURCES_DMAGICK)
+	$(DC) $(DCFLAGS) -L-lMagickCore $(SOURCES_DMAGICK) $< $(output)
+	./$@
 
 #######################################################################
 
@@ -75,7 +86,7 @@ docs: $(DOCS_DMAGICK)
 #######################################################################
 
 docs/%.html : dmagick/%.d
-	$(DC) $(DCFLAGS) $(IMPORTS) -o- $< -Df$@
+	$(DC) $(DCFLAGS) -o- $< -Df$@
 
 #######################################################################
 
