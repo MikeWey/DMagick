@@ -17,23 +17,21 @@ ifndef DC
     endif
 endif
 
-ifeq ("$(DC)","dmd")
-    DCFLAGS=-O
-    LINKERFLAG=-L
-    output=-of$@
-else ifeq ("$(DC)","ldc")
-    DCFLAGS=-O
-    LINKERFLAG=-L
-    output=-of$@
-else
+ifeq ("$(DC)","gdc")
     DCFLAGS=-O2
     LINKERFLAG=-Xlinker
+    UNITTESTFLAG=-funittest
+    DDOCFLAGS=-fdoc-file=$@
     output=-o $@
+else
+    DCFLAGS=-O
+    LINKERFLAG=-L
+    UNITTESTFLAG=-unittest
+    DDOCFLAGS=-o- -Df$@
+    output=-of$@
 endif
 
-ifeq ("$(OS)","Darwin")
-    LDFLAGS+=-Wl,-undefined,dynamic_lookup
-else ifeq ("$(OS)","Linux")
+ifeq ("$(OS)","Linux")
     LDFLAGS+=$(LINKERFLAG)-ldl
 endif
 
@@ -69,13 +67,11 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 
 #######################################################################
 
-/tmp/stubmain.o:
+/tmp/stubmain.d:
 	$(shell echo "void main(){}" > /tmp/stubmain.d)
-	$(DC) $(DCFLAGS) -c /tmp/stubmain.d $(output)
 
-unittest: DCFLAGS+=-unittest
-unittest: /tmp/stubmain.o $(SOURCES_DMAGICK)
-	$(DC) $(DCFLAGS) -L-lMagickCore $(SOURCES_DMAGICK) $< $(output)
+unittest: /tmp/stubmain.d $(SOURCES_DMAGICK)
+	$(DC) $(DCFLAGS) $(UNITTESTFLAG) $(LINKERFLAG)-lMagickCore $(SOURCES_DMAGICK) $< $(output)
 	./$@
 
 #######################################################################
@@ -86,7 +82,7 @@ docs: $(DOCS_DMAGICK)
 #######################################################################
 
 docs/%.html : dmagick/%.d
-	$(DC) $(DCFLAGS) -o- $< -Df$@
+	$(DC) $(DCFLAGS) $< $(DDOCFLAGS) 
 
 #######################################################################
 
@@ -101,4 +97,4 @@ uninstall:
 	rm -f $(DESTDIR)$(prefix)/lib/$(LIBNAME_DMAGICK)
 
 clean:
-	-rm -rf $(LIBNAME_DMAGICK) $(OBJECTS_DMAGICK) docs
+	-rm -rf $(LIBNAME_DMAGICK) $(OBJECTS_DMAGICK) unittest.o unittest docs
