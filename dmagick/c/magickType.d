@@ -26,16 +26,16 @@ extern (C)
 	}
 	else version(Quantum64)
 	{
-		static assert(false, "64bit Quantum not implemented, need long double");
+		alias double Quantum;
+		//real seems to be the same size as long double for
+		//dmc and dmd on windows and for dmd and gcc on linux. 
+		alias real MagickRealType;
 
-		//alias double Quantum;
-		//alias long double MagickRealType;
-
-		//enum MAGICKCORE_QUANTUM_DEPTH = 64;
-		//enum QuantumRange = 18446744073709551615.0;
-		//enum MaxColormapSize = 65536;
-		//enum MagickEpsilon = 1.0e-10;
-		//enum MagickHuge = 1.0e12;
+		enum MAGICKCORE_QUANTUM_DEPTH = 64;
+		enum QuantumRange = 18446744073709551615.0;
+		enum MaxColormapSize = 65536;
+		enum MagickEpsilon = 1.0e-10;
+		enum MagickHuge = 1.0e12;
 	}
 	else
 	{
