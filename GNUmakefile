@@ -43,6 +43,12 @@ endif
 AR=ar
 RANLIB=ranlib
 
+QUANTUMDEPTH = $(lastword $(shell MagickCore-config --version))
+
+ifneq ("$(QUANTUMDEPTH)","Q16")
+    DCFLAGS+= -version=$(subst Q,Quantum,$(QUANTUMDEPTH))
+endif
+
 #######################################################################
 
 LIBNAME_DMAGICK = libdmagick.a
@@ -71,7 +77,7 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 	$(shell echo "void main(){}" > /tmp/stubmain.d)
 
 unittest: /tmp/stubmain.d $(SOURCES_DMAGICK)
-	$(DC) $(DCFLAGS) $(UNITTESTFLAG) $(LINKERFLAG)-lMagickCore $(SOURCES_DMAGICK) $< $(output)
+	$(DC) $(DCFLAGS) $(UNITTESTFLAG) $(LINKERFLAG)-lMagickCore $^ $(output)
 	./$@
 
 #######################################################################

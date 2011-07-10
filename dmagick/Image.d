@@ -1933,6 +1933,99 @@ class Image
 	}
 
 	/**
+	 * Ping is similar to read except only enough of the image is read to
+	 * determine the image columns, rows, and filesize. The columns, rows,
+	 * and fileSize attributes are valid after invoking ping.
+	 * The image data is not valid after calling ping.
+	 */
+	void ping(string filename)
+	{
+		options.filename = filename;
+
+		MagickCoreImage* image = PingImages(options.imageInfo, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	///ditto
+	void ping(void[] blob)
+	{
+		MagickCoreImage* image = 
+			PingBlob(options.imageInfo, blob.ptr, blob.length, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Produce an image that looks like a Polaroid® instant picture.
+	 * If the image has a "Caption" property, the value is used as a caption.
+	 * 
+	 * Params:
+	 *     angle = The resulting image is rotated by this amount,
+	 *             measured in degrees.
+	 */
+	void polaroid(double angle)
+	{
+		MagickCoreImage* image = 
+			PolaroidImage(imageRef, options.drawInfo, angle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Reduces the image to a limited number of colors for a "poster" effect.
+	 * 
+	 * Params:
+	 *     levels = Number of color levels allowed in each channel.
+	 *              Very low values (2, 3, or 4) have the most
+	 *              visible effect.
+	 *     dither = If true, dither the image.
+	 */
+	void posterize(size_t levels = 4, bool dither = false)
+	{
+		PosterizeImage(imageRef, levels, dither);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Creates an image that contains 9 small versions of the receiver
+	 * image. The center image is the unchanged receiver. The other 8
+	 * images are variations created by transforming the receiver according
+	 * to the specified preview type with varying parameters.
+	 *
+	 * A preview image is an easy way to "try out" a transformation method.
+	 */
+	Image preview(PreviewType preview)
+	{
+		MagickCoreImage* image = 
+			PreviewImage(imageRef, preview, DMagickExceptionInfo());
+
+		return new Image(image, options.clone());
+	}
+
+	/**
+	 * Execute the named process module, passing any arguments arguments.
+	 * An exception is thrown if the requested process module does not exist,
+	 * fails to load, or fails during execution.
+	 * 
+	 * Params:
+	 *     name      = The name of a module.
+	 *     arguments = The arguments to pass to the module.
+	 */
+	void process(string name, string[] arguments)
+	{
+		MagickCoreImage* image = imageRef;
+		const(char)*[] args = new char*[arguments.length];
+
+		foreach( i, arg; arguments )
+			args[i] = toStringz(arg);
+
+		InvokeDynamicImageFilter(toStringz(mod), &image, cast(int)args.length, args.ptr, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
 	 * Read an Image by reading from the file or
 	 * URL specified by filename.
 	 */
@@ -3100,6 +3193,7 @@ class Image
 	//Should we implement these as actual properties?
 	//attribute
 	//comment
+	//caption
 	//label
 	//signature
 
