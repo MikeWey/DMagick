@@ -21,6 +21,8 @@ extern(C)
 		ArcDistortion,
 		PolarDistortion,
 		DePolarDistortion,
+		Cylinder2PlaneDistortion,
+		Plane2CylinderDistortion,
 		BarrelDistortion,
 		BarrelInverseDistortion,
 		ShepardsDistortion,

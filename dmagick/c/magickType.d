@@ -79,7 +79,7 @@ extern (C)
 		BlackChannel      = 0x0020,
 		IndexChannel      = 0x0020,
 		CompositeChannels = 0x002F,
-		AllChannels       =   ~0UL,
+		AllChannels       =    ~0L,
 
 		TrueAlphaChannel = 0x0040, // extract actual alpha channel from opacity
 		RGBChannels      = 0x0080, // set alpha from  grayscale mask in RGB

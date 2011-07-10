@@ -26,20 +26,19 @@ extern(C)
 
 	enum PixelComponent
 	{
-		RedPixelComponent = 0,
-		CyanPixelComponent = 0,
-		GrayPixelComponent = 0,
-		YPixelComponent = 0,
-		GreenPixelComponent = 1,
-		MagentaPixelComponent = 1,
-		CbPixelComponent = 1,
-		BluePixelComponent = 2,
-		YellowPixelComponent = 2,
-		CrPixelComponent = 2,
-		AlphaPixelComponent = 3,
-		BlackPixelComponent = 4,
-		IndexPixelComponent = 4,
-		MaskPixelComponent = 5
+		PixelRed = 0,
+		PixelCyan = 0,
+		PixelGray = 0,
+		PixelY = 0,
+		PixelGreen = 1,
+		PixelMagenta = 1,
+		PixelCb = 1,
+		PixelBlue = 2,
+		PixelYellow = 2,
+		PixelCr = 2,
+		PixelAlpha = 3,
+		PixelBlack = 4,
+		PixelIndex = 4,
 	}
 
 	struct DoublePixelPacket

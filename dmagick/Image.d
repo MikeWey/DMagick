@@ -1637,6 +1637,31 @@ class Image
 	}
 
 	/**
+	 * Replaces the pixels in the specified area with pixel data
+	 * from the supplied array.
+	 * 
+	 * Params:
+	 *     area   = Location in the image to store the pixels. 
+	 *     pixels = An array of pixels defined by map.
+	 *     map    = This character string can be any combination
+	 *              or order of R = red, G = green, B = blue, A = 
+	 *              alpha, C = cyan, Y = yellow, M = magenta, and K = black.
+	 *              The ordering reflects the order of the pixels in
+	 *              the supplied pixel array.
+	 */
+	void importPixels(T)(Geometry area, T[] pixels, string map = "RGBA")
+	{
+		StorageType storage = getStorageType!(T);
+
+		ImportImagePixels(imageRef,
+			area.xOffset, area.yOffset,
+			area.width,   area.height,
+			toStringz(map), storage, pixels.ptr);
+
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
 	 * Adjusts the levels of an image by scaling the colors falling between
 	 * specified white and black points to the full available quantum range.
 	 * The parameters provided represent the black, mid, and white points.
@@ -1918,31 +1943,6 @@ class Image
 		MagickCoreImage* image = ReadImage(options.imageInfo, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
-	}
-
-	/**
-	 * Replaces the pixels in the specified area with pixel data
-	 * from the supplied array.
-	 * 
-	 * Params:
-	 *     area   = Location in the image to store the pixels. 
-	 *     pixels = An array of pixels defined by map.
-	 *     map    = This character string can be any combination
-	 *              or order of R = red, G = green, B = blue, A = 
-	 *              alpha, C = cyan, Y = yellow, M = magenta, and K = black.
-	 *              The ordering reflects the order of the pixels in
-	 *              the supplied pixel array.
-	 */
-	void importPixels(T)(Geometry area, T[] pixels, string map = "RGBA")
-	{
-		StorageType storage = getStorageType!(T);
-
-		ImportImagePixels(imageRef,
-			area.xOffset, area.yOffset,
-			area.width,   area.height,
-			toStringz(map), storage, pixels.ptr);
-
-		DMagickException.throwException(&(imageRef.exception));
 	}
 
 	/**
