@@ -1217,6 +1217,20 @@ class Image
 	}
 
 	/**
+	 * Applies a value to the image with an arithmetic, relational, or
+	 * logical operator to an image. Use these operations to lighten or
+	 * darken an image, to increase or decrease contrast in an image, or
+	 * to produce the "negative" of an image.
+	 *
+	 * See_Also: $(LINK2 http://www.imagemagick.org/script/command-line-options.php#evaluate,
+	 *     ImageMagick's -evaluate option).
+	 */
+	void evaluate(MagickEvaluateOperator op, double value, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		EvaluateImageChannel(imageRef, channel, op, value,  DMagickExceptionInfo());
+	}
+
+	/**
 	 * This method is very similar to crop. It extracts the rectangle
 	 * specified by its arguments from the image and returns it as a new
 	 * image. However, excerpt does not respect the virtual page offset and
@@ -1680,7 +1694,11 @@ class Image
 	 *     gamma      = Specifies the gamma correction to apply to the image.
 	 *     channel    = The channels to level.
 	 */
-	void level(Quantum blackPoint = 0, Quantum whitePoint = QuantumRange, double gamma = 1, ChannelType channel = ChannelType.DefaultChannels)
+	void level(
+		Quantum blackPoint = 0,
+		Quantum whitePoint = QuantumRange,
+		double gamma = 1,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		LevelImageChannel(imageRef, channel, blackPoint, whitePoint, gamma);
 
@@ -1704,7 +1722,11 @@ class Image
 	 *     gamma      = Specifies the gamma correction to apply to the image.
 	 *     channel    = The channels to level.
 	 */
-	void levelize(Quantum blackPoint = 0, Quantum whitePoint = QuantumRange, double gamma = 1, ChannelType channel = ChannelType.DefaultChannels)
+	void levelize(
+		Quantum blackPoint = 0,
+		Quantum whitePoint = QuantumRange,
+		double gamma = 1,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		LevelizeImageChannel(imageRef, channel, blackPoint, whitePoint, gamma);
 
@@ -1822,7 +1844,11 @@ class Image
 	 *     angle   = The angle (in degrees) of the blurring motion.
 	 *     channel = The affected channels.
 	 */
-	void motionBlur(double radius = 0, double sigma = 1, double angle = 0, ChannelType channel = ChannelType.DefaultChannels)
+	void motionBlur(
+		double radius = 0,
+		double sigma = 1,
+		double angle = 0,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		MagickCoreImage* image = 
 			MotionBlurImageChannel(imageRef, channel, radius, sigma, angle, DMagickExceptionInfo());
@@ -2020,9 +2046,65 @@ class Image
 		foreach( i, arg; arguments )
 			args[i] = toStringz(arg);
 
-		InvokeDynamicImageFilter(toStringz(mod), &image, cast(int)args.length, args.ptr, DMagickExceptionInfo());
+		InvokeDynamicImageFilter(toStringz(name), &image, cast(int)args.length, args.ptr, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Analyzes the colors within a reference image and chooses a fixed
+	 * number of colors to represent the image. The goal of the algorithm
+	 * is to minimize the difference between the input and output image
+	 * while minimizing the processing time.
+	 * 
+	 * Params:
+	 *     measureError = Set to true to calculate quantization errors
+	 *                    when quantizing the image. These can be accessed
+	 *                    with: normalizedMeanError, normalizedMaxError
+	 *                    and meanErrorPerPixel.
+	 */
+	//TODO: should quantizeInfo be part of options?
+	void quantize(measureError=false)
+	{
+		options.quantizeInfo = measureError;
+
+		QuantizeImage(options.quantizeInfo, imageRef);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Applies a radial blur to the image.
+	 * 
+	 * Params:
+	 *     angle   = The angle of the radial blur, in degrees.
+	 *     channel = If no channels are specified, blurs all the channels.
+	 */
+	void radialBlur(double angle, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickCoreImage* image = 
+			RadialBlurImageChannel(imageRef, channel, angle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Creates a simulated three-dimensional button-like effect by
+	 * lightening and darkening the edges of the image.
+	 * 
+	 * Params:
+	 *     width  = The width of the raised edge in pixels.
+	 *     height = The height of the raised edge in pixels.
+	 *     raised = If true, the image is raised, otherwise lowered.
+	 */
+	void raise(size_t width, size_t height, bool raised = true)
+	{
+		RectangleInfo raiseInfo;
+
+		raiseInfo.width  = width;
+		raiseInfo.height = height;
+
+		RaiseImage(imageRef, raiseInfo, raised);
+		DMagickException.throwException(&(imageRef.exception));
 	}
 
 	/**
@@ -2367,9 +2449,7 @@ class Image
 		else if ( imageRef.storage_class == ClassType.DirectClass && type == ClassType.PseudoClass )
 		{
 			options.quantizeColors = MaxColormapSize;
-			//TODO: implement quantize function.
-			//quantize();
-			assert(false);
+			quantize();
 		}
 
 		imageRef.storage_class = type;
