@@ -1113,6 +1113,22 @@ class Options
 	}
 
 	/**
+	 * The basic strategy of dithering is to trade intensity resolution for
+	 * spatial resolution by averaging the intensities of several neighboring
+	 * pixels. Images which suffer from severe contouring when reducing
+	 * colors can be improved with this option. 
+	 */
+	void quantizeDitherMethod(DitherMethod method)
+	{
+		quantizeInfo.dither_method = method;
+	}
+	///ditto
+	DitherMethod quantizeDitherMethod()
+	{
+		return quantizeInfo.dither_method;
+	}
+
+	/**
 	 * Depth of the quantization color classification tree.
 	 * Values of 0 or 1 allow selection of the optimal tree _depth
 	 * for the color reduction algorithm. Values between 2 and 8
@@ -1130,5 +1146,4 @@ class Options
 
 	//MagickBooleanType measure_error;
 	//size_t signature;
-	//DitherMethod dither_method;
 }

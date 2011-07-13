@@ -2108,6 +2108,27 @@ class Image
 	}
 
 	/**
+	 * Changes the value of individual pixels based on the intensity of
+	 * each pixel compared to a random threshold. The result is a
+	 * low-contrast, two color image.
+	 * 
+	 * Params:
+	 *     thresholds = A geometry string containing LOWxHIGH thresholds.
+	 *                  The string is in the form `XxY'. The Y value may be
+	 *                  omitted, in which case it is assigned the value
+	 *                  QuantumRange-X. If an % appears in the string then
+	 *                  the values are assumed to be percentages of
+	 *                  QuantumRange. If the string contains 2x2, 3x3, or
+	 *                  4x4, then an ordered dither of order 2, 3, or 4
+	 *                  will be performed instead.
+	 *     channel    = The affected channels.
+	 */
+	void randomThreshold(Geometry thresholds, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		RandomThresholdImageChannel(imageRef, channel, toStringz(thresholds.toString()), DMagickExceptionInfo());
+	}
+
+	/**
 	 * Read an Image by reading from the file or
 	 * URL specified by filename.
 	 */
@@ -2215,6 +2236,36 @@ class Image
 			ConstituteImage(width, height, toStringz(map), storage, pixels.ptr, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Smooths the contours of an image while still preserving edge
+	 * information. The algorithm works by replacing each pixel with its
+	 * neighbor closest in value.
+	 * 
+	 * Params:
+	 *     radius = A neighbor is defined by radius. Use a radius of 0
+	 *              and reduceNoise selects a suitable radius for you.
+	 */
+	void reduceNoise(size_t radius = 0)
+	{
+		MagickCoreImage* image = 
+			StatisticImage(imageRef, StatisticType.NonpeakStatistic, radius, radius, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Reduce the number of colors in img to the colors used by reference.
+	 * If a dither method is set then the given colors are dithered over
+	 * the image as necessary, otherwise the closest color
+	 * (in RGB colorspace) is selected to replace that pixel in the image.
+	 */
+	void remap(Image reference)
+	{
+		RemapImage(options.quantizeInfo, imageRef, reference.imageRef);
+
+		DMagickException.throwException(&(imageRef.exception));
 	}
 
 	//TODO: set process monitor.
