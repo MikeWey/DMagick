@@ -120,6 +120,28 @@ struct Geometry
 		assert( geo.toString == "200x150!-50+25");
 	}
 
+	/**
+	 * Calculate the absolute width and height based on the flags,
+	 * and the profided width and height.
+	 */
+	Geometry toAbsolute(size_t width, size_t height)
+	{
+		ssize_t x, y;
+
+		ParseMetaGeometry(toStringz(toString()), &x, &y, &width, &height);
+
+		return Geometry(width, height, x, y);
+	}
+
+	unittest
+	{
+		Geometry percentage = Geometry("50%");
+		Geometry absolute = percentage.toAbsolute(100, 100);
+
+		assert(absolute.width  == 50);
+		assert(absolute.height == 50);
+	}
+
 	RectangleInfo rectangleInfo()
 	{
 		RectangleInfo info;

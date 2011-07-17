@@ -247,13 +247,10 @@ class Image
 	 */
 	void adaptiveResize(Geometry size)
 	{
-		ssize_t x, y;
-		size_t width  = columns;
-		size_t height = rows;
+		size = size.toAbsolute(columns, rows);
 
-		ParseMetaGeometry(toStringz(size.toString), &x, &y, &width, &height);
 		MagickCoreImage* image =
-			AdaptiveResizeImage(imageRef, width, height, DMagickExceptionInfo());
+			AdaptiveResizeImage(imageRef, size.width, size.height, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -270,7 +267,7 @@ class Image
 	 *     radius  = The radius of the Gaussian in pixels,
 	 *               not counting the center pixel.
 	 *     sigma   = The standard deviation of the Laplacian, in pixels.
-	 *     channel = If no channels are specified, blurs all the channels.
+	 *     channel = If no channels are specified, sharpens all the channels.
 	 */
 	void adaptiveSharpen(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
 	{
@@ -1761,13 +1758,10 @@ class Image
 	 */
 	void liquidRescale(Geometry size, size_t rows, double deltaX = 0, double rigidity = 0)
 	{
-		ssize_t x, y;
-		size_t width  = columns;
-		size_t height = rows;
+		size = size.toAbsolute(columns, rows);
 
-		ParseMetaGeometry(toStringz(size.toString), &x, &y, &width, &height);
 		MagickCoreImage* image =
-			LiquidRescaleImage(imageRef, columns, rows, deltaX, rigidity, DMagickExceptionInfo());
+			LiquidRescaleImage(imageRef, size.width, size.height, deltaX, rigidity, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -2064,9 +2058,9 @@ class Image
 	 *                    and meanErrorPerPixel.
 	 */
 	//TODO: should quantizeInfo be part of options?
-	void quantize(measureError=false)
+	void quantize(bool measureError = false)
 	{
-		options.quantizeInfo = measureError;
+		options.quantizeInfo.measure_error = measureError;
 
 		QuantizeImage(options.quantizeInfo, imageRef);
 		DMagickException.throwException(&(imageRef.exception));
@@ -2103,7 +2097,7 @@ class Image
 		raiseInfo.width  = width;
 		raiseInfo.height = height;
 
-		RaiseImage(imageRef, raiseInfo, raised);
+		RaiseImage(imageRef, &raiseInfo, raised);
 		DMagickException.throwException(&(imageRef.exception));
 	}
 
@@ -2266,6 +2260,167 @@ class Image
 		RemapImage(options.quantizeInfo, imageRef, reference.imageRef);
 
 		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Resize image in terms of its pixel size, so that when displayed at
+	 * the given resolution it will be the same size in terms of real world
+	 * units as the original image at the original resolution.
+	 * 
+	 * Params:
+	 *     xResolution = the target horizontal resolution
+	 *     yResolution = the target vertical resolution
+	 *     filter      = The filter to use when resizing.
+	 *     blur        = Values > 1 increase the blurriness.
+	 *                   Values < 1 increase the sharpness.
+	 */
+	void resample(double xResolution, double yResolution, FilterTypes filter = FilterTypes.LanczosFilter, double blur = 1)
+	{
+		MagickCoreImage* image = 
+			ResampleImage(imageRef, xResolution, yResolution, filter, blur, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * scales an image to the desired dimensions, using the given filter.
+	 * 
+	 * Params:
+	 *     size   = The desired width and height.
+	 *     filter = The filter to use when resizing.
+	 *     blur   = Values > 1 increase the blurriness.
+	 *              Values < 1 increase the sharpness.
+	 */
+	void resize(Geometry size, FilterTypes filter = FilterTypes.LanczosFilter, double blur = 1)
+	{
+		size = size.toAbsolute(columns, rows);
+
+		MagickCoreImage* image = 
+			ResizeImage(imageRef, size.width, size.height, filter, blur, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Offsets an image as defined by xOffset and yOffset.
+	 */
+	void roll(ssize_t xOffset, ssize_t yOffset)
+	{
+		MagickCoreImage* image = 
+			RollImage(imageRef, xOffset, yOffset, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Rotate the image by specified number of degrees. Rotated images are
+	 * usually larger than the originals and have 'empty' triangular corners.
+	 * Empty triangles left over from shearing the image are filled with the
+	 * background color defined by the 'backgroundColor' property
+	 * of the image.
+	 * 
+	 * Params:
+	 *     degrees = The number of degrees to rotate the image. Positive
+	 *               angles rotate counter-clockwise (right-hand rule),
+	 *               while negative angles rotate clockwise.
+	 */
+	void rotate(double degrees)
+	{
+		MagickCoreImage* image = 
+			RotateImage(imageRef, degrees, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * scales an image to the desired dimensions with pixel sampling.
+	 * Unlike other scaling methods, this method does not introduce any
+	 * additional color into the scaled image.
+	 */
+	void sample(Geometry size)
+	{
+		size = size.toAbsolute(columns, rows);
+
+		MagickCoreImage* image = 
+			SampleImage(imageRef, size.width, size.height, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Resize image by using simple ratio algorithm.
+	 */
+	void scale(Geometry size)
+	{
+		size = size.toAbsolute(columns, rows);
+
+		MagickCoreImage* image = 
+			ScaleImage(imageRef, size.width, size.height, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Segments an image by analyzing the histograms of the color
+	 * components and identifying units that are homogeneous with the
+	 * fuzzy c-means technique. Also uses quantizeColorSpace and
+	 * verbose image properties. 
+	 * 
+	 * Params:
+	 *     clusterThreshold   = 
+	 *          The number of pixels in each cluster must exceed the
+	 *          the cluster threshold to be considered valid.
+	 *     smoothingThreshold = 
+	 *          The smoothing threshold eliminates noise in the second
+	 *          derivative of the histogram. As the value is increased,
+	 *          you can expect a smoother second derivative.
+	 */
+	void segment(double clusterThreshold = 1, double smoothingThreshold = 1.5)
+	{
+		SegmentImage(imageRef, options.quantizeColorSpace, options.verbrose, clusterThreshold, smoothingThreshold);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Selectively blur pixels within a contrast threshold.
+	 * 
+	 * Params:
+	 *     radius    = The radius of the Gaussian in pixels,
+	 *                 not counting the center pixel.
+	 *     sigma     = The standard deviation of the Laplacian, in pixels.
+	 *     threshold = Threshold level represented as a percentage
+	 *                 of the quantum range.
+	 *     channel   = The channels to blur.
+	 */
+	void selectiveBlur(double radius, double sigma, double threshold, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickCoreImage* image = 
+			SelectiveBlurImageChannel(imageRef, channel, radius, sigma, threshold, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	//TODO: implement separate, returns a range of images.
+
+	/**
+	 * applies a special effect to the image, similar to the effect achieved
+	 * in a photo darkroom by sepia toning. A threshold of 80% is a good
+	 * starting point for a reasonable tone.
+	 * 
+	 * Params:
+	 *     threshold = Threshold ranges from 0 to QuantumRange and is
+	 *                 a measure of the extent of the sepia toning.
+	 *                 A value lower than 1 is treated as a percentage.
+	 */
+	void sepiatone(double threshold = QuantumRange)
+	{
+		if ( threshold < 1 )
+			threshold *= QuantumRange;
+
+		MagickCoreImage* image = 
+			SepiaToneImage(imageRef, threshold, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
 	}
 
 	//TODO: set process monitor.
