@@ -2274,7 +2274,11 @@ class Image
 	 *     blur        = Values > 1 increase the blurriness.
 	 *                   Values < 1 increase the sharpness.
 	 */
-	void resample(double xResolution, double yResolution, FilterTypes filter = FilterTypes.LanczosFilter, double blur = 1)
+	void resample(
+		double xResolution,
+		double yResolution,
+		FilterTypes filter = FilterTypes.LanczosFilter,
+		double blur = 1)
 	{
 		MagickCoreImage* image = 
 			ResampleImage(imageRef, xResolution, yResolution, filter, blur, DMagickExceptionInfo());
@@ -2392,7 +2396,11 @@ class Image
 	 *                 of the quantum range.
 	 *     channel   = The channels to blur.
 	 */
-	void selectiveBlur(double radius, double sigma, double threshold, ChannelType channel = ChannelType.DefaultChannels)
+	void selectiveBlur(
+		double radius,
+		double sigma,
+		double threshold,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		MagickCoreImage* image = 
 			SelectiveBlurImageChannel(imageRef, channel, radius, sigma, threshold, DMagickExceptionInfo());
@@ -2423,6 +2431,100 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
+	/**
+	 * shines a distant light on an image to create a three-dimensional
+	 * effect. You control the positioning of the light with azimuth and
+	 * elevation.
+	 * 
+	 * Params:
+	 *     azimuth   = The amount of degrees off the X axis.
+	 *     elevation = The amount of pixels above the Z axis.
+	 *     shading   = If true, shade shades the intensity of each pixel.
+	 */
+	void shade(double azimuth = 30, double elevation = 30, bool shading = false)
+	{
+		MagickCoreImage* image = 
+			ShadeImage(imageRef, shading, azimuth, elevation, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Simulates a shadow from the specified image and returns it.
+	 * This method only works when the image has opaque parts and
+	 * transparent parts. Note that the resulting image is just the shadow.
+	 * 
+	 * Params:
+	 *     xOffset = The shadow x offset.
+	 *     yOffset = The shadow y offset.
+	 *     sigma   = The standard deviation of the Gaussian operator used
+	 *               to produce the shadow. The higher the number, the
+	 *               "blurrier" the shadow, but the longer it takes to
+	 *               produce the shadow.
+	 *     opacity = The percent opacity of the shadow.
+	 *               A number between 0.1 and 1.0
+	 */
+	Image shadowImage(ssize_t xOffset, ssize_t yOffset, double sigma = 4, double opacity = 1)
+	{
+		MagickCoreImage* image = 
+			ShadowImage(imageRef, opacity, sigma, xOffset, yOffset, DMagickExceptionInfo());
+
+		return new Image(image);
+	}
+
+	/**
+	 * Sharpens an image. We convolve the image with a Gaussian operator
+	 * of the given radius and standard deviation (sigma). For reasonable
+	 * results, radius should be larger than sigma. Use a radius of 0 and
+	 * sharpen selects a suitable radius for you.
+	 * 
+	 * Params:
+	 *     radius  = The radius of the Gaussian in pixels,
+	 *               not counting the center pixel.
+	 *     sigma   = The standard deviation of the Laplacian, in pixels.
+	 *     channel = If no channels are specified, sharpens all the channels.
+	 */
+	void sharpen(double radius = 0, double sigma = 1, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickCoreImage* image = 
+			SharpenImageChannel(imageRef, channel, radius, sigma, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Removes pixels from the edges of the image,
+	 * leaving the center rectangle.
+	 * 
+	 * Params:
+	 *     geometry = The region of the image to crop.
+	 */
+	void shave(Geometry geometry)
+	{
+		RectangleInfo rectangle = geometry.rectangleInfo;
+		MagickCoreImage* image = ShaveImage(imageRef, &rectangle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Shearing slides one edge of an image along the X or Y axis, creating
+	 * a parallelogram. An X direction shear slides an edge along the X axis,
+	 * while a Y direction shear slides an edge along the Y axis. The amount
+	 * of the shear is controlled by a shear angle. For X direction shears,
+	 * xShearAngle is measured relative to the Y axis, and similarly, for Y
+	 * direction shears yShearAngle is measured relative to the X axis.
+	 * Empty triangles left over from shearing the image are filled with
+	 * the background color.
+	 */
+	void shear(double xShearAngle, double yShearAngle)
+	{
+		MagickCoreImage* image = 
+			ShearImage(imageRef, xShearAngle, yShearAngle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
 	//TODO: set process monitor.
 
 	/**
@@ -2432,7 +2534,6 @@ class Image
 	void splice(Geometry geometry)
 	{
 		RectangleInfo rectangle = geometry.rectangleInfo;
-		
 		MagickCoreImage* image = SpliceImage(imageRef, &rectangle, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
