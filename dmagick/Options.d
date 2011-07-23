@@ -1123,7 +1123,7 @@ class Options
 		quantizeInfo.dither_method = method;
 	}
 	///ditto
-	DitherMethod quantizeDitherMethod()
+	DitherMethod quantizeDitherMethod() const
 	{
 		return quantizeInfo.dither_method;
 	}

@@ -2463,6 +2463,7 @@ class Image
 	 *               produce the shadow.
 	 *     opacity = The percent opacity of the shadow.
 	 *               A number between 0.1 and 1.0
+	 * Returns: The shadows for this image.
 	 */
 	Image shadowImage(ssize_t xOffset, ssize_t yOffset, double sigma = 4, double opacity = 1)
 	{
@@ -2525,6 +2526,84 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
+	/**
+	 * Adjusts the contrast of an image channel with a non-linear sigmoidal
+	 * contrast algorithm. Increases the contrast of the image using a
+	 * sigmoidal transfer function without saturating highlights or shadows.
+	 * 
+	 * Params:
+	 *     contrast = indicates how much to increase the contrast
+	 *                (0 is none; 3 is typical; 20 is pushing it)
+	 *     midpoint = indicates where midtones fall in the resultant
+	 *                image (0 is white; 50% is middle-gray; 100% is black).
+	 *                Specify an apsulute number of pixels or an
+	 *                percentage by passing a value between 1 and 0
+	 *     sharpen  = Increase or decrease image contrast.
+	 *     channel  = The channels to adjust.
+	 */
+	void sigmoidalContrast(double contrast = 3, double midpoint = 50, bool sharpen = false, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		if ( midpoint < 1 )
+			midpoint *= QuantumRange;
+
+		SigmoidalContrastImageChannel(imageRef, channel, sharpen, contrast, midpoint);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Simulates a pencil sketch. For best results start with
+	 * a grayscale image.
+	 * 
+	 * Params:
+	 *     radius = The radius of the Gaussian, in pixels, not counting
+	 *              the center pixel.
+	 *     sigma  = The standard deviation of the Gaussian, in pixels.
+	 *     angle  = The angle toward which the image is sketched.
+	 */
+	void sketch(double radius = 0, double sigma = 1, double angle = 0)
+	{
+		MagickCoreImage* image = 
+			SketchImage(imageRef, radius, sigma, angle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Fills the image with the specified color or colors, starting at
+	 * the x,y coordinates associated with the color and using the specified
+	 * interpolation method.
+	 * 
+	 * Params:
+	 *     method = The method to fill in the gradient between the
+	 *              control points.
+	 *     args   = A series of control points, and there Color.
+	 * 
+	 * See_Also: $(LINK2 http://www.imagemagick.org/Usage/canvas/#sparse-color,
+	 *     Sparse Points of Color) at Examples of ImageMagick Usage.
+	 */
+	void sparseColor(SparseColorMethod method, Tuple!(size_t, "x", size_t, "y", Color, "color")[] args ...)
+	{
+		double[] argv = new double[args.length * 6];
+
+		foreach( i, arg; args )
+		{
+			double values = argv[i*6 .. i*6+6];
+
+			values[0] = arg.x;
+			values[1] = arg.y;
+
+			values[2] = arg.color.redQuantum / QuantumRange;
+			values[3] = arg.color.greenQuantum / QuantumRange;
+			values[4] = arg.color.blueQuantum / QuantumRange;
+			values[5] = arg.color.opacityQuantum / QuantumRange;
+		}
+
+		MagickCoreImage* image = 
+			SparseColorImage(imageRef, ChannelType.DefaultChannels, method, argv.length, argv.ptr, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
 	//TODO: set process monitor.
 
 	/**
@@ -2535,6 +2614,49 @@ class Image
 	{
 		RectangleInfo rectangle = geometry.rectangleInfo;
 		MagickCoreImage* image = SpliceImage(imageRef, &rectangle, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Randomly displaces each pixel in a block defined by the
+	 * radius parameter.
+	 */
+	void spread(double radius = 3)
+	{
+		MagickCoreImage* image =
+			SpreadImage(imageRef, radius, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Hides a digital watermark in the receiver. You can retrieve the
+	 * watermark by reading the file with the stegano: prefix, thereby
+	 * proving the authenticity of the file.
+	 * 
+	 * The watermarked image must be saved in a lossless RGB format such
+	 * as MIFF, or PNG. You cannot save a watermarked image in a lossy
+	 * format such as JPEG or a pseudocolor format such as GIF. Once
+	 * written, the file must not be modified or processed in any way.
+	 * 
+	 * Params:
+	 *     watermark = An image or imagelist to be used as the watermark.
+	 *                 The watermark must be grayscale and should be
+	 *                 substantially smaller than the receiver. The recovery
+	 *                 time is proportional to the size of the watermark.
+	 *     offset    = The starting position within the receiver at which
+	 *                 the watermark will be hidden. When you retrieve the
+	 *                 watermark from the file, you must supply this value,
+	 *                 along with the width and height of the watermark, in
+	 *                 the size optional parameter to the read method.
+	 */
+	void stegano(Image watermark, ssize_t offset)
+	{
+		imageRef.offset = offset;
+
+		MagickCoreImage* image =
+			SpreadImage(imageRef, watermark.imageRef, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
