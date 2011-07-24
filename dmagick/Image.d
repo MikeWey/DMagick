@@ -9,6 +9,7 @@ module dmagick.Image;
 import std.conv;
 import std.math;
 import std.string;
+import std.typecons : Tuple;
 import core.memory;
 import core.runtime;
 import core.stdc.string;
@@ -2381,7 +2382,7 @@ class Image
 	 */
 	void segment(double clusterThreshold = 1, double smoothingThreshold = 1.5)
 	{
-		SegmentImage(imageRef, options.quantizeColorSpace, options.verbrose, clusterThreshold, smoothingThreshold);
+		SegmentImage(imageRef, options.quantizeColorSpace, options.verbose, clusterThreshold, smoothingThreshold);
 		DMagickException.throwException(&(imageRef.exception));
 	}
 
@@ -2587,7 +2588,7 @@ class Image
 
 		foreach( i, arg; args )
 		{
-			double values = argv[i*6 .. i*6+6];
+			double[] values = argv[i*6 .. i*6+6];
 
 			values[0] = arg.x;
 			values[1] = arg.y;
@@ -2656,7 +2657,80 @@ class Image
 		imageRef.offset = offset;
 
 		MagickCoreImage* image =
-			SpreadImage(imageRef, watermark.imageRef, DMagickExceptionInfo());
+			SteganoImage(imageRef, watermark.imageRef, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Combines two images and produces a single image that is the composite
+	 * of a left and right image of a stereo pair. Special red-green stereo
+	 * glasses are required to view this effect.
+	 */
+	void stereo(Image rightImage)
+	{
+		MagickCoreImage* image =
+			StereoImage(imageRef, rightImage.imageRef, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Strips an image of all profiles and comments.
+	 */
+	void strip()
+	{
+		StripImage(imageRef);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * synchronizes image properties with the image profiles. Currently
+	 * we only support updating the EXIF resolution and orientation.
+	 */
+	void syncProfiles()
+	{
+		SyncImageProfiles(imageRef);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Swirls the pixels about the center of the image, where degrees
+	 * indicates the sweep of the arc through which each pixel is moved.
+	 * You get a more dramatic effect as the degrees move from 1 to 360.
+	 */
+	void swirl(double degrees)
+	{
+		MagickCoreImage* image =
+			SwirlImage(imageRef, degrees, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Changes the value of individual pixels based on the intensity of
+	 * each pixel compared to threshold. The result is a high-contrast,
+	 * two color image.
+	 * 
+	 * See_Also: bilevel.
+	 */
+	//TODO: deprecated ?
+	void threshold(Quantum value)
+	{
+		bilevel(value);
+	}
+
+	/**
+	 * changes the size of an image to the given dimensions and removes
+	 * any associated profiles. The goal is to produce small low cost
+	 * thumbnail images suited for display on the Web.
+	 */
+	void thumbnail(Geometry size)
+	{
+		size = size.toAbsolute(columns, rows);
+
+		MagickCoreImage* image =
+			ThumbnailImage(imageRef, size.width, size.height, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -2695,6 +2769,138 @@ class Image
 		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, DMagickExceptionInfo());
 
 		return blob[0 .. length];	
+	}
+
+	/**
+	 * Changes the opacity value of all the pixels that match color to
+	 * the value specified by opacity. By default the pixel must match
+	 * exactly, but you can specify a tolerance level by setting the fuzz
+	 * attribute on the image.
+	 * 
+	 * Params:
+	 *     target  = The target color.
+	 *     opacity = The desired opacity.
+	 *     invert  = If true, all pixels outside the range
+	 *               are set to opacity.
+	 */
+	void transparent(Color color, Quantum opacity = TransparentOpacity, bool invert = false)
+	{
+		MagickPixelPacket target;
+
+		GetMagickPixelPacket(imageRef, &target);
+		target.red     = color.redQuantum;
+		target.green   = color.greenQuantum;
+		target.blue    = color.blueQuantum;
+
+		TransparentPaintImage(imageRef, &target, opacity, invert);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Changes the opacity value associated with any pixel between low and
+	 * high to the value defined by opacity.
+	 * 
+	 * As there is one fuzz value for the all the channels, the transparent
+	 * method is not suitable for the operations like chroma, where the
+	 * tolerance for similarity of two color components (RGB) can be
+	 * different, Thus we define this method take two target pixels (one
+	 * low and one high) and all the pixels of an image which are lying
+	 * between these two pixels are made transparent.
+	 * 
+	 * Params:
+	 *     low     = The low end of the pixel range.
+	 *     high    = The high end of the pixel range.
+	 *     opacity = The desired opacity.
+	 *     invert  = If true, all pixels outside the range
+	 *               are set to opacity.
+	 */
+	void transparentChroma(Color low, Color high, Quantum opacity = TransparentOpacity, bool invert = false)
+	{
+		MagickPixelPacket lowTarget;
+		MagickPixelPacket highTarget;
+
+		GetMagickPixelPacket(imageRef, &lowTarget);
+		lowTarget.red     = low.redQuantum;
+		lowTarget.green   = low.greenQuantum;
+		lowTarget.blue    = low.blueQuantum;
+
+		GetMagickPixelPacket(imageRef, &highTarget);
+		highTarget.red     = high.redQuantum;
+		highTarget.green   = high.greenQuantum;
+		highTarget.blue    = high.blueQuantum;
+
+		TransparentPaintImage(imageRef, &lowTarget, &highTarget, opacity, invert);
+		DMagickException.throwException(&(imageRef.exception));
+	}
+
+	/**
+	 * Creates a horizontal mirror image by reflecting the pixels around
+	 * the central y-axis while rotating them by 90 degrees.
+	 */
+	void transpose()
+	{
+		MagickCoreImage* image = TransposeImage(imageRef, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Creates a vertical mirror image by reflecting the pixels around
+	 * the central x-axis while rotating them by 270 degrees
+	 */
+	void transverse()
+	{
+		MagickCoreImage* image = TransverseImage(imageRef, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Removes the edges that are exactly the same color as the corner
+	 * pixels. Use the fuzz property to make trim remove edges that are
+	 * nearly the same color as the corner pixels.
+	 */
+	void trim()
+	{
+		MagickCoreImage* image = TrimImage(imageRef, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Constructs a new image with one pixel for each unique color in the
+	 * image. The new image has 1 row. The row has 1 column for each unique
+	 * pixel in the image.
+	 */
+	Image uniqueColors()
+	{
+		MagickCoreImage* image = UniqueImageColors(imageRef, DMagickExceptionInfo());
+
+		return new Image(image);
+	}
+
+	/**
+	 * Sharpens an image. We convolve the image with a Gaussian operator
+	 * of the given radius and standard deviation (sigma). For reasonable
+	 * results, radius should be larger than sigma. Use a radius of 0 and
+	 * unsharpMask selects a suitable radius for you.
+	 * 
+	 * Params:
+	 *     radius    = The radius of the Gaussian operator.
+	 *     sigma     = The standard deviation of the Gaussian operator.
+	 *     amount    = The percentage of the blurred image to be added
+	 *                 to the receiver, specified as a fraction between 0
+	 *                 and 1.0. A good starting value is 1.0
+	 *     threshold = The threshold needed to apply the amount, specified
+	 *                 as a fraction between 0 and 1.0.
+	 *     channel   = The channels to sharpen.
+	 */
+	void unsharpMask(double radius = 0, double sigma = 1, double amount = 1, double threshold = 0.05, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		MagickCoreImage* image =
+			UnsharpMaskImageChannel(imageRef, channel, radius, sigma, amount, threshold, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
 	}
 
 	/**
