@@ -2542,7 +2542,11 @@ class Image
 	 *     sharpen  = Increase or decrease image contrast.
 	 *     channel  = The channels to adjust.
 	 */
-	void sigmoidalContrast(double contrast = 3, double midpoint = 50, bool sharpen = false, ChannelType channel = ChannelType.DefaultChannels)
+	void sigmoidalContrast(
+		double contrast = 3,
+		double midpoint = 50,
+		bool sharpen = false,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		if ( midpoint < 1 )
 			midpoint *= QuantumRange;
@@ -2600,7 +2604,10 @@ class Image
 		}
 
 		MagickCoreImage* image = 
-			SparseColorImage(imageRef, ChannelType.DefaultChannels, method, argv.length, argv.ptr, DMagickExceptionInfo());
+			SparseColorImage(imageRef,
+				ChannelType.DefaultChannels,
+				method,   argv.length,
+				argv.ptr, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
 	}
@@ -2829,7 +2836,7 @@ class Image
 		highTarget.green   = high.greenQuantum;
 		highTarget.blue    = high.blueQuantum;
 
-		TransparentPaintImage(imageRef, &lowTarget, &highTarget, opacity, invert);
+		TransparentPaintImageChroma(imageRef, &lowTarget, &highTarget, opacity, invert);
 		DMagickException.throwException(&(imageRef.exception));
 	}
 
@@ -2895,7 +2902,12 @@ class Image
 	 *                 as a fraction between 0 and 1.0.
 	 *     channel   = The channels to sharpen.
 	 */
-	void unsharpMask(double radius = 0, double sigma = 1, double amount = 1, double threshold = 0.05, ChannelType channel = ChannelType.DefaultChannels)
+	void unsharpMask(
+		double radius = 0,
+		double sigma = 1,
+		double amount = 1,
+		double threshold = 0.05,
+		ChannelType channel = ChannelType.DefaultChannels)
 	{
 		MagickCoreImage* image =
 			UnsharpMaskImageChannel(imageRef, channel, radius, sigma, amount, threshold, DMagickExceptionInfo());
