@@ -1355,18 +1355,14 @@ class Image
 
 		if ( fillToBorder )
 		{
-			target.red   = borderColor.redQuantum;
-			target.green = borderColor.greenQuantum;
-			target.blue  = borderColor.blueQuantum;
+			setMagickPixelPacket(&target, borderColor);
 		}
 		else
 		{
 			PixelPacket packet;
 			GetOneAuthenticPixel(imageRef, xOffset, yOffset, &packet, DMagickExceptionInfo());
 
-			target.red   = packet.red;
-			target.green = packet.green;
-			target.blue  = packet.blue;
+			setMagickPixelPacket(&target, new Color(packet));
 		}
 
 		FloodfillPaintImage(imageRef, channel, options.drawInfo, &target, xOffset, yOffset, fillToBorder);
@@ -1920,14 +1916,6 @@ class Image
 		
 		GetMagickPixelPacket(imageRef, &magickTarget);
 		GetMagickPixelPacket(imageRef, &magickFill);
-
-		void setMagickPixelPacket(MagickPixelPacket* magick, Color color)
-		{
-			magick.red     = color.redQuantum;
-			magick.green   = color.greenQuantum;
-			magick.blue    = color.blueQuantum;
-			magick.opacity = color.opacityQuantum;
-		}
 
 		setMagickPixelPacket(&magickTarget, target);
 		setMagickPixelPacket(&magickFill, fill);
@@ -2795,9 +2783,7 @@ class Image
 		MagickPixelPacket target;
 
 		GetMagickPixelPacket(imageRef, &target);
-		target.red     = color.redQuantum;
-		target.green   = color.greenQuantum;
-		target.blue    = color.blueQuantum;
+		setMagickPixelPacket(&target, color);
 
 		TransparentPaintImage(imageRef, &target, opacity, invert);
 		DMagickException.throwException(&(imageRef.exception));
@@ -2827,14 +2813,10 @@ class Image
 		MagickPixelPacket highTarget;
 
 		GetMagickPixelPacket(imageRef, &lowTarget);
-		lowTarget.red     = low.redQuantum;
-		lowTarget.green   = low.greenQuantum;
-		lowTarget.blue    = low.blueQuantum;
+		setMagickPixelPacket(&lowTarget, low);
 
 		GetMagickPixelPacket(imageRef, &highTarget);
-		highTarget.red     = high.redQuantum;
-		highTarget.green   = high.greenQuantum;
-		highTarget.blue    = high.blueQuantum;
+		setMagickPixelPacket(&highTarget, high);
 
 		TransparentPaintImageChroma(imageRef, &lowTarget, &highTarget, opacity, invert);
 		DMagickException.throwException(&(imageRef.exception));
@@ -3926,6 +3908,14 @@ class Image
 
 	//Other unimplemented porperties
 	//pixelColor
+
+	private void setMagickPixelPacket(MagickPixelPacket* magick, Color color)
+	{
+		magick.red     = color.redQuantum;
+		magick.green   = color.greenQuantum;
+		magick.blue    = color.blueQuantum;
+		magick.opacity = color.opacityQuantum;
+	}
 
 	private template getStorageType(T)
 	{
