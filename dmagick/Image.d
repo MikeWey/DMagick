@@ -2897,6 +2897,77 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
+	//TODO: view.
+
+	/**
+	 * Gradually shades the edges of the image by transforming the pixels
+	 * into the background color.
+	 * 
+	 * Larger values of sigma increase the blurring at the expense of
+	 * increased execution time. In general, radius should be larger than
+	 * sigma, although if radius is 0 then ImageMagick will choose a suitable
+	 * value. Sigma must be non-zero. Choose a very small value for sigma to
+	 * produce a "hard" edge.
+	 * 
+	 * Params:
+	 *     xOffset = Influences the amount of background color in the
+	 *               horizontal dimension.
+	 *     yOffset = Influences the amount of background color in the
+	 *               vertical dimension.
+	 *     radius  = The radius of the pixel neighborhood.
+	 *     sigma   = The standard deviation of the Gaussian, in pixels.
+	 */
+	void vignette(ssize_t xOffset, ssize_t yOffset, double radius = 0, double sigma = 10)
+	{
+		MagickCoreImage* image =
+			VignetteImage(imageRef, radius, sigma, xOffset, yOffset, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Creates a "ripple" effect in the image by shifting the pixels
+	 * vertically along a sine wave whose amplitude and wavelength is
+	 * specified by the given parameters.Creates a "ripple" effect in the
+	 * image by shifting the pixels vertically along a sine wave whose
+	 * amplitude and wavelength is specified by the given parameters.
+	 */
+	void wave(double amplitude = 25, double wavelength = 150)
+	{
+		MagickCoreImage* image =
+			WaveImage(imageRef, amplitude, wavelength, DMagickExceptionInfo());
+
+		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Forces all pixels above the threshold into white while leaving
+	 * all pixels below the threshold unchanged.
+	 * 
+	 * Params:
+	 *     threshold = The threshold value for red green and blue.
+	 *     channel   = One or more channels to adjust.
+	 */
+	void whiteThreshold(Quantum threshold, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		whiteThreshold(threshold, threshold, threshold, 0, channel);
+	}
+
+	///ditto
+	void whiteThreshold(
+		Quantum red,
+		Quantum green,
+		Quantum blue,
+		Quantum opacity = 0,
+		ChannelType channel = ChannelType.DefaultChannels)
+	{
+		string thresholds = std.string.format("%s,%s,%s,%s", red, green, blue, opacity);
+
+		WhiteThresholdImageChannel(
+			imageRef, channel, toStringz(thresholds), DMagickExceptionInfo()
+		);
+	}
+
 	/**
 	 * Writes the image to the specified file. ImageMagick
 	 * determines image format from the prefix or extension.
