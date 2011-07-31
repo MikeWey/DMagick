@@ -2898,9 +2898,9 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
-	ImageView view(Geometry area)
+	dmagick.ImageView.ImageView view(Geometry area)
 	{
-		return ImageView(this, area);
+		return new dmagick.ImageView.ImageView(this, area);
 	}
 
 	/**
