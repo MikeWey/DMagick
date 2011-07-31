@@ -18,6 +18,7 @@ import core.sys.posix.sys.types;
 import dmagick.Color;
 import dmagick.Exception;
 import dmagick.Geometry;
+import dmagick.ImageView;
 import dmagick.Options;
 import dmagick.Utils;
 
@@ -2897,7 +2898,10 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
-	//TODO: view.
+	ImageView view(Geometry area)
+	{
+		return ImageView(this, area);
+	}
 
 	/**
 	 * Gradually shades the edges of the image by transforming the pixels
