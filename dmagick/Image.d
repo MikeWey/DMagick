@@ -3492,6 +3492,11 @@ class Image
 		copyString(imageRef.filename, str);
 		options.filename = str;
 	}
+	///ditto
+	string filename() const
+	{
+		return to!(string)(imageRef.filename);
+	}
 
 	/**
 	 * The image filesize in bytes.

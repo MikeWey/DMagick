@@ -1,6 +1,10 @@
 module dmagick.ImageView;
 
 import std.array;
+import std.parallelism;
+import std.range;
+import std.string;
+import core.atomic;
 
 import dmagick.Color;
 import dmagick.Exception;
@@ -31,7 +35,7 @@ class ImageView
 	Row opIndex(size_t row)
 	{
 		PixelPacket* pixels = 
-			GetAuthenticPixels(image.imageRef, extent.x, extent.y, 1, extent.width, DMagickExceptionInfo());
+			GetAuthenticPixels(image.imageRef, extent.x, extent.y + row, 1, extent.width, DMagickExceptionInfo());
 
 		return Row(image, pixels[0 .. extent.width]);
 	}
@@ -53,6 +57,27 @@ class ImageView
 
 	int opApply(int delegate(ref Row) dg)
 	{
+		shared(int) progress;
+
+		foreach ( row; taskPool.parallel(iota(extent.y, extent.y + extent.height)) )
+		{
+			PixelPacket* pixels = 
+				GetAuthenticPixels(image.imageRef, extent.x, row, 1, extent.width, DMagickExceptionInfo());
+
+			int result = dg(Row(image, pixels[0 .. extent.width]));
+
+			if ( result )
+				return result;
+
+			if ( image.imageRef.progress_monitor !is null )
+			{
+				atomicOp!"+="(progress, 1);
+				image.imageRef.progress_monitor(toStringz("ImageView/" ~ image.filename), progress, extent.height, image.imageRef.client_data);
+			}
+		}
+
+		return 0;
+
 		//Use UpdateImageViewIterator ?
 	}
 }
