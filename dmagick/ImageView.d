@@ -11,6 +11,7 @@ import std.parallelism;
 import std.range;
 import std.string;
 import core.atomic;
+import core.sys.posix.sys.types;
 
 import dmagick.Color;
 import dmagick.Exception;
@@ -18,7 +19,10 @@ import dmagick.Geometry;
 import dmagick.Image;
 
 import dmagick.c.cache;
+import dmagick.c.exception;
 import dmagick.c.geometry;
+import dmagick.c.image : MagickCoreImage = Image;
+import dmagick.c.magickType;
 import dmagick.c.pixel;
 
 /**
@@ -102,10 +106,7 @@ class ImageView
 	 */
 	Row opIndex(size_t row)
 	{
-		PixelPacket* pixels = 
-			GetAuthenticPixels(image.imageRef, extent.x, extent.y + row, 1, extent.width, DMagickExceptionInfo());
-
-		return Row(image, pixels[0 .. extent.width]);
+		return Row.row(image, row + extent.x, extent.width, extent.y);
 	}
 
 	///ditto
@@ -158,10 +159,9 @@ class ImageView
 
 		foreach ( row; taskPool.parallel(iota(extent.y, extent.y + extent.height)) )
 		{
-			PixelPacket* pixels = 
-				GetAuthenticPixels(image.imageRef, extent.x, row, 1, extent.width, DMagickExceptionInfo());
+			Row data = Row.row(image, row, extent.width, extent.x);
 
-			int result = dg(Row(image, pixels[0 .. extent.width]));
+			int result = dg(data);
 
 			if ( result )
 				return result;
@@ -174,8 +174,6 @@ class ImageView
 		}
 
 		return 0;
-
-		//Use UpdateImageViewIterator ?
 	}
 }
 
@@ -207,10 +205,7 @@ class Rows : ImageView
 	 */
 	override Row opIndex(size_t column)
 	{
-		PixelPacket* pixels = 
-			GetAuthenticPixels(image.imageRef, extent.x, extent.y, extent.height, 1, DMagickExceptionInfo());
-
-		return Row(image, pixels[0 .. extent.width]);
+		return Row.column(image, column + extent.y, extent.height, extent.x);
 	}
 
 	/*
@@ -241,17 +236,45 @@ class Rows : ImageView
 struct Row
 {
 	Image image;
+	NexusInfo nexus;
 	PixelPacket[] pixels;
-	
-	this(Image image, PixelPacket[] pixels)
+
+	/**
+	 * Get an row in the image.
+	 */
+	static Row row(Image image, size_t row, size_t width, ssize_t offset)
 	{
-		this.image = image;
-		this.pixels = pixels;
+		Row pixelData;
+
+		Quantum* data =
+			GetAuthenticPixelCacheNexus(image.imageRef, offset, cast(ssize_t)row, width, 1, &(pixelData.nexus), DMagickExceptionInfo());
+
+		pixelData.image = image;
+		pixelData.pixels = (cast(PixelPacket*)data)[0..width];
+
+		return pixelData;
+	}
+
+	/**
+	 * Get an column in the image.
+	 */
+	static Row column(Image image, size_t column, size_t height, ssize_t offset)
+	{
+		Row pixelData;
+
+		Quantum* data =
+			GetAuthenticPixelCacheNexus(image.imageRef, cast(ssize_t)column, offset, 1, height, &(pixelData.nexus), DMagickExceptionInfo());
+
+		pixelData.image = image;
+		pixelData.pixels = (cast(PixelPacket*)data)[0..height];
+
+		return pixelData;
 	}
 
 	~this()
 	{
-		SyncAuthenticPixels(image.imageRef, DMagickExceptionInfo());
+		if ( !pixels.empty )
+			SyncAuthenticPixelCacheNexus(image.imageRef, &nexus, DMagickExceptionInfo());
 	}
 
 	/**
@@ -275,7 +298,7 @@ struct Row
 	 */
 	Color opIndex(size_t pixel)
 	{
-		return new Color(&(pixels[pixel]));
+		return new Color(pixels.ptr + pixel);
 	}
 
 	///ditto
@@ -295,7 +318,7 @@ struct Row
 	///ditto
 	Row opSilce(size_t left, size_t right)
 	{
-		return Row(image, pixels[left .. right]);
+		return Row(image, nexus, pixels[left .. right]);
 	}
 
 	///ditto
@@ -329,5 +352,47 @@ struct Row
 
 		return 0;
 	}
+
+	unittest
+	{
+		Image image = new Image(Geometry(100, 100), new Color("Blue"));
+		{
+			Row row = Row.row(image, 50, 50, 25);
+			row[] = new Color("red");
+		}
+
+		assert(image.view[50][50] == new Color("red"));
+	}
+}
+
+/*
+ * Note: these defenitions aren't public.
+ */
+private extern(C)
+{
+	struct NexusInfo
+	{
+		MagickBooleanType
+			mapped;
+
+		RectangleInfo
+			region;
+
+		MagickSizeType
+			length;
+
+		Quantum*
+			cache,
+			pixels;
+
+		void*
+			metacontent;
+
+		size_t
+			signature;
+	}
+
+	Quantum* GetAuthenticPixelCacheNexus(MagickCoreImage* image, const ssize_t x, const ssize_t y, const size_t columns, const size_t rows, NexusInfo* nexus_info, ExceptionInfo* exception);
+	MagickBooleanType SyncAuthenticPixelCacheNexus(MagickCoreImage* image, NexusInfo* nexus_info, ExceptionInfo* exception);
 }
 

@@ -2905,8 +2905,14 @@ class Image
 	 * Params:
 	 *     area = The area accessible through the view. 
 	 */
-	dmagick.ImageView.ImageView view(Geometry area = Geometry(cast(size_t)this.columns, cast(size_t)this.rows) )
+	dmagick.ImageView.ImageView view(Geometry area = Geometry.init )
 	{
+		if ( area == Geometry.init )
+		{
+			area.width = columns;
+			area.height = rows;
+		}
+
 		return new dmagick.ImageView.ImageView(this, area);
 	}
 

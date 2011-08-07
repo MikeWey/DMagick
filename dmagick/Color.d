@@ -76,7 +76,7 @@ class Color
 	 */
 	this(PixelPacket* packet)
 	{
-		packet = packet;
+		this.packet = packet;
 	}
 
 	PixelPacket pixelPacket()
@@ -104,11 +104,21 @@ class Color
 			string frm = "%08X";
 
 		if ( packet.opacity == 0 )
-			frm = "#" ~ frm ~ frm ~ frm;
+			return format("#"~frm~frm~frm, packet.red, packet.green, packet.blue);
 		else
-			frm = "#" ~ frm ~ frm ~ frm ~ frm;
+			return format("#"~frm~frm~frm~frm, packet.red, packet.green, packet.blue, packet.opacity);
+	}
 
-		return format(frm, packet.red, packet.green, packet.blue, packet.opacity);
+	unittest
+	{
+		Color color = new Color("blue");
+
+		static if ( MagickQuantumDepth == 8 )
+			assert(color.toString() == "#0000FF");
+		else static if ( MagickQuantumDepth == 16 )
+			assert(color.toString() == "#00000000FFFF");
+		else
+			assert(color.toString() == "#0000000000000000FFFFFFFF");
 	}
 
 	/**

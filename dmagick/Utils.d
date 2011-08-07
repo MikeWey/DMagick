@@ -22,11 +22,19 @@ import dmagick.c.magickType;
  */
 void copyString(ref char[MaxTextExtent] dest, string source)
 {
-	if ( source.length < MaxTextExtent )
+	if ( source.length > MaxTextExtent )
 		throw new ResourceLimitException("Source is larger then MaxTextExtend", null);
 
 	dest[0 .. source.length] = source;
 	dest[source.length] = '\0';
+}
+
+unittest
+{
+	char[MaxTextExtent] dest;
+	copyString(dest, "unittest");
+
+	assert(dest[0 .. 8] == "unittest");
 }
 
 /**
