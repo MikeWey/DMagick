@@ -2898,7 +2898,14 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
-	dmagick.ImageView.ImageView view(Geometry area)
+	/**
+	 * Get a view into the image. The ImageView can be used to modify
+	 * individual pixels of the image.
+	 * 
+	 * Params:
+	 *     area = The area accessible through the view. 
+	 */
+	dmagick.ImageView.ImageView view(Geometry area = Geometry(cast(size_t)this.columns, cast(size_t)this.rows) )
 	{
 		return new dmagick.ImageView.ImageView(this, area);
 	}
@@ -4053,3 +4060,4 @@ version (Windows)
 			MagickCoreTerminus();
 	}
 }
+
