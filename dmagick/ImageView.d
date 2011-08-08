@@ -23,6 +23,7 @@ import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.image : MagickCoreImage = Image;
 import dmagick.c.magickType;
+import dmagick.c.memory;
 import dmagick.c.pixel;
 
 /**
@@ -104,9 +105,9 @@ class ImageView
 	/**
 	 * Indexing operators yield or modify the value at a specified index.
 	 */
-	Row opIndex(size_t row)
+	Pixels opIndex(size_t row)
 	{
-		return Row.row(image, row + extent.x, extent.width, extent.y);
+		return Pixels(image, extent.x, extent.y + row, extent.width, 1);
 	}
 
 	///ditto
@@ -153,15 +154,13 @@ class ImageView
 	 * The foreach is executed in parallel.
 	 */
 	//TODO: Should the foreach be parallel?
-	int opApply(int delegate(ref Row) dg)
+	int opApply(int delegate(ref Pixels) dg)
 	{
 		shared(int) progress;
 
 		foreach ( row; taskPool.parallel(iota(extent.y, extent.y + extent.height)) )
 		{
-			Row data = Row.row(image, row, extent.width, extent.x);
-
-			int result = dg(data);
+			int result = dg(Pixels(image, extent.x, row, extent.width, 1));
 
 			if ( result )
 				return result;
@@ -203,9 +202,9 @@ class Rows : ImageView
 	/*
 	 * Indexing operators yield or modify the value at a specified index.
 	 */
-	override Row opIndex(size_t column)
+	override Pixels opIndex(size_t column)
 	{
-		return Row.column(image, column + extent.y, extent.height, extent.x);
+		return Pixels(image, extent.x + column, extent.y, 1, extent.height);
 	}
 
 	/*
@@ -230,51 +229,67 @@ class Rows : ImageView
 
 /**
  * Row reprecents a singe row of pixels in an ImageView.
- * 
- * Bugs: Only one row per thread is supported.
  */
-struct Row
+struct Pixels
 {
 	Image image;
-	NexusInfo nexus;
 	PixelPacket[] pixels;
 
+	private size_t* refcount;
+	private NexusInfo nexus;
+
 	/**
-	 * Get an row in the image.
+	 * Get the pixels of the specifies area in the image.
 	 */
-	static Row row(Image image, size_t row, size_t width, ssize_t offset)
+	this(Image image, ssize_t x, ssize_t y, size_t columns, size_t rows)
 	{
-		Row pixelData;
+		this.image = image;
 
 		Quantum* data =
-			GetAuthenticPixelCacheNexus(image.imageRef, offset, cast(ssize_t)row, width, 1, &(pixelData.nexus), DMagickExceptionInfo());
+			GetAuthenticPixelCacheNexus(image.imageRef, x, y, columns, rows, &nexus, DMagickExceptionInfo());
+		this.pixels = (cast(PixelPacket*)data)[0..columns*rows];
 
-		pixelData.image = image;
-		pixelData.pixels = (cast(PixelPacket*)data)[0..width];
-
-		return pixelData;
+		refcount  = new size_t;
+		*refcount = 1;
 	}
 
-	/**
-	 * Get an column in the image.
+	/*
+	 * Copy constructor.
 	 */
-	static Row column(Image image, size_t column, size_t height, ssize_t offset)
+	private this(Image image, PixelPacket[] pixels, size_t* refCount, NexusInfo nexus)
 	{
-		Row pixelData;
+		this.image = image;
+		this.pixels = pixels;
+		this.refcount = refcount;
+		this.nexus = nexus;
 
-		Quantum* data =
-			GetAuthenticPixelCacheNexus(image.imageRef, cast(ssize_t)column, offset, 1, height, &(pixelData.nexus), DMagickExceptionInfo());
+		(*refcount)++;
+	}
 
-		pixelData.image = image;
-		pixelData.pixels = (cast(PixelPacket*)data)[0..height];
-
-		return pixelData;
+	this(this)
+	{
+		if ( !pixels.empty )
+			(*refcount)++;
 	}
 
 	~this()
 	{
-		if ( !pixels.empty )
-			SyncAuthenticPixelCacheNexus(image.imageRef, &nexus, DMagickExceptionInfo());
+		if ( pixels.empty )
+			return;
+
+		(*refcount)--;
+
+		if ( *refcount == 0 )
+		{
+			sync();
+
+			if ( !nexus.mapped )
+				RelinquishMagickMemory(nexus.cache);
+			else
+				UnmapBlob(nexus.cache, cast(size_t)nexus.length);
+
+			nexus.cache = null;
+		}
 	}
 
 	/**
@@ -301,6 +316,14 @@ struct Row
 		return new Color(pixels.ptr + pixel);
 	}
 
+	/**
+	 * Sync the pixels back to the image. The destructor does this for you.
+	 */
+	void sync()
+	{
+		SyncAuthenticPixelCacheNexus(image.imageRef, &nexus, DMagickExceptionInfo());
+	}
+
 	///ditto
 	void opIndexAssign(Color color, size_t index)
 	{
@@ -310,15 +333,15 @@ struct Row
 	/**
 	 * Sliceing operators yield or modify the value in the specified slice.
 	 */
-	Row opSlice()
+	Pixels opSlice()
 	{
 		return this;
 	}
 
 	///ditto
-	Row opSilce(size_t left, size_t right)
+	Pixels opSilce(size_t left, size_t right)
 	{
-		return Row(image, nexus, pixels[left .. right]);
+		return Pixels(image, pixels[left .. right], refcount, nexus);
 	}
 
 	///ditto
@@ -394,5 +417,6 @@ private extern(C)
 
 	Quantum* GetAuthenticPixelCacheNexus(MagickCoreImage* image, const ssize_t x, const ssize_t y, const size_t columns, const size_t rows, NexusInfo* nexus_info, ExceptionInfo* exception);
 	MagickBooleanType SyncAuthenticPixelCacheNexus(MagickCoreImage* image, NexusInfo* nexus_info, ExceptionInfo* exception);
+	MagickBooleanType UnmapBlob(void* map, const size_t length);
 }
 
