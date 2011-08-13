@@ -165,10 +165,10 @@ class ImageView
 			if ( result )
 				return result;
 
-			if ( image.imageRef.progress_monitor !is null )
+			if ( image.monitor !is null )
 			{
 				atomicOp!"+="(progress, 1);
-				image.imageRef.progress_monitor(toStringz("ImageView/" ~ image.filename), progress, extent.height, image.imageRef.client_data);
+				image.monitor()("ImageView/" ~ image.filename, progress, extent.height);
 			}
 		}
 

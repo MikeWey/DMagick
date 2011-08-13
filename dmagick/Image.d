@@ -2,6 +2,15 @@
  * Copyright: Mike Wey 2011
  * License:   zlib (See accompanying LICENSE file)
  * Authors:   Mike Wey
+ *
+ * Macros:
+ *     TABLE=<table>$0</table>
+ *
+ *     TH=<th>$1</th>$(TH $+)
+ *     HEADERS=<tr>$(TH $1, $+)</tr>
+ *
+ *     TD=<td>$1</td>$(TD $+)
+ *     ROW=<tr>$(TD $1, $+)</tr>
  */
 
 module dmagick.Image;
@@ -36,6 +45,8 @@ class Image
 	ImageRef imageRef;
 	Options options;  ///The options for this image.
 
+	private bool delegate(string, long, ulong) progressMonitor;
+	
 	///
 	this()
 	{
@@ -2601,8 +2612,6 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
-	//TODO: set process monitor.
-
 	/**
 	 * Splice the background color into the image as defined by the geometry.
 	 * This method is the opposite of chop.
@@ -3755,6 +3764,46 @@ class Image
 	}
 
 	/**
+	 * Establish a progress monitor. Most Image and ImageList methods
+	 * will periodically call the monitor with arguments indicating the
+	 * progress of the method.
+	 *
+	 * The delegate receves the folowing params: $(BR)
+	 * $(TABLE 
+	 *     $(ROW string $(I methodName), The name of the monitored method.)
+	 *     $(ROW long   $(I offset    ), A number between 0 and extent that
+	 *          identifies how much of the operation has been completed
+	 *          (or, in some cases, remains to be completed).)
+	 *     $(ROW ulong  $(I extent    ), The number of quanta needed to
+	 *                                   complete the operation.)
+	 * )
+	 */
+	void monitor(bool delegate(string methodName, long offset, ulong extent) progressMonitor)
+	{
+		if ( this.progressMonitor is null )
+			SetImageProgressMonitor(imageRef, cast(MagickProgressMonitor)&ImageProgressMonitor, cast(void*)this);
+
+		this.progressMonitor = progressMonitor;
+
+		if ( progressMonitor is null )
+			SetImageProgressMonitor(imageRef, null, null);		
+	}
+	///ditto
+	bool delegate(string, long, ulong) monitor()
+	{
+		return progressMonitor;
+	}
+
+	static extern(C) MagickBooleanType ImageProgressMonitor(
+		const(char)* methodName,
+		MagickOffsetType offset,
+		MagickSizeType extend,
+		Image image)
+	{
+		return image.progressMonitor(to!(string)(methodName), offset, extend);
+	}
+
+	/**
 	 * Tile size and offset within an image montage.
 	 * Only valid for images produced by montage.
 	 */
@@ -4066,4 +4115,5 @@ version (Windows)
 			MagickCoreTerminus();
 	}
 }
+
 
