@@ -26,12 +26,10 @@ class ColorRGB : Color
 	 */
 	this(ubyte red, ubyte green, ubyte blue, ubyte opacity = 0)
 	{
-		super();
-
-		pixelPacket.red     = ScaleCharToQuantum(red);
-		pixelPacket.green   = ScaleCharToQuantum(green);
-		pixelPacket.blue    = ScaleCharToQuantum(blue);
-		pixelPacket.opacity = ScaleCharToQuantum(opacity);
+		super(ScaleCharToQuantum(red),
+			ScaleCharToQuantum(green),
+			ScaleCharToQuantum(blue),
+			ScaleCharToQuantum(opacity));
 	}
 
 	/**
@@ -40,12 +38,10 @@ class ColorRGB : Color
 	 */
 	this(double red, double green, double blue, double opacity = 0)
 	{
-		super();
-
-		pixelPacket.red     = scaleDoubleToQuantum(red);
-		pixelPacket.green   = scaleDoubleToQuantum(green);
-		pixelPacket.blue    = scaleDoubleToQuantum(blue);
-		pixelPacket.opacity = scaleDoubleToQuantum(opacity);
+		super(scaleDoubleToQuantum(red),
+			scaleDoubleToQuantum(green),
+			scaleDoubleToQuantum(blue),
+			scaleDoubleToQuantum(opacity));
 	}
 
 	/**
