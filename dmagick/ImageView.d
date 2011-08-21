@@ -380,7 +380,7 @@ struct Pixels
 	{
 		Image image = new Image(Geometry(100, 100), new Color("Blue"));
 		{
-			Row row = Row.row(image, 50, 50, 25);
+			Pixels row = Pixels(image, 25, 50, 50, 1);
 			row[] = new Color("red");
 		}
 

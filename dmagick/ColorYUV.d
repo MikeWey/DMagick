@@ -4,7 +4,7 @@
  * Authors:   Mike Wey
  */
 
-module dmagick.ColorRGB;
+module dmagick.ColorYUV;
 
 import dmagick.Color;
 
@@ -22,7 +22,7 @@ import dmagick.c.quantum;
  * The luminance component is sufficient for black-and-white TV sets,
  * whereas color TV sets need the additional chrominance information.
  */
-class ColorRGB : Color
+class ColorYUV : Color
 {
 	this()
 	{
@@ -130,7 +130,13 @@ class ColorRGB : Color
 	 * Convert an YUV value to a RGB value.
 	 */
 	private void convertYUVToRGB(double y, double u, double v, ref Quantum red, ref Quantum green, ref Quantum blue)
+	in
 	{
+		assert(y <= 1 && y >= 0);
+		assert(u <= 1 && u >= 0);
+		assert(v <= 1 && v >= 0);
+	}
+	body	{
 		// ⌈R⌉ ⌈ 1.000  0.000  1.140⌉ ⌈Y⌉
 		// |G|=| 1.000 -0.395 -0.581|·|U|
 		// ⌊B⌋ ⌊ 1.000  2.032  0.000⌋ ⌊V⌋
