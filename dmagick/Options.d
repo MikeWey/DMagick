@@ -31,6 +31,7 @@ import dmagick.c.memory;
 import dmagick.c.option;
 import dmagick.c.quantize;
 import dmagick.c.quantum;
+import dmagick.c.type;
 
 /**
  * A class that wraps ImageInfo, DrawInfo and QuantizeInfo
@@ -859,6 +860,55 @@ class Options
 	}
 
 	/**
+	 * Specify the font family, such as "arial" or "helvetica".
+	 */
+	void fontFamily(string type)
+	{
+		copyString(drawInfo.family, type);
+	}
+	///ditto
+	string fontFamily() const
+	{
+		return to!(string)(drawInfo.family);
+	}
+
+	void fontStretch(StretchType type)
+	{
+		drawInfo.stretch = type;
+	}
+	///ditto
+	StretchType fontStretch() const
+	{
+		return drawInfo.stretch;
+	}
+
+	/**
+	 * Specify the font style, i.e. italic, oblique, or normal.
+	 */
+	void fontStyle(StyleType type)
+	{
+		drawInfo.style = type;
+	}
+	///ditto
+	StyleType fontStyle() const
+	{
+		return drawInfo.style;
+	}
+
+	/**
+	 * Specify the font style, i.e. italic, oblique, or normal.
+	 */
+	void fontWeight(size_t weight)
+	{
+		drawInfo.weight = type;
+	}
+	///ditto
+	size_t fontWeight() const
+	{
+		return drawInfo.weight;
+	}
+
+	/**
 	 * Enable or disable anti-aliasing when drawing object outlines.
 	 */
 	void strokeAntialias(bool antialias)
@@ -1054,10 +1104,6 @@ class Options
 	//char* text;
 	//size_t face;
 	//char* metrics,
-	//char* family;
-	//StyleType style;
-	//StretchType stretch;
-	//size_t weight;
 	//AlignType align;
 	//char* clip_mask;
 	//SegmentInfo bounds;

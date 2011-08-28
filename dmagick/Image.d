@@ -3907,7 +3907,7 @@ class Image
 	/**
 	 * JPEG/MIFF/PNG compression level (default 75).
 	 */
-	void quality(size_t )
+	void quality(size_t quality)
 	{
 		imageRef.quality = quality;
 		options.quality = quality;
