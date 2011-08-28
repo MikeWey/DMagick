@@ -936,7 +936,7 @@ class Options
 	///ditto
 	Color strokeColor() const
 	{
-		return new Color(imageInfo.background_color);
+		return new Color(drawInfo.stroke);
 	}
 
 	/**
@@ -990,7 +990,7 @@ class Options
 		drawInfo.linecap = cap;
 	}
 	///ditto
-	LineCap lineCap() const
+	LineCap strokeLineCap() const
 	{
 		return drawInfo.linecap;
 	}

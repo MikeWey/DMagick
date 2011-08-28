@@ -29,13 +29,13 @@ class Color
 	{
 		packet = new PixelPacket;
 
-		packet.opacity = TransparentOpacity;
+		packet.opacity = OpaqueOpacity;
 	}
 
 	/**
 	 * Create a Color from the specified Quantums.
 	 */
-	this(Quantum red, Quantum green, Quantum blue, Quantum opacity = 0)
+	this(Quantum red, Quantum green, Quantum blue, Quantum opacity = OpaqueOpacity)
 	{
 		this();
 
@@ -64,10 +64,10 @@ class Color
 	{
 		this();
 
-		packet.red     = packet.red;
-		packet.green   = packet.green;
-		packet.blue    = packet.blue;
-		packet.opacity = packet.opacity;
+		this.packet.red     = packet.red;
+		this.packet.green   = packet.green;
+		this.packet.blue    = packet.blue;
+		this.packet.opacity = packet.opacity;
 	}
 
 	/**
@@ -103,7 +103,7 @@ class Color
 		else
 			string frm = "%08X";
 
-		if ( packet.opacity == 0 )
+		if ( packet.opacity == OpaqueOpacity )
 			return format("#"~frm~frm~frm, packet.red, packet.green, packet.blue);
 		else
 			return format("#"~frm~frm~frm~frm, packet.red, packet.green, packet.blue, packet.opacity);

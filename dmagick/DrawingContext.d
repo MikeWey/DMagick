@@ -7,6 +7,7 @@
 module dmagick.DrawingContext;
 
 import dmagick.Color;
+import dmagick.Exception;
 import dmagick.Geometry;
 import dmagick.Image;
 import dmagick.Options;
@@ -194,6 +195,28 @@ class DrawingContext
 		actions ~= (Image image)
 		{
 			image.fuzz = f;
+		};
+	}
+
+	/**
+	 * Draw a line from start to end.
+	 */
+	void line(size_t startX, size_t startY, size_t endX, size_t endY)
+	{
+		actions ~= (Image image)
+		{
+			PrimitiveInfo[] primitiveInfo = new PrimitiveInfo[3];
+
+			primitiveInfo[0].coordinates = 3;
+			primitiveInfo[0].primitive = PrimitiveType.LinePrimitive;
+			primitiveInfo[0].point = PointInfo(startX, startY);
+			primitiveInfo[1].primitive = PrimitiveType.LinePrimitive;
+			primitiveInfo[1].point = PointInfo(endX, endY);
+			primitiveInfo[2].primitive = PrimitiveType.UndefinedPrimitive;
+
+			DrawPrimitive(image.imageRef, image.options.drawInfo, primitiveInfo.ptr);
+
+			DMagickException.throwException(&(image.imageRef.exception));
 		};
 	}
 
