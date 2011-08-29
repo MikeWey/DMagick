@@ -51,7 +51,7 @@ endif
 
 #######################################################################
 
-LIBNAME_DMAGICK = libdmagick.a
+LIBNAME_DMAGICK = libDMagick.a
 SOURCES_DMAGICK = $(sort $(wildcard dmagick/*.d)) \
                   $(sort $(wildcard dmagick/c/*.d))
 
