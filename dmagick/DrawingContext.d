@@ -6,6 +6,7 @@
 
 module dmagick.DrawingContext;
 
+import std.array;
 import std.string;
 
 import dmagick.Color;
@@ -56,8 +57,38 @@ class DrawingContext
 			startX, startY, endX, endY, startDegrees, endDegrees);
 	}
 
-//bezier
-//border-color
+	/**
+	 * Draw a cubic Bezier curve.
+	 * 
+	 * The arguments are pairs of points. At least 4 pairs must be specified.
+	 * Each point xn, yn on the curve is associated with a control point
+	 * cxn, cyn. The first point, x1, y1, is the starting point. The last
+	 * point, xn, yn, is the ending point. Other point/control point pairs
+	 * specify intermediate points on a polybezier curve.
+	 */
+	void bezier(size_t x1, size_t y1, size_t cx1, size_t cy1,
+		size_t cx2, size_t cy2, size_t x2, size_t y2,
+		size_t[] points ...)
+	in
+	{
+		assert ( points.length % 2 == 0,
+			"bezier needs an even number of argumants, "~
+			"each x coordinate needs a coresponding y coordinate." );
+	}
+	body
+	{
+		operations ~= format(" bezier %s,%s %s,%s %s,%s %s,%s",
+			x1, y1, cx1, cy1, cx2, cy2, x2, y2);
+
+		for( int i = 0; i < points.length; i+=2 )
+			operations ~= format(" %s,%s", points[i], points[i+1]);
+	}
+
+	void borderColor(Color color)
+	{
+		operations ~= format(" border-color %s", color);
+	}
+
 //clip-path
 //clip-rule
 //clip-units
