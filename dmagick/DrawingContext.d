@@ -7,6 +7,7 @@
 module dmagick.DrawingContext;
 
 import std.array;
+import std.conv;
 import std.string;
 
 import dmagick.Color;
@@ -84,14 +85,75 @@ class DrawingContext
 			operations ~= format(" %s,%s", points[i], points[i+1]);
 	}
 
+	/**
+	 * Set the image border color. The default is "#dfdfdf".
+	 */
 	void borderColor(Color color)
 	{
 		operations ~= format(" border-color %s", color);
 	}
 
-//clip-path
-//clip-rule
-//clip-units
+	/**
+	 * Defines a clip-path. Within the delegate, call other drawing
+	 * primitive methods (rectangle, polygon, text, etc.) to define the
+	 * clip-path. The union of all the primitives (excluding the effects
+	 * of rendering methods such as stroke_width, etc.) is the clip-path.
+	 * 
+	 * Params:
+	 *     path = The delegate that defines the clip-path using
+	 *            using the provided DrawingContext.
+	 */
+	void clipPath(void delegate(DrawingContext path) defineClipPath)
+	{
+		static size_t count;
+
+		DrawingContext path = new DrawingContext();
+		defineClipPath(path);
+
+		operations ~= format(" push defs push clip-path path%s push graphic-context", count);
+		operations ~= path.operations;
+		operations ~= " pop graphic-context pop clip-path pop defs";
+		operations ~= format(" clip-path url(#path%s)", count);
+
+		count++;
+	}
+
+	/**
+	 * Specify how to determine if a point on the image is inside
+	 * clipping region.
+	 * 
+	 * See_Also: $(LINK2 http://www.w3.org/TR/SVG/painting.html#FillRuleProperty,
+	 *     the 'fill-rule' property) in the Scalable Vector Graphics (SVG)
+	 *     1.1 Specification.
+	 */
+	void clipRule(ClipPathRule rule)
+	{
+		if ( rule == ClipPathRule.EvenOdd)
+			operations ~= " clip-rule evenodd";
+		else
+			operations ~= " clip-rule nonzero";
+	}
+
+	/**
+	 * Defines the coordinate space within the clipping region.
+	 * 
+	 * See_Also: $(LINK2 http://www.w3.org/TR/SVG/masking.html#EstablishingANewClippingPath,
+	 *     Establishing a New Clipping Path) in the
+	 *     Scalable Vector Graphics (SVG) 1.1 Specification.
+	 */
+	void clipUnits(ClipPathUnits units)
+	{
+		operations ~= format( " clip-units %s", toLower(to!(string)(units)) );
+	}
+
+	unittest
+	{
+		auto dc = new DrawingContext();
+		dc.clipUnits(ClipPathUnits.UserSpace);
+
+		assert(dc.operations == " clip-units userspace");
+	}
+
 //circle
 //color
 //decorate
@@ -128,7 +190,7 @@ class DrawingContext
 //scale
 //skewX
 //skewY
-//stop-color
+//stop-color for gradients.
 //stroke
 //stroke-antialias
 //stroke-dasharray
@@ -145,4 +207,10 @@ class DrawingContext
 //text-undercolor
 //translate
 //viewbox
+}
+
+enum ClipPathRule
+{
+	EvenOdd,
+	NonZero
 }
