@@ -8,7 +8,9 @@ module dmagick.DrawingContext;
 
 import std.array;
 import std.conv;
+import std.file;
 import std.string;
+import core.sys.posix.sys.types;
 
 import dmagick.Color;
 import dmagick.Exception;
@@ -17,6 +19,7 @@ import dmagick.Image;
 import dmagick.Options;
 import dmagick.Utils;
 
+import dmagick.c.composite;
 import dmagick.c.draw;
 import dmagick.c.geometry;
 import dmagick.c.type;
@@ -35,6 +38,8 @@ class DrawingContext
 	void draw(Image image)
 	{
 		copyString(image.options.drawInfo.primitive, operations);
+		scope(exit) copyString(image.options.drawInfo.primitive, null);
+
 		DrawImage(image.imageRef, image.options.drawInfo);
 
 		DMagickException.throwException(&(image.imageRef.exception));
@@ -126,12 +131,20 @@ class DrawingContext
 	 *     the 'fill-rule' property) in the Scalable Vector Graphics (SVG)
 	 *     1.1 Specification.
 	 */
-	void clipRule(ClipPathRule rule)
+	void clipRule(FillRule rule)
 	{
-		if ( rule == ClipPathRule.EvenOdd)
-			operations ~= " clip-rule evenodd";
-		else
-			operations ~= " clip-rule nonzero";
+		final switch ( rule )
+		{
+			case FillRule.EvenOddRule:
+				operations ~= " clip-rule evenodd";
+				break;
+			case FillRule.NonZeroRule:
+				operations ~= " clip-rule nonzero";
+				break;
+			case FillRule.UndefinedRule: 
+				throw new DrawException("Undefined Fill Rule");
+				break;
+		}
 	}
 
 	/**
@@ -154,8 +167,76 @@ class DrawingContext
 		assert(dc.operations == " clip-units userspace");
 	}
 
-//circle
-//color
+	/**
+	 * Draw a circle.
+	 * 
+	 * Params:
+	 *     xOrigin    = The x coordinate for the center of the circle.
+	 *     yOrigin    = The y coordinate for the center of the circle.
+	 *     xPerimeter = The x coordinate for a point on the perimeter of
+	 *                  the circle.
+	 *     yPerimeter = The x coordinate for a point on the perimeter of
+	 *                  the circle.
+	 */
+	void circle(size_t xOrigin, size_t yOrigin, size_t xPerimeter, size_t yPerimeter)
+	{
+		operations ~= format(" circle %s,%s %s,%s",
+			xOrigin, yOrigin, xPerimeter, yPerimeter);
+	}
+
+	///ditto
+	void circle(size_t xOrigin, size_t yOrigin, size_t radius)
+	{
+		circle(xOrigin, yOrigin, xOrigin, yOrigin + radius);
+	}
+
+	/**
+	 * Set color in image according to the specified PaintMethod constant.
+	 * If you use the PaintMethod.FillToBorderMethod, assign the border
+	 * color with the DrawingContext.borderColor property.
+	 */
+	void color(size_t x, size_t y, PaintMethod method)
+	{
+		if ( method == PaintMethod.UndefinedMethod )
+			throw new DrawException("Undefined Paint Method");
+		
+		operations ~= format(" color %s,%s %s", x, y, to!(string)(method)[0 .. $-6]);
+	}
+
+	void composite(
+		ssize_t xOffset,
+		ssize_t yOffset,
+		size_t width,
+		size_t height,
+		string filename,
+		CompositeOperator compositeOp)
+	{
+		if ( compositeOp == CompositeOperator.UndefinedCompositeOp)
+			throw new DrawException("Undefined Composite Operator");
+
+		operations  ~= format(" image %s %s,%s %s,%s '%s'",
+			to!(string)(compositeOp)[0 .. 11], xOffset, yOffset, width, height, filename);
+	}
+
+	void composite(
+		ssize_t xOffset,
+		ssize_t yOffset,
+		size_t width,
+		size_t height,
+		Image image,
+		CompositeOperator compositeOp)
+	{
+		if ( image.filename !is null && image.filename.exists && !image.changed )
+		{
+			composite(xOffset, yOffset, width, height, image.filename, compositeOp);
+			return;
+		}
+
+		string filename = saveTempFile(image);
+
+		composite(xOffset, yOffset, width, height, filename, compositeOp);
+	}
+
 //decorate
 //ellipse
 //encoding
@@ -170,7 +251,6 @@ class DrawingContext
 //font-weight
 //gradient-units
 //gravity
-//image
 //interline-spacing
 //interword-spacing
 //kerning
@@ -207,10 +287,59 @@ class DrawingContext
 //text-undercolor
 //translate
 //viewbox
-}
 
-enum ClipPathRule
-{
-	EvenOdd,
-	NonZero
+	private static string saveTempFile(Image image)
+	{
+		import std.datetime;
+		import std.path;
+		import std.process;
+		import core.runtime;
+
+		string tempPath;
+		string filename;
+
+		version(Windows)
+		{
+			tempPath = getenv("TMP");
+			if ( tempPath is null )
+				tempPath = getenv("TEMP");
+			if ( tempPath is null )
+				tempPath = join(getenv("USERPROFILE"), "AppData/Local/Temp");
+			if ( tempPath is null || !tempPath.exists )
+				tempPath = join(getenv("WinDir"), "Temp");
+		}
+		else
+		{
+			import core.sys.posix.stdio;
+
+			tempPath = getenv("TMPDIR");
+			if ( tempPath is null )
+				tempPath = P_tmpdir;
+		}
+
+		do
+		{
+			filename = join(tempPath, "DMagick."~to!(string)(Clock.currTime().stdTime));
+
+			if ( image.magick !is null && toLower(image.magick) != "canvas" )
+				filename ~= "."~image.magick;
+			else
+				filename ~= ".png";
+		}
+		while ( filename.exists )
+
+		image.write(filename);
+
+		return filename;
+	}
+
+	unittest
+	{
+		auto image = new Image(Geometry(200, 200), new Color("blue"));
+		string filename = saveTempFile(image);
+
+		assert(filename.exists);
+
+		remove(filename);
+	}
 }

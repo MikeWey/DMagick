@@ -3005,7 +3005,7 @@ class Image
 	 */
 	void write(string filename)
 	{
-		options.filename = filename;
+		this.filename = filename;
 		WriteImage(options.imageInfo, imageRef);
 
 		DMagickException.throwException(&(imageRef.exception));
@@ -3708,8 +3708,9 @@ class Image
 	string magick() const
 	{
 		if ( imageRef.magick !is null )
+		{
 			return imageRef.magick[0 .. strlen(imageRef.magick.ptr)].idup;
-
+		}
 		return options.magick;
 	}
 
