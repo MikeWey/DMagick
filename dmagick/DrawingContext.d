@@ -133,18 +133,10 @@ class DrawingContext
 	 */
 	void clipRule(FillRule rule)
 	{
-		final switch ( rule )
-		{
-			case FillRule.EvenOddRule:
-				operations ~= " clip-rule evenodd";
-				break;
-			case FillRule.NonZeroRule:
-				operations ~= " clip-rule nonzero";
-				break;
-			case FillRule.UndefinedRule: 
-				throw new DrawException("Undefined Fill Rule");
-				break;
-		}
+		if ( rule == FillRule.UndefinedRule )
+			throw new DrawException("Undefined Fill Rule");
+
+		operations ~= format(" clip-rule %s", to!(string)(rule)[0 .. 4]);
 	}
 
 	/**
@@ -203,13 +195,32 @@ class DrawingContext
 		operations ~= format(" color %s,%s %s", x, y, to!(string)(method)[0 .. $-6]);
 	}
 
+	/**
+	 * Composite filename/image with the receiver image.
+	 * 
+	 * Params:
+	 *     xOffset     = The x-offset of the composited image,
+	 *                   measured from the upper-left corner
+	 *                   of the image.
+	 *     yOffset     = The y-offset of the composited image,
+	 *                   measured from the upper-left corner
+	 *                   of the image.
+	 *     width       = Scale the composite image to this size.
+	 *                   If value is 0, the composite image is not scaled.
+	 *     height      = Scale the composite image to this size.
+	 *                   If value is 0, the composite image is not scaled.
+	 *     filename    = Filename of the mage to use in the
+	 *                   composite operation.
+	 *     image       = Image to use in the composite operation.
+	 *     compositeOp = The composite operation to use.
+	 */
 	void composite(
 		ssize_t xOffset,
 		ssize_t yOffset,
 		size_t width,
 		size_t height,
 		string filename,
-		CompositeOperator compositeOp)
+		CompositeOperator compositeOp = CompositeOperator.OverCompositeOp)
 	{
 		if ( compositeOp == CompositeOperator.UndefinedCompositeOp)
 			throw new DrawException("Undefined Composite Operator");
@@ -218,13 +229,14 @@ class DrawingContext
 			to!(string)(compositeOp)[0 .. 11], xOffset, yOffset, width, height, filename);
 	}
 
+	///ditto
 	void composite(
 		ssize_t xOffset,
 		ssize_t yOffset,
 		size_t width,
 		size_t height,
 		Image image,
-		CompositeOperator compositeOp)
+		CompositeOperator compositeOp = CompositeOperator.OverCompositeOp)
 	{
 		if ( image.filename !is null && image.filename.exists && !image.changed )
 		{
@@ -237,18 +249,173 @@ class DrawingContext
 		composite(xOffset, yOffset, width, height, filename, compositeOp);
 	}
 
-//decorate
-//ellipse
-//encoding
-//fill
-//fill-opacity
-//fill-rule
-//font
-//font-family
-//font-size
-//font-stretch
-//font-style
-//font-weight
+	/**
+	 * Specify text decoration.
+	 */
+	void decorate(DecorationType decoration)
+	{
+		//TODO: support oring decorations together.
+		operations ~= " decorate ";
+
+		final switch ( decoration )
+		{
+			case DecorationType.NoDecoration:
+				operations ~= "none";         break;
+			case DecorationType.UnderlineDecoration:
+				operations ~= "underline";    break;
+			case DecorationType.OverlineDecoration:
+				operations ~= "overline";     break;
+			case DecorationType.LineThroughDecoration:
+				operations ~= "line-through"; break;
+
+			case DecorationType.UndefinedDecoration:
+				throw new DrawException("Undefined Decoration");
+				break;
+		}
+	}
+
+	/**
+	 * Draw an ellipse.
+	 * 
+	 * Params:
+	 *     xOrigin      = The x coordinate of the ellipse.
+	 *     yOrigin      = The y coordinate of the ellipse.
+	 *     width        = The horizontal radii. 
+	 *     height       = The vertical radii.
+	 *     startDegrees = Where to start the ellipse.
+	 *                    0 degrees is at 3 o'clock.
+	 *     endDegrees   = Whare to end the ellipse.
+	 */
+	void ellipse(size_t xOrigin, size_t yOrigin, size_t width, size_t height, double startDegrees, double endDegrees)
+	{
+		operations ~= format(" ellipse %s,%s %s,%s %s,%s",
+			xOrigin, yOrigin, width, height, startDegrees, endDegrees);
+	}
+
+	/**
+	 * Color to use when filling drawn objects.
+	 * The default is "black".
+	 */
+	void fillColor(Color fillColor)
+	{
+		operations ~= format(" fill %s", fillColor);
+	}
+
+	/**
+	 * Specify the fill opacity.
+	 * 
+	 * Params:
+	 *     opacity = A number between 0 and 1.
+	 */
+	void fillOpacity(double opacity)
+	in
+	{
+		assert(opacity >= 0);
+		assert(opacity <= 1);
+	}
+	body
+	{
+		operations ~= format(" fill-opacity %s", opacity);
+	}
+
+	/**
+	 * Specify how to determine if a point on the image is inside a shape.
+	 * 
+	 * See_Also: $(LINK2 http://www.w3.org/TR/SVG/painting.html#FillRuleProperty,
+	 *     the 'fill-rule' property) in the Scalable Vector Graphics (SVG)
+	 *     1.1 Specification.
+	 */
+	void fillRule(FillRule rule)
+	{
+		if ( rule == FillRule.UndefinedRule )
+			throw new DrawException("Undefined Fill Rule");
+
+		operations ~= format(" fill-rule %s", to!(string)(rule)[0 .. 4]);
+	}
+
+	/**
+	 * The _font name or filename.
+	 * You can tag a _font to specify whether it is a Postscript,
+	 * Truetype, or OPTION1 _font. For example, Arial.ttf is a
+	 * Truetype _font, ps:helvetica is Postscript, and x:fixed is OPTION1.
+	 * 
+	 * The _font name can be a complete filename such as
+	 * "/mnt/windows/windows/fonts/Arial.ttf". The _font name can
+	 * also be a fully qualified X font name such as
+	 * "-urw-times-medium-i-normal--0-0-0-0-p-0-iso8859-13".
+	 */
+	void font(string font)
+	{
+		operations ~= format(" font '%s'", font);
+	}
+
+	/**
+	 * Specify the font encoding.
+	 * Note: This specifies the character repertory (i.e., charset),
+	 * and not the text encoding method (e.g., UTF-8, UTF-16, etc.).
+	 */
+	void fontEncoding(FontEncoding encoding)
+	{
+		operations ~= format(" encoding %s", encoding);
+	}
+
+	unittest
+	{
+		auto dc = new DrawingContext();
+		dc.fontEncoding(FontEncoding.Latin1);
+
+		assert(dc.operations == " encoding Latin-1");
+	}
+
+	/**
+	 * Specify the font family, such as "arial" or "helvetica".
+	 */
+	void fontFamily(string family)
+	{
+		operations ~= format(" font-family '%s'", family);
+	}	
+
+	/**
+	 * Text rendering font point size
+	 */
+	void fontSize(double pointSize)
+	{
+		operations ~= format(" font-size %s", pointSize);
+	}
+
+	/**
+	 * Specify the spacing between text characters.
+	 */
+	void fontStretch(StretchType type)
+	{
+		operations ~= format(" font-stretch %s", to!(string)(type)[0 .. 7]);
+	}
+
+	/**
+	 * Specify the font style, i.e. italic, oblique, or normal.
+	 */
+	void fontStyle(StyleType type)
+	{
+		operations ~= format(" font-style %s", to!(string)(type)[0 .. 5]);
+	}
+
+	/**
+	 * Specify the font weight.
+	 * 
+	 * Eighter use the FontWeight enum or specify a number
+	 * between 100 and 900.
+	 */
+	void fontWeight(size_t weight)
+	{
+		operations ~= format("font-weight %s", weight);		
+	}
+
+	///ditto
+	void fontWeight(FontWeight weight)
+	{
+		operations ~= format("font-weight %s", weight);
+	}
+
 //gradient-units
 //gravity
 //interline-spacing
@@ -304,9 +471,9 @@ class DrawingContext
 			if ( tempPath is null )
 				tempPath = getenv("TEMP");
 			if ( tempPath is null )
-				tempPath = join(getenv("USERPROFILE"), "AppData/Local/Temp");
+				tempPath = buildPath(getenv("USERPROFILE"), "AppData/Local/Temp");
 			if ( tempPath is null || !tempPath.exists )
-				tempPath = join(getenv("WinDir"), "Temp");
+				tempPath = buildPath(getenv("WinDir"), "Temp");
 		}
 		else
 		{
@@ -319,7 +486,7 @@ class DrawingContext
 
 		do
 		{
-			filename = join(tempPath, "DMagick."~to!(string)(Clock.currTime().stdTime));
+			filename = buildPath(tempPath, "DMagick."~to!(string)(Clock.currTime().stdTime));
 
 			if ( image.magick !is null && toLower(image.magick) != "canvas" )
 				filename ~= "."~image.magick;
@@ -342,4 +509,39 @@ class DrawingContext
 
 		remove(filename);
 	}
+}
+
+/**
+ * This enumeration lists specific character repertories (i.e., charsets),
+ * and not text encoding methods (e.g., UTF-8, UTF-16, etc.).
+ */
+enum FontEncoding : string
+{
+	AdobeCustom   = "AdobeCustom",    ///
+	AdobeExpert   = "AdobeExpert",    ///ditto
+	AdobeStandard = "AdobeStandard",  ///ditto
+	AppleRoman    = "AppleRoman",     ///ditto
+	BIG5     = "BIG5",                ///ditto
+	GB2312   = "GB2312",              ///ditto
+	Johab    = "Johab",               ///ditto
+	Latin1   = "Latin-1",             ///ditto
+	Latin2   = "Latin-2",             ///ditto
+	None     = "None",                ///ditto
+	SJIScode = "SJIScode",            ///ditto
+	Symbol   = "Symbol",              ///ditto
+	Unicode  = "Unicode",             ///ditto
+	Wansung  = "Wansung",             ///ditto
+}
+
+/**
+ * The font weight can be specified as one of 100, 200, 300, 400, 500,
+ * 600, 700, 800, or 900, or one of the following constants.
+ */
+enum FontWeight : string
+{
+        Any     = "all",     /// No weight specified.
+        Normal  = "normal",  /// Normal weight, equivalent to 400.
+        Bold    = "bold",    /// Bold. equivalent to 700. 
+        Bolder  = "bolder",  /// Increases weight by 100.
+        Lighter = "lighter", /// Decreases weight by 100.
 }

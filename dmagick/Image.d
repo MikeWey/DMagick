@@ -771,7 +771,7 @@ class Image
 	 * Composites dest onto this image using the specified composite operator.
 	 *
 	 * Params:
-	 *     overlay     = Image to use in to composite operation.
+	 *     overlay     = Image to use in the composite operation.
 	 *     compositeOp = The composite operation to use.
 	 *     xOffset     = The x-offset of the composited image,
 	 *                   measured from the upper-left corner
@@ -2768,12 +2768,30 @@ class Image
 
 		//Use the D GC to accolate the blob.
 		GetMagickMemoryMethods(&oldMalloc, &oldRealloc, &oldFree);
-		SetMagickMemoryMethods(&GC.malloc, &GC.realloc, &GC.free);
+		SetMagickMemoryMethods(&Image.malloc, &Image.realloc, &Image.free);
 		scope(exit) SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
 
 		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, DMagickExceptionInfo());
 
 		return blob[0 .. length];	
+	}
+
+	private extern(C)
+	{
+		static void* malloc(ulong sz)
+		{
+			return GC.malloc(sz, GC.BlkAttr.NO_SCAN);
+		}
+
+		static void* realloc(void* p, ulong sz)
+		{
+			return GC.realloc(p, sz, GC.BlkAttr.NO_SCAN);
+		}
+
+		static void free(void* p)
+		{
+			GC.free(p);
+		}
 	}
 
 	/**

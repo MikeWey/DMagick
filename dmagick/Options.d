@@ -343,6 +343,20 @@ class Options
 	}
 
 	/**
+	 * Text rendering font point size
+	 */
+	void fontSize(double size)
+	{
+		imageInfo.pointsize = size;
+		drawInfo.pointsize = size;
+	}
+	///ditto
+	double fontSize() const
+	{
+		return drawInfo.pointsize;
+	}
+
+	/**
 	 * Colors within this distance are considered equal. 
 	 * A number of algorithms search for a target  color.
 	 * By default the color must be exact. Use this option to match
@@ -445,20 +459,6 @@ class Options
 	Geometry page() const
 	{
 		return Geometry( to!(string)(imageInfo.page) );
-	}
-
-	/**
-	 * Text rendering font point size
-	 */
-	void pointSize(double size)
-	{
-		imageInfo.pointsize = size;
-		drawInfo.pointsize = size;
-	}
-	///ditto
-	double pointSize() const
-	{
-		return drawInfo.pointsize;
 	}
 
 	/**
@@ -872,6 +872,9 @@ class Options
 		return to!(string)(drawInfo.family);
 	}
 
+	/**
+	 * Specify the spacing between text characters.
+	 */
 	void fontStretch(StretchType type)
 	{
 		drawInfo.stretch = type;
@@ -896,7 +899,7 @@ class Options
 	}
 
 	/**
-	 * Specify the font style, i.e. italic, oblique, or normal.
+	 * Specify the font weight.
 	 */
 	void fontWeight(size_t weight)
 	{
