@@ -94,11 +94,6 @@ deprecated extern(C)
 	int GetImageGeometry(Image*, const(char)*, const uint, RectangleInfo*);
 	int ParseImageGeometry(const(char)*, ssize_t*, ssize_t*, size_t*, size_t*);
 
-	ssize_t FormatMagickString(char*, const size_t, const(char)*, ...);
-	ssize_t FormatMagickStringList(char*, const size_t, const(char)*, va_list);
-	ssize_t GetImageListIndex(const(Image)*);
-	ssize_t SetMagickRegistry(const RegistryType, const(void)*, const size_t, ExceptionInfo*);
-
 	MagickBooleanType AcquireOneCacheViewPixel(const(CacheView)*, const ssize_t, const ssize_t, PixelPacket*, ExceptionInfo*);
 	MagickBooleanType AcquireOneCacheViewVirtualPixel(const(CacheView)*, const VirtualPixelMethod, const ssize_t, const ssize_t, PixelPacket*, ExceptionInfo*);
 	MagickBooleanType AffinityImage(const(QuantizeInfo)*, Image*, const(Image)*);
@@ -112,6 +107,7 @@ deprecated extern(C)
 	MagickBooleanType DescribeImage(Image*, FILE*, const MagickBooleanType);
 	MagickBooleanType FormatImageAttribute(Image*, const(char)*, const(char)*, ...);
 	MagickBooleanType FormatImageAttributeList(Image*, const(char)*, const(char)*, va_list);
+	MagickBooleanType FormatImagePropertyList(Image*, const(char)*, const(char)*, va_list);
 	MagickBooleanType FuzzyColorCompare(const(Image)*, const(PixelPacket)*, const(PixelPacket)*);
 	MagickBooleanType FuzzyOpacityCompare(const(Image)*, const(PixelPacket)*, const(PixelPacket)*);
 	MagickBooleanType LevelImageColors(Image*, const ChannelType, const(MagickPixelPacket)*, const(MagickPixelPacket)*, const MagickBooleanType);
@@ -154,6 +150,11 @@ deprecated extern(C)
 	size_t GetImageListSize(const(Image)*);
 	size_t PopImagePixels(Image*, const QuantumType, ubyte*);
 	size_t PushImagePixels(Image*, const QuantumType, const(byte)*);
+
+	ssize_t FormatMagickString(char*, const size_t, const(char)*, ...);
+	ssize_t FormatMagickStringList(char*, const size_t, const(char)*, va_list);
+	ssize_t GetImageListIndex(const(Image)*);
+	ssize_t SetMagickRegistry(const RegistryType, const(void)*, const size_t, ExceptionInfo*);
 
 	uint ChannelImage(Image*, const ChannelType);
 	uint ChannelThresholdImage(Image*, const(char)*);

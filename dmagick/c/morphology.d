@@ -125,5 +125,5 @@ extern(C)
 	Image* MorphologyImageChannel(const(Image)*, const ChannelType, const MorphologyMethod, const ssize_t, const(KernelInfo)*, ExceptionInfo*);
 
 	void ScaleGeometryKernelInfo(KernelInfo*, const(char)*);
-	void ShowKernelInfo(KernelInfo*);
+	void ShowKernelInfo(const(KernelInfo)*);
 }
