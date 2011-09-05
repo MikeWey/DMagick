@@ -293,10 +293,28 @@ class DrawingContext
 	}
 
 	/**
+	 * Specify the font encoding.
+	 * Note: This specifies the character repertory (i.e., charset),
+	 * and not the text encoding method (e.g., UTF-8, UTF-16, etc.).
+	 */
+	void encoding(FontEncoding encoding)
+	{
+		operations ~= format(" encoding %s", encoding);
+	}
+
+	unittest
+	{
+		auto dc = new DrawingContext();
+		dc.encoding(FontEncoding.Latin1);
+
+		assert(dc.operations == " encoding Latin-1");
+	}
+
+	/**
 	 * Color to use when filling drawn objects.
 	 * The default is "black".
 	 */
-	void fillColor(Color fillColor)
+	void fill(Color fillColor)
 	{
 		operations ~= format(" fill %s", fillColor);
 	}
@@ -350,24 +368,6 @@ class DrawingContext
 	}
 
 	/**
-	 * Specify the font encoding.
-	 * Note: This specifies the character repertory (i.e., charset),
-	 * and not the text encoding method (e.g., UTF-8, UTF-16, etc.).
-	 */
-	void fontEncoding(FontEncoding encoding)
-	{
-		operations ~= format(" encoding %s", encoding);
-	}
-
-	unittest
-	{
-		auto dc = new DrawingContext();
-		dc.fontEncoding(FontEncoding.Latin1);
-
-		assert(dc.operations == " encoding Latin-1");
-	}
-
-	/**
 	 * Specify the font family, such as "arial" or "helvetica".
 	 */
 	void fontFamily(string family)
@@ -388,6 +388,9 @@ class DrawingContext
 	 */
 	void fontStretch(StretchType type)
 	{
+		if ( type == StretchType.UndefinedStretch )
+			throw new DrawException("Undefined Stretch type");
+
 		operations ~= format(" font-stretch %s", to!(string)(type)[0 .. 7]);
 	}
 
@@ -396,6 +399,9 @@ class DrawingContext
 	 */
 	void fontStyle(StyleType type)
 	{
+		if ( type == StyleType.UndefinedStyle )
+			throw new DrawException("Undefined Style type");
+
 		operations ~= format(" font-style %s", to!(string)(type)[0 .. 5]);
 	}
 
@@ -416,16 +422,114 @@ class DrawingContext
 		operations ~= format("font-weight %s", weight);
 	}
 
-//gradient-units
-//gravity
-//interline-spacing
-//interword-spacing
-//kerning
-//line
-//matte
-//offset
-//opacity
-//path
+	/**
+	 * Specify how the text is positioned. The default is NorthWestGravity.
+	 */
+	void gravity(GravityType type)
+	{
+		if ( type == GravityType.UndefinedGravity )
+			throw new DrawException("Undefined Gravity type");
+
+		operations ~= format(" gravity %s", to!(string)(type)[0 .. 7]);
+	}
+
+	/**
+	 * Modify the spacing between lines when text has multiple lines.
+	 * 
+	 * If positive, inserts additional space between lines. If negative,
+	 * removes space between lines. The amount of space inserted
+	 * or removed depends on the font.
+	 */
+	void interlineSpacing(double spacing)
+	{
+		operations ~= format(" interline-spacing %s", spacing);
+	}
+
+	/**
+	 * Modify the spacing between words in text.
+	 * 
+	 * If positive, inserts additional space between words. If negative,
+	 * removes space between words. The amount of space inserted
+	 * or removed depends on the font.
+	 */
+	void interwordSpacing(double spacing)
+	{
+		operations ~= format(" interword-spacing %s", spacing);
+	}
+
+	/**
+	 * Modify the spacing between letters in text.
+	 * 
+	 * If positive, inserts additional space between letters. If negative,
+	 * removes space between letters. The amount of space inserted or
+	 * removed depends on the font but is usually measured in pixels. That
+	 * is, the following call adds about 5 pixels between each letter.
+	 */
+	void kerning(double kerning)
+	{
+		operations ~= format(" kerning %s", kerning);
+	}
+
+	/**
+	 * Draw a line from start to end.
+	 */
+	void line(size_t xStart, size_t yStart, size_t xEnd, size_t yEnd)
+	{
+		operations ~= format(" line %s,%s %s,%s",
+			xStart, yStart, xEnd, yEnd);
+	}
+
+	/**
+	 * Make the image transparent according to the specified
+	 * PaintMethod constant.
+	 * 
+	 * If you use the PaintMethod.FillToBorderMethod, assign the border
+	 * color with the DrawingContext.borderColor property.
+	 */
+	void matte(size_t x, size_t y, PaintMethod method)
+	{
+		if ( method == PaintMethod.UndefinedMethod )
+			throw new DrawException("Undefined Paint Method");
+		
+		operations ~= format(" matte %s,%s %s", x, y, to!(string)(method)[0 .. $-6]);
+	}
+
+	/**
+	 * Specify the fill and stroke opacities.
+	 * 
+	 * Params:
+	 *     opacity = A number between 0 and 1.
+	 */
+	void opacity(double opacity)
+	in
+	{
+		assert(opacity >= 0);
+		assert(opacity <= 1);
+	}
+	body
+	{
+		operations ~= format(" opacity %s", opacity);
+	}
+
+	/**
+	 * Draw using SVG-compatible path drawing commands.
+	 * 
+	 * See_Also: "$(LINK2 http://www.w3.org/TR/SVG/paths.html,
+	 *     Paths)" in the Scalable Vector Graphics (SVG) 1.1 Specification. 
+	 */
+	void path(string svgPath)
+	{
+		operations ~= " path "~svgPath;
+	}
+
+	/**
+	 * Set the pixel at x,y to the fill color.
+	 */
+	void point(size_t x, size_t y)
+	{
+		operations ~= format(" point %s,%s", x,y);
+	}
+
 //point
 //polyline
 //polygon
@@ -437,7 +541,6 @@ class DrawingContext
 //scale
 //skewX
 //skewY
-//stop-color for gradients.
 //stroke
 //stroke-antialias
 //stroke-dasharray
@@ -454,6 +557,13 @@ class DrawingContext
 //text-undercolor
 //translate
 //viewbox
+
+//For gradients:
+//gradient-units
+//stop-color
+
+//Does this do anything?
+//offset
 
 	private static string saveTempFile(Image image)
 	{

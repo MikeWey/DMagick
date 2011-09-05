@@ -26,7 +26,7 @@ import dmagick.c.exception;
  */
 class DMagickException : Exception
 {
-	this(string reason, string description = null)
+	this(string reason, string description = null, string file = __FILE__, size_t line = __LINE__)
 	{
 		string message = to!(string)(GetClientName());
 
@@ -35,7 +35,7 @@ class DMagickException : Exception
 		if ( description.length > 0 )
 			message ~= " (" ~ description ~ ")";
 
-		super(message);
+		super(message, file, line);
 	}
 
 	private enum string[] severities = [ "Blob", "Cache", "Coder",
@@ -47,7 +47,7 @@ class DMagickException : Exception
 	/**
 	 * Throws an Exception or error matching the ExceptionInfo.
 	 */
-	static void throwException(ExceptionInfo* exception)
+	static void throwException(ExceptionInfo* exception, string file = __FILE__, size_t line = __LINE__)
 	{
 		if ( exception.severity == ExceptionType.UndefinedException )
 			return;
@@ -67,11 +67,11 @@ class DMagickException : Exception
 			{
 				exceptions ~=
 					"case ExceptionType."~ severity ~"Warning:
-						throw new "~ severity ~"Exception(reason, description);
+						throw new "~ severity ~"Exception(reason, description, file, line);
 						break;
 					 case ExceptionType."~ severity ~"Error:
 					 case ExceptionType."~ severity ~"FatalError:
-						throw new "~ severity ~"Error(reason, description);
+						throw new "~ severity ~"Error(reason, description, file, line);
 						break;";
 			}
 
@@ -96,7 +96,7 @@ class DMagickException : Exception
  */
 class DMagickError : Error
 {
-	this(string reason, string description = null)
+	this(string reason, string description = null, string file = __FILE__, size_t line = __LINE__)
 	{
 		string message = to!(string)(GetClientName());
 
@@ -105,7 +105,7 @@ class DMagickError : Error
 		if ( description.length > 0 )
 			message ~= " (" ~ description ~ ")";
 
-		super(message);
+		super(message, file, line);
 	}
 }
 
@@ -121,18 +121,18 @@ mixin(
 		exceptions ~= 
 			"class " ~ severity ~ "Exception : DMagickException
 			 {
-				this(string reason, string description = null)
+				this(string reason, string description = null, string file = __FILE__, size_t line = __LINE__)
 				{
-					super(reason, description);
+					super(reason, description, file, line);
 				}
 			 }";
 
 		exceptions ~= 
 			"class " ~ severity ~ "Error : DMagickError
 			 {
-				this(string reason, string description = null)
+				this(string reason, string description = null, string file = __FILE__, size_t line = __LINE__)
 				{
-					super(reason, description);
+					super(reason, description, file, line);
 				}
 			 }";
 	}
@@ -152,12 +152,15 @@ struct DMagickExceptionInfo
 {
 	ExceptionInfo* exceptionInfo;
 
+	string file;
+	size_t line;
+
 	private bool isInitialized;
 	private size_t* refcount;
 
 	alias exceptionInfo this;
 
-	static DMagickExceptionInfo opCall()
+	static DMagickExceptionInfo opCall(string file = __FILE__, size_t line = __LINE__)
 	{
 		DMagickExceptionInfo info;
 
@@ -166,6 +169,9 @@ struct DMagickExceptionInfo
 
 		*(info.refcount) = 1;
 		info.isInitialized = true;
+
+		info.file = file;
+		info.line = line;
 
 		return info;
 	}
@@ -185,7 +191,7 @@ struct DMagickExceptionInfo
 
 		if ( *refcount == 0 )
 		{
-			DMagickException.throwException(exceptionInfo);
+			DMagickException.throwException(exceptionInfo, file, line);
 		}
 	}
 }
