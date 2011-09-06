@@ -925,7 +925,7 @@ class Options
 	}
 
 	/**
-	 * Color to use when drawing object outlines
+	 * Color to use when drawing object outlines.
 	 */
 	void strokeColor(string color)
 	{

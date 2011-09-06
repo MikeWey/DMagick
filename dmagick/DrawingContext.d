@@ -6,6 +6,7 @@
 
 module dmagick.DrawingContext;
 
+import std.algorithm;
 import std.array;
 import std.conv;
 import std.file;
@@ -78,7 +79,7 @@ class DrawingContext
 	in
 	{
 		assert ( points.length % 2 == 0,
-			"bezier needs an even number of argumants, "~
+			"bezier needs an even number of arguments, "~
 			"each x coordinate needs a coresponding y coordinate." );
 	}
 	body
@@ -93,7 +94,7 @@ class DrawingContext
 	/**
 	 * Set the image border color. The default is "#dfdfdf".
 	 */
-	void borderColor(Color color)
+	void borderColor(const(Color) color)
 	{
 		operations ~= format(" border-color %s", color);
 	}
@@ -314,7 +315,7 @@ class DrawingContext
 	 * Color to use when filling drawn objects.
 	 * The default is "black".
 	 */
-	void fill(Color fillColor)
+	void fill(const(Color) fillColor)
 	{
 		operations ~= format(" fill %s", fillColor);
 	}
@@ -530,20 +531,183 @@ class DrawingContext
 		operations ~= format(" point %s,%s", x,y);
 	}
 
-//point
-//polyline
-//polygon
-//pop
-//push
-//rectangle
-//rotate
-//roundRectangle
-//scale
-//skewX
-//skewY
-//stroke
-//stroke-antialias
-//stroke-dasharray
+	/**
+	 * Draw a polygon.
+	 * 
+	 * The arguments are a sequence of 2 or more points. If the last
+	 * point is not the same as the first, the polygon is closed by
+	 * drawing a line from the last point to the first.
+	 */
+	void polygon(size_t[] points ...)
+	in
+	{
+		assert ( points.length % 2 == 0,
+			"polygon needs an even number of arguments, "~
+			"each x coordinate needs a coresponding y coordinate." );
+	}
+	body
+	{
+		operations ~= " polygon";
+
+		for( int i = 0; i < points.length; i+=2 )
+			operations ~= format(" %s,%s", points[i], points[i+1]);
+	}
+
+	/**
+	 * Draw a polyline. Unlike a polygon,
+	 * a polyline is not automatically closed.
+	 */
+	void polyline(size_t[] points ...)
+	in
+	{
+		assert ( points.length % 2 == 0,
+			"polyline needs an even number of arguments, "~
+			"each x coordinate needs a coresponding y coordinate." );
+	}
+	body
+	{
+		operations ~= " polyline";
+
+		for( int i = 0; i < points.length; i+=2 )
+			operations ~= format(" %s,%s", points[i], points[i+1]);
+	}
+
+	/**
+	 * Restore the graphics context to the state it was in when
+	 * push was called last.
+	 */
+	void pop()
+	{
+		operations ~= " pop graphic-context";
+	}
+
+	/**
+	 * Save the current state of the graphics context, including the
+	 * attribute settings and the current set of primitives. Use the
+	 * pop primitive to restore the state.
+	 */
+	void push()
+	{
+		operations ~= " push graphic-context";
+	}
+
+	/**
+	 * Draw a rectangle.
+	 */
+	void rectangle(size_t xStart, size_t yStart, size_t xEnd, size_t yEnd)
+	{
+		operations ~= format(" rectangle %s,%s %s,%s",
+			xStart, yStart, xEnd, yEnd);
+	}
+
+	/**
+	 * Specify a rotation transformation to the coordinate space.
+	 */
+	void rotate(double angle)
+	{
+		operations ~= format(" rotate %s", angle);
+	}
+
+	/**
+	 * Draw a rectangle with rounded corners.
+	 * 
+	 * Params:
+	 *     xStart       = The x coordinate for the upper left hand corner
+	 *                    of the rectangle.
+	 *     yStart       = The y coordinate for the upper left hand corner
+	 *                    of the rectangle.
+	 *     xEnd         = The x coordinate for the lower left hand corner
+	 *                    of the rectangle.
+	 *     yEnd         = The y coordinate for the lower left hand corner
+	 *                    of the rectangle.
+	 *     cornerWidth  = The width of the corner.
+	 *     cornerHeight = The height of the corner.
+	 */
+	void roundRectangle(
+		size_t xStart, size_t yStart,
+		size_t xEnd, size_t yEnd,
+		size_t cornerWidth, size_t cornerHeight)
+	{
+		operations ~= format(" roundRectangle %s,%s %s,%s %s,%s",
+			xStart, yStart, xEnd, yEnd, cornerWidth, cornerHeight);
+	}
+
+	/**
+	 * Define a scale transformation to the coordinate space.
+	 */
+	void scale(double xScale, double yScale)
+	{
+		operations ~= format(" scale %s,%s", xScale, yScale);
+	}
+
+	/**
+	 * Define a skew transformation along the x-axis.
+	 * 
+	 * Params:
+	 *     angle = The amount of skew, in degrees.
+	 */
+	void skewX(double angle)
+	{
+		operations ~= format(" skewX %s", angle);
+	}
+
+	/**
+	 * Define a skew transformation along the y-axis.
+	 * 
+	 * Params:
+	 *     angle = The amount of skew, in degrees.
+	 */
+	void skewY(double angle)
+	{
+		operations ~= format(" skewY %s", angle);
+	}
+
+	/**
+	 * Color to use when drawing object outlines.
+	 */
+	void stroke(const(Color) strokeColor)
+	{
+		operations ~= format(" stroke %s", strokeColor);
+	}
+
+	/**
+	 * Specify if the stroke should be antialiased.
+	 */
+	void strokeAntialias(bool antialias)
+	{
+		operations ~= format(" stroke-antialias %s", (antialias ? 1 : 0));
+	}
+
+	/**
+	 * Describe a pattern of dashes to be used when stroking paths.
+	 * The arguments are a list of pixel widths of alternating
+	 * dashes and gaps.
+	 * 
+	 * The first argument is the width of the first dash. The second is
+	 * the width of the gap following the first dash. The third argument
+	 * is another dash width, followed by another gap width, etc.
+	 */
+	void strokeDashArray(const(double)[] dashArray ...)
+	{
+		if ( dashArray.length == 0 )
+		{
+			operations ~= " stroke-dasharray none";
+		}
+		else
+		{
+			operations ~= format(" stroke-dasharray %s",
+				array(joiner(map!"to!(string)(a)"(dashArray), ",")) );
+		}
+	}
+
+	unittest
+	{
+		auto dc = new DrawingContext();
+		dc.strokeDasharray(10, 10, 10);
+
+		assert(dc.operations == " stroke-dasharray 10,10,10");
+	}
+
 //stroke-dashoffset
 //stroke-linecap
 //stroke-linejoin
