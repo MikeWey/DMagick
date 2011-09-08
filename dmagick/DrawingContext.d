@@ -137,7 +137,7 @@ class DrawingContext
 		if ( rule == FillRule.UndefinedRule )
 			throw new DrawException("Undefined Fill Rule");
 
-		operations ~= format(" clip-rule %s", to!(string)(rule)[0 .. 4]);
+		operations ~= format(" clip-rule %s", to!(string)(rule)[0 .. $-4]);
 	}
 
 	/**
@@ -227,7 +227,7 @@ class DrawingContext
 			throw new DrawException("Undefined Composite Operator");
 
 		operations  ~= format(" image %s %s,%s %s,%s '%s'",
-			to!(string)(compositeOp)[0 .. 11], xOffset, yOffset, width, height, filename);
+			to!(string)(compositeOp)[0 .. $-11], xOffset, yOffset, width, height, filename);
 	}
 
 	///ditto
@@ -349,7 +349,7 @@ class DrawingContext
 		if ( rule == FillRule.UndefinedRule )
 			throw new DrawException("Undefined Fill Rule");
 
-		operations ~= format(" fill-rule %s", to!(string)(rule)[0 .. 4]);
+		operations ~= format(" fill-rule %s", to!(string)(rule)[0 .. $-4]);
 	}
 
 	/**
@@ -392,7 +392,7 @@ class DrawingContext
 		if ( type == StretchType.UndefinedStretch )
 			throw new DrawException("Undefined Stretch type");
 
-		operations ~= format(" font-stretch %s", to!(string)(type)[0 .. 7]);
+		operations ~= format(" font-stretch %s", to!(string)(type)[0 .. $-7]);
 	}
 
 	/**
@@ -403,7 +403,7 @@ class DrawingContext
 		if ( type == StyleType.UndefinedStyle )
 			throw new DrawException("Undefined Style type");
 
-		operations ~= format(" font-style %s", to!(string)(type)[0 .. 5]);
+		operations ~= format(" font-style %s", to!(string)(type)[0 .. $-5]);
 	}
 
 	/**
@@ -431,7 +431,7 @@ class DrawingContext
 		if ( type == GravityType.UndefinedGravity )
 			throw new DrawException("Undefined Gravity type");
 
-		operations ~= format(" gravity %s", to!(string)(type)[0 .. 7]);
+		operations ~= format(" gravity %s", to!(string)(type)[0 .. $-7]);
 	}
 
 	/**
@@ -703,14 +703,39 @@ class DrawingContext
 	unittest
 	{
 		auto dc = new DrawingContext();
-		dc.strokeDasharray(10, 10, 10);
+		dc.strokeDashArray(10, 10, 10);
 
 		assert(dc.operations == " stroke-dasharray 10,10,10");
 	}
 
-//stroke-dashoffset
-//stroke-linecap
-//stroke-linejoin
+	/**
+	 * Specify the initial distance into the dash pattern.
+	 */
+	void strokeDashOffset(double offset)
+	{
+		operations ~= format(" stroke-dashoffset %s", offset);
+	}
+
+	/**
+	 * Specify how the line ends should be drawn.
+	 */
+	void strokeLineCap(LineCap cap)
+	{
+		if ( cap == LineCap.UndefinedCap )
+			throw new DrawException("Undefined Line cap.");
+
+		operations ~= format(" stroke-linecap %s", to!(string)(cap)[0 .. $-3]);
+	}
+
+	void strokeLineJoin(LineJoin join)
+	{
+		if ( join == LineJoin.UndefinedJoin )
+			throw new DrawException("Undefined Line join.");
+
+		operations ~= format(" stroke-linejoin %s", to!(string)(join)[0 .. $-4]);
+	}
+
+
 //stroke-miterlimit
 //stroke-opacity
 //stroke-width
