@@ -56,6 +56,15 @@ class DrawingContext
 	}
 
 	/**
+	 * Specify if the text and stroke should be antialiased.
+	 */
+	void antialias(bool antialias)
+	{
+		strokeAntialias = antialias;
+		textAntialias = antialias;
+	}
+
+	/**
 	 * Draws an arc within a rectangle.
 	 */
 	void arc(size_t startX, size_t startY, size_t endX, size_t endY, double startDegrees, double endDegrees)
@@ -149,6 +158,9 @@ class DrawingContext
 	 */
 	void clipUnits(ClipPathUnits units)
 	{
+		if ( units == ClipPathUnits.UndefinedPathUnits )
+			throw new DrawException("Undefined Path Unit");
+
 		operations ~= format( " clip-units %s", toLower(to!(string)(units)) );
 	}
 
@@ -318,6 +330,30 @@ class DrawingContext
 	void fill(const(Color) fillColor)
 	{
 		operations ~= format(" fill %s", fillColor);
+	}
+
+	///ditto
+	alias fill fillColor;
+
+	/**
+	 * Pattern to use when filling drawn objects.
+	 */
+	void fill(size_t x, size_t y, size_t width, size_t height, void delegate(DrawingContext path) pattern)
+	{
+		operations ~= format(" fill url(#%s)", definePattern(x, y, width, height, pattern));
+	}
+	
+	///ditto
+	alias fill fillPattern;
+
+	/**
+	 * The gradient to use when filling drawn objects.
+	 */
+	void fill(Gradient gradient)
+	{
+		operations ~= gradient.defineGradient();
+
+		operations ~= format(" fill url(#%s)", gradient.id());
 	}
 
 	/**
@@ -670,6 +706,30 @@ class DrawingContext
 		operations ~= format(" stroke %s", strokeColor);
 	}
 
+	///ditto
+	alias stroke strokeColor;
+
+	/**
+	 * Pattern to use when filling drawn objects.
+	 */
+	void stroke(size_t x, size_t y, size_t width, size_t height, void delegate(DrawingContext path) pattern)
+	{
+		operations ~= format(" stroke url(#%s)", definePattern(x, y, width, height, pattern));
+	}
+	
+	///ditto
+	alias stroke strokePattern;
+
+	/**
+	 * The gradient to use when filling drawn objects.
+	 */
+	void stroke(Gradient gradient)
+	{
+		operations ~= gradient.defineGradient();
+
+		operations ~= format(" stroke url(#%s)", gradient.id());
+	}
+
 	/**
 	 * Specify if the stroke should be antialiased.
 	 */
@@ -821,6 +881,9 @@ class DrawingContext
 		operations ~= format(" text-undercolor %s", color);
 	}
 
+	///ditto
+	alias textUnderColor boxColor;
+
 	/**
 	 * Specify a translation operation on the coordinate space.
 	 */
@@ -829,12 +892,23 @@ class DrawingContext
 		operations ~= format(" translate %s,%s", x, y);
 	}
 
-//For gradients:
-//gradient-units
-//stop-color
+	/**
+	 * Generate to operations for the profide pattern.
+	 */
+	private string definePattern(size_t x, size_t y, size_t width, size_t height, void delegate(DrawingContext path) pattern)
+	{
+		static size_t count;
+		count++;
 
-//Does this do anything?
-//offset
+		DrawingContext patt = new DrawingContext();
+		pattern(patt);
+
+		operations ~= format(" push defs push pattern patt%s %s,%s %s,%s push graphic-context", count, x, y, width, height);
+		operations ~= patt.operations;
+		operations ~= " pop graphic-context pop pattern pop defs";
+
+		return format("patt%s", count);
+	}
 
 	/**
 	 * Escape the text so it can be added to the operations string.
@@ -927,6 +1001,168 @@ class DrawingContext
 }
 
 /**
+ *
+ */
+struct Gradient
+{
+	private static size_t count;
+	private size_t currentCount;
+
+	//Is the id to use this gradient already set.
+	private bool isDefined = false;
+
+	GradientType  type;
+	GradientUnits units;
+	double x1, y1, x2, y2, radius;
+	StopColor[] stopColors;
+
+	/**
+	 * Define a linear gradient.
+	 * 
+	 * x1, y1, x2 and y2 define a gradient vector for the linear gradient.
+	 * This gradient vector provides starting and ending points onto which
+	 * the gradient stops are mapped. The values of x1, y1, x2 and y2 can
+	 * be either numbers or percentages.
+	 */
+	static Gradient linear(double x1, double y1, double x2, double y2)
+	{
+		Gradient gradient;
+
+		gradient.type = GradientType.LinearGradient;
+
+		gradient.currentCount = count++;
+		gradient.x1 = x1;
+		gradient.y1 = y1;
+		gradient.x2 = x2;
+		gradient.y2 = y2;
+
+		return gradient;
+	}
+
+	/**
+	 * Define a radial gradient.
+	 * 
+	 * cx, cy and r define the largest (i.e., outermost) circle for the
+	 * radial gradient. The gradient will be drawn such that the 100%
+	 * gradient stop is mapped to the perimeter of this largest
+	 * (i.e., outermost) circle.
+	 * 
+	 * Params:
+	 *     xCenter = x coordinate for the center of the circle.
+	 *     yCenter = y coordinate for the center of the circle.
+	 *     xFocal  = x coordinate the focal point for the radial gradient.
+	 *               The gradient will be drawn such that the 0% gradient
+	 *               stop is mapped to (xFocal, yFocal).
+	 *     yFocal  = y coordinate the focal point
+	 *     radius  = The radius of the gradient. A value of zero will cause
+	 *               the area to be painted as a single color using the
+	 *               color and opacity of the last gradient stop.
+	 */
+	static Gradient radial(double xCenter, double yCenter, double xFocal, double yFocal, double radius)
+	{
+		Gradient gradient;
+
+		gradient.type = GradientType.RadialGradient;
+
+		gradient.currentCount = count++;
+		gradient.x1 = xCenter;
+		gradient.y1 = yCenter;
+		gradient.x2 = xFocal;
+		gradient.y2 = yFocal;
+		gradient.radius = radius;
+
+		return gradient;
+	}
+
+	/**
+	 * Define a radial gradient.
+	 * 
+	 * The same as above but with the focal point at
+	 * the center of the circle.
+	 */
+	static Gradient radial(double xCenter, double yCenter, double radius)
+	{
+		return radial(xCenter, yCenter, xCenter, yCenter, radius);
+	}
+
+	/**
+	 * Defines the coordinate system to use.
+	 */
+	Gradient gradientUnits(GradientUnits units)
+	{
+		this.units = units;
+
+		return this;
+	}
+
+	/**
+	 * Define the color to use, and there offsets in the gradient.
+	 * 
+	 * Params:
+	 *     color  = The color to use at this stop.
+	 *     offset = For linear gradients, the offset attribute represents
+	 *              a location along the gradient vector. For radial
+	 *              gradients, it represents a percentage distance
+	 *              from (fx,fy) to the edge of the outermost/largest circle.
+	 *              offset should bwe between 0 and 1.
+	 */
+	Gradient stopColor(Color color, double offset)
+	{
+		stopColors ~= StopColor(color, offset);
+
+		return this;
+	}
+
+	/**
+	 * Generate the string used to define this gradient.
+	 */
+	private string defineGradient()
+	{
+		if ( isDefined )
+			return "";
+
+		string operations = " push defs";
+
+		if ( type == GradientType.LinearGradient )
+		{
+			operations ~= format(" push gradient grad%s linear %s,%s %s,%s",
+				currentCount, x1, y1, x2, y2);
+		}
+		else
+		{
+			operations ~= format(" push gradient grad%s radial %s,%s %s,%s $s",
+				currentCount, x1, y1, x2, y2, radius);
+		}
+
+		if ( units != GradientUnits.Undefined )
+			operations ~= format(" gradient-units %s", units);
+
+		foreach ( stop; stopColors )
+		{
+			operations ~= format(" stop-color %s %s", stop.color, stop.offset);
+		}
+
+		operations ~= " pop gradient pop defs";
+
+		return operations;
+	}
+
+	/**
+	 * If the gradient is defined, this id is neded to use it.
+	 */
+	private string id()
+	{
+		return format("grad%s", currentCount);
+	}
+
+	private struct StopColor
+	{
+		Color color;
+		double offset;
+	}
+}
+
+/**
  * This enumeration lists specific character repertories (i.e., charsets),
  * and not text encoding methods (e.g., UTF-8, UTF-16, etc.).
  */
@@ -959,4 +1195,42 @@ enum FontWeight : string
         Bold    = "bold",    /// Bold. equivalent to 700. 
         Bolder  = "bolder",  /// Increases weight by 100.
         Lighter = "lighter", /// Decreases weight by 100.
+}
+
+/**
+ * Defines the coordinate system to use for Gradients.
+ */
+enum GradientUnits : string
+{
+	/**
+	 * No coordinate systewm defined.
+	 */
+	Undefined         = "",
+
+	/**
+	 * The values supplied to Gradient represent values in the coordinate
+	 * system that results from taking the current user coordinate system
+	 * in place at the time when the gradient element is referenced.
+	 */
+	UserSpace         = "userSpace",
+
+	/**
+	 * The user coordinate system for the values supplied to Gradient is
+	 * established using the bounding box of the element to which the
+	 * gradient is applied.
+	 */
+	UserSpaceOnUse    = "userSpaceOnUse",
+
+	/**
+	 * The normal of the linear gradient is perpendicular to the gradient
+	 * vector in object bounding box space. When the object's bounding box
+	 * is not square, the gradient normal which is initially perpendicular
+	 * to the gradient vector within object bounding box space may render
+	 * non-perpendicular relative to the gradient vector in user space.
+	 * If the gradient vector is parallel to one of the axes of the bounding
+	 * box, the gradient normal will remain perpendicular.
+	 * This transformation is due to application of the non-uniform scaling
+	 * transformation from bounding box space to user space.
+	 */
+	ObjectBoundingBox = "objectBoundingBox",
 }
