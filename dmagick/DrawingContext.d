@@ -727,6 +727,9 @@ class DrawingContext
 		operations ~= format(" stroke-linecap %s", to!(string)(cap)[0 .. $-3]);
 	}
 
+	/**
+	 * Specify how corners are drawn.
+	 */
 	void strokeLineJoin(LineJoin join)
 	{
 		if ( join == LineJoin.UndefinedJoin )
@@ -735,17 +738,96 @@ class DrawingContext
 		operations ~= format(" stroke-linejoin %s", to!(string)(join)[0 .. $-4]);
 	}
 
+	/**
+	 * Specify a constraint on the length of the "miter"
+	 * formed by two lines meeting at an angle. If the angle
+	 * if very sharp, the miter could be very long relative
+	 * to the line thickness. The miter _limit is a _limit on
+	 * the ratio of the miter length to the line width.
+	 * The default is 4.
+	 */
+	void strokeMiterLimit(size_t limit)
+	{
+		operations ~= format(" stroke-miterlimit %s", limit);
+	}
 
-//stroke-miterlimit
-//stroke-opacity
-//stroke-width
-//text
-//text-align
-//text-anchor
-//text-antialias
-//text-undercolor
-//translate
-//viewbox
+	/**
+	 * Specify the stroke opacity.
+	 * 
+	 * Params:
+	 *     opacity = A number between 0 and 1.
+	 */
+	void strokeOpacity(double opacity)
+	in
+	{
+		assert(opacity >= 0);
+		assert(opacity <= 1);
+	}
+	body
+	{
+		operations ~= format(" stroke-opacity %s", opacity);
+	}
+
+	/**
+	 * Specify the stroke width in pixels. The default is 1.
+	 */
+	void strokeWidth(double width)
+	{
+		operations ~= format(" stroke-width %s", width);
+	}
+
+	/**
+	 * Draw text at the location specified by (x,y). Use gravity to
+	 * position text relative to (x, y). Specify the font appearance
+	 * with the font, fontFamily, fontStretch, fontStyle, and fontWeight
+	 * properties. Specify the text attributes with the textAlign,
+	 * textAnchor, textAntialias, and textUndercolor properties.
+	 * 
+	 * To include a '%' in the text, use '%%'.
+	 * 
+	 * See_Also: Image.annotate for the image properties you can
+	 *     include in the string.
+	 */
+	void text(size_t x, size_t y, string text)
+	{
+		operations ~= format(" text %s,%s %s", x, y, escapeText(text));
+	}
+
+	/**
+	 * Align text relative to the starting point.
+	 */
+	void textAlign(AlignType type)
+	{
+		if ( type == AlignType.UndefinedAlign )
+			throw new DrawException("Undefined Align type.");
+
+		operations ~= format(" text-align %s", to!(string)(type)[0 .. $-5]);
+
+	}
+
+	/**
+	 * Specify if the text should be antialiased.
+	 */
+	void textAntialias(bool antialias)
+	{
+		operations ~= format(" text-antialias %s", (antialias ? 1 : 0));
+	}
+
+	/**
+	 * If set, causes the text to be drawn over a box of the specified color.
+	 */
+	void textUnderColor(Color color)
+	{
+		operations ~= format(" text-undercolor %s", color);
+	}
+
+	/**
+	 * Specify a translation operation on the coordinate space.
+	 */
+	void translate(size_t x, size_t y)
+	{
+		operations ~= format(" translate %s,%s", x, y);
+	}
 
 //For gradients:
 //gradient-units
@@ -754,6 +836,40 @@ class DrawingContext
 //Does this do anything?
 //offset
 
+	/**
+	 * Escape the text so it can be added to the operations string.
+	 */
+	private static string escapeText(string text)
+	{
+		string escaped;
+
+		//reserve text.lengt + 10% to avoid realocating when appending.
+		escaped.reserve(cast(size_t)(text.length * 0.1));
+		escaped ~= '\"';
+
+		foreach ( c; text )
+		{
+			if ( c == '\"' || c == '\\' )
+				escaped ~= '\\';
+
+			escaped ~= c;
+		}
+
+		escaped ~= '\"';
+
+		return escaped;
+	}
+
+	unittest
+	{
+		assert(escapeText(q{Hello world})       == q{"Hello world"});
+		assert(escapeText(q{"Hello world"})     == q{"\"Hello world\""});
+		assert(escapeText(q{"\"Hello world\""}) == q{"\"\\\"Hello world\\\"\""});
+	}
+
+	/**
+	 * Save the image in the temp directory and return the filename.
+	 */
 	private static string saveTempFile(Image image)
 	{
 		import std.datetime;
