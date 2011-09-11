@@ -93,7 +93,7 @@ docs: $(DOCS_DMAGICK)
 #######################################################################
 
 docs/%.html : dmagick/%.d
-	$(DC) $(DCFLAGS) $< $(DDOCFLAGS) 
+	$(DC) $(DCFLAGS) docs/dmagick.ddoc $< $(DDOCFLAGS) 
 
 #######################################################################
 
@@ -108,4 +108,4 @@ uninstall:
 	rm -f $(DESTDIR)$(prefix)/lib/$(LIBNAME_DMAGICK)
 
 clean:
-	-rm -rf $(LIBNAME_DMAGICK) $(OBJECTS_DMAGICK) unittest.o unittest docs
+	-rm -rf $(LIBNAME_DMAGICK) $(OBJECTS_DMAGICK) $(DOCS_DMAGICK) docs/c unittest.o unittest

@@ -1,0 +1,210 @@
+body
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: black;
+	background-color: #1f252b;
+	font-size: 100%;
+	font-family: Verdana, "Deja Vu", "Bitstream Vera Sans", sans-serif;
+}
+
+div#header
+{
+	padding: 1em;
+}
+
+div#navigation
+{
+	font-size: 0.875em;
+	float: left;
+	padding: 0 1.5em;
+}
+
+div#navigation h2
+{
+	font-family: Verdana, "Deja Vu", "Bitstream Vera Sans", sans-serif;
+	font-size: 1.35em;
+	color: #ccc;
+	margin: 0;
+}
+
+div#navigation ul
+{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+div#navigation li
+{
+	margin: 0 0 0 0.8em;
+	padding: 0;
+}
+
+#navigation a
+{
+	display: block;
+	color: #ccc;
+	text-decoration: none;
+	padding: 0.1em 0;
+	border-bottom: 1px dotted #494949;
+}
+
+#navigation a:hover
+{
+	color: #eee;
+}
+
+#navigation a.active
+{
+	color: white;
+	border-color: white;
+}
+
+div#content
+{
+	min-height: 440px;
+	max-width: 76em;
+	margin-left: 18em;
+	margin-right: 1.6em;
+	padding: 1.6em;
+	padding-top: 1.3em;
+	border: 0.6em solid #ccd5d5;
+	background-color: #f6f6f6;
+	font-size: 0.875em;
+	line-height: 1.4em;
+}
+
+div#content li
+{
+	padding-bottom: .7ex;
+}
+
+div#copyright
+{
+	clear: both;
+	margin-top: 2em;
+	padding: 1em 2em;
+	background-color: #303333;
+	color: #ccc;
+	font-size: 0.75em;
+	text-align: center;
+}
+
+div#copyright a
+{
+	color: #ccc;
+}
+
+#lastupdate
+{
+	float: right;
+	margin: -1.5em;
+	margin-bottom: 0;
+	text-align: right;
+	font-size: 0.8em;
+	font-style: italic;
+	color: #666;
+}
+
+h1, h2, h3, h4, h5, h6
+{
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-weight: normal;
+	color: #633;
+	line-height: normal;
+	text-align: left;
+}
+
+h1
+{
+	margin-top: 0;
+	font-size: 2.5em;
+}
+
+h2
+{
+	font-size: 1.7em;
+}
+
+h3
+{
+	font-size: 1.35em;
+}
+
+h4
+{
+	font-size: 1.15em;
+	font-style: italic;
+	margin-bottom: 0;
+}
+
+pre
+{
+	background: white;
+	padding: 1ex;
+	margin: 1em 0 1em 3em;
+	font-family: monospace;
+	font-size: 1.2em;
+	line-height: normal;
+	border: 1px solid #ccc;
+	width: auto;
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+dd
+{
+	padding: 1ex;
+	margin-left: 3em;
+	margin-bottom: 1em;
+}
+
+hr
+{
+	margin: 2em 0;
+}
+
+a
+{
+	color: #006;
+}
+
+a:visited
+{
+	color: #606;
+}
+
+.d_inlinecode
+{
+	font-family: monospace;
+	font-weight: bold;
+}
+
+.d_decl {
+    font-weight: bold;
+    background-color: #E4E9EF;
+    border-bottom: solid 2px #336600;
+    padding: 2px 0px 2px 2px;
+}
+
+/* Elements of D source code text */
+.d_comment { color: green; }
+.d_string  { color: red; }
+.d_keyword { color: blue; }
+.d_psymbol { text-decoration: underline; }
+.d_param   { font-style: italic; }
+
+/* Focal symbol that is being documented */
+.ddoc_psymbol { color: #336600; }
+
+.red    { color: red; }
+.green  { color: green; }
+.blue   { color: blue; }
+.yellow { color: yellow; }
+.black  { color: black; }
+.white  { color: white; }

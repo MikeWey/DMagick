@@ -2,15 +2,6 @@
  * Copyright: Mike Wey 2011
  * License:   zlib (See accompanying LICENSE file)
  * Authors:   Mike Wey
- *
- * Macros:
- *     TABLE=<table>$0</table>
- *
- *     TH=<th>$1</th>$(TH $+)
- *     HEADERS=<tr>$(TH $1, $+)</tr>
- *
- *     TD=<td>$1</td>$(TD $+)
- *     ROW=<tr>$(TD $1, $+)</tr>
  */
 
 module dmagick.Image;
@@ -146,16 +137,16 @@ class Image
 	 * Constructs an image from an array of pixels.
 	 *
 	 * Params:
-	 *     width  =  The number of columns in the image.
-	 *     height =  The number of rows in the image.
-	 *     map    =  A string describing the expected ordering
-	 *               of the pixel array. It can be any combination
-	 *               or order of R = red, G = green, B = blue, A = alpha
-	 *               , C = cyan, Y = yellow, M = magenta, K = black,
-	 *               or I = intensity (for grayscale).
-	 *     storage = The pixel Staroage type (CharPixel,
-	 *               ShortPixel, IntegerPixel, FloatPixel, or DoublePixel).
-	 *     pixels  = The pixel data.
+	 *     columns =  The number of columns in the image.
+	 *     rows    =  The number of rows in the image.
+	 *     map     =  A string describing the expected ordering
+	 *                of the pixel array. It can be any combination
+	 *                or order of R = red, G = green, B = blue, A = alpha
+	 *                , C = cyan, Y = yellow, M = magenta, K = black,
+	 *                or I = intensity (for grayscale).
+	 *     storage  = The pixel Staroage type (CharPixel,
+	 *                ShortPixel, IntegerPixel, FloatPixel, or DoublePixel).
+	 *     pixels   = The pixel data.
 	 */
 	this(size_t columns, size_t rows, string map, StorageType storage, void[] pixels)
 	{
@@ -170,14 +161,16 @@ class Image
 	/**
 	 * Constructs a description of the image as a string.
 	 * The string contains some or all of the following fields:
-	 * $(B filename) The current filename. $(BR)
-	 * $(B [scene]) The scene number, if the image is part of a secuence. $(BR)
-	 * $(B format) The image format. $(BR)
-	 * $(B width x height) $(BR)
-	 * $(B page width x height + xOffset + yOffset) $(BR)
-	 * $(B classType) DirectClass or PseudoClass $(BR)
-	 * $(B N-bit) bit depth. $(BR)
-	 * $(B blob size) if present.
+	 * $(LIST
+	 *     $(B filename) The current filename.,
+	 *     $(B [scene]) The scene number if the image is part of a secuence.,
+	 *     $(B format) The image format.,
+	 *     $(B width x height),
+	 *     $(B page width x height + xOffset + yOffset),
+	 *     $(B classType) DirectClass or PseudoClass,
+	 *     $(B N-bit) bit depth.,
+	 *     $(B blob size) if present.
+	 * )
 	 */
 	string toString()
 	{
@@ -3803,7 +3796,7 @@ class Image
 	 * will periodically call the monitor with arguments indicating the
 	 * progress of the method.
 	 *
-	 * The delegate receves the folowing params: $(BR)
+	 * The delegate receves the folowing $(B parameters): $(BR)
 	 * $(TABLE 
 	 *     $(ROW string $(I methodName), The name of the monitored method.)
 	 *     $(ROW long   $(I offset    ), A number between 0 and extent that
