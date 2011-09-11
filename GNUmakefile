@@ -44,9 +44,14 @@ AR=ar
 RANLIB=ranlib
 
 QUANTUMDEPTH = $(lastword $(shell MagickCore-config --version))
+MAGICKVERSION = $(subst .,,$(firstword $(shell MagickCore-config --version)))
 
 ifneq ("$(QUANTUMDEPTH)","Q16")
     DCFLAGS+= -version=$(subst Q,Quantum,$(QUANTUMDEPTH))
+endif
+
+ifneq ("$(MAGICKVERSION)","672")
+    DCFLAGS+= -version=MagickCore_$(MAGICKVERSION)
 endif
 
 #######################################################################
