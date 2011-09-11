@@ -12,7 +12,16 @@ extern(C)
 {
 	mixin(
 	{
-		string options = "enum CommandOption
+		static if ( MagickLibVersion >= 0x670 )
+		{
+			string options = "enum CommandOption";
+		}
+		else
+		{
+			string options = "enum MagickOption";
+		}
+
+		options ~= "
 		{
 			MagickUndefinedOptions = -1,
 			MagickAlignOptions = 0,
@@ -100,8 +109,6 @@ extern(C)
 		return options;
 	}());
 
-	alias CommandOption MagickOption;
-
 	enum ValidateType
 	{
 		UndefinedValidate,
@@ -152,36 +159,43 @@ extern(C)
 			stealth;
 	}
 
-	char** GetCommandOptions(const CommandOption);
+	static if ( MagickLibVersion >= 0x670 )
+	{
+		char** GetCommandOptions(const CommandOption);
+
+		const(char)* CommandOptionToMnemonic(const CommandOption, const ssize_t);
+
+		MagickBooleanType IsCommandOption(const(char)*);
+		MagickBooleanType ListCommandOptions(FILE*, const CommandOption, ExceptionInfo*);
+
+		ssize_t GetCommandOptionFlags(const CommandOption, const MagickBooleanType, const(char)*);
+		ssize_t ParseCommandOption(const CommandOption, const MagickBooleanType, const(char)*);
+	}
+	else
+	{
+		char** GetMagickOptions(const MagickOption);
+
+		const(char)* MagickOptionToMnemonic(const MagickOption, const ssize_t);
+
+		MagickBooleanType IsMagickOption(const(char)*);
+		MagickBooleanType ListMagickOptions(FILE*, const MagickOption, ExceptionInfo*);
+
+		ssize_t ParseMagickOption(const MagickOption, const MagickBooleanType,const(char)*);
+	}
+
 	char*  GetNextImageOption(const(ImageInfo)*);
 	char*  RemoveImageOption(ImageInfo*, const(char)*);
 
-	const(char)* CommandOptionToMnemonic(const CommandOption, const ssize_t);
 	const(char)* GetImageOption(const(ImageInfo)*, const(char)*);
 
 	MagickBooleanType CloneImageOptions(ImageInfo*, const(ImageInfo)*);
 	MagickBooleanType DefineImageOption(ImageInfo*, const(char)*);
 	MagickBooleanType DeleteImageOption(ImageInfo*, const(char)*);
-	MagickBooleanType IsCommandOption(const(char)*);
-	MagickBooleanType ListCommandOptions(FILE*, const CommandOption, ExceptionInfo*);
 	MagickBooleanType SetImageOption(ImageInfo*, const(char)*, const(char)*);
 
-	static if ( MagickLibVersion >= 0x670 )
-	{
-		ssize_t GetCommandOptionFlags(const CommandOption, const MagickBooleanType, const(char)*);
-	}
-
 	ssize_t ParseChannelOption(const(char)*);
-	ssize_t ParseCommandOption(const CommandOption, const MagickBooleanType, const(char)*);
 
 	void DestroyImageOptions(ImageInfo*);
 	void ResetImageOptions(const(ImageInfo)*);
 	void ResetImageOptionIterator(const(ImageInfo)*);
-
-	//Renamed functions in 6.7.0
-	alias GetCommandOptions GetMagickOptions;
-	alias CommandOptionToMnemonic MagickOptionToMnemonic;
-	alias IsCommandOption IsMagickOption;
-	alias ListCommandOptions ListMagickOptions;
-	alias ParseCommandOption ParseMagickOption;
 }
