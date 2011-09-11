@@ -337,6 +337,9 @@ class DrawingContext
 
 	/**
 	 * Pattern to use when filling drawn objects.
+	 * 
+	 * Within the delegate, call other drawing primitive methods (rectangle,
+	 * polygon, text, etc.) to define the pattern.
 	 */
 	void fill(size_t x, size_t y, size_t width, size_t height, void delegate(DrawingContext path) pattern)
 	{
@@ -711,6 +714,9 @@ class DrawingContext
 
 	/**
 	 * Pattern to use when filling drawn objects.
+	 * 
+	 * Within the delegate, call other drawing primitive methods (rectangle,
+	 * polygon, text, etc.) to define the pattern.
 	 */
 	void stroke(size_t x, size_t y, size_t width, size_t height, void delegate(DrawingContext path) pattern)
 	{
@@ -862,7 +868,6 @@ class DrawingContext
 			throw new DrawException("Undefined Align type.");
 
 		operations ~= format(" text-align %s", to!(string)(type)[0 .. $-5]);
-
 	}
 
 	/**
@@ -1001,7 +1006,7 @@ class DrawingContext
 }
 
 /**
- *
+ * This defines a Gradient used when drawing.
  */
 struct Gradient
 {
