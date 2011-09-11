@@ -14,6 +14,7 @@ import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.layer;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.monitor;
 import dmagick.c.pixel;
 import dmagick.c.profile;
@@ -320,8 +321,11 @@ extern(C)
 		MagickBooleanType
 			ping;
 
-		size_t
-			channels;
+		static if ( MagickLibVersion >= 0x670 )
+		{
+			size_t
+				channels;
+		}
 	}
 
 	struct ImageInfo
@@ -481,7 +485,11 @@ extern(C)
 	Image* NewMagickImage(const(ImageInfo)*, const size_t, const size_t, const(MagickPixelPacket)*);
 	Image* ReferenceImage(Image*);
 	Image* SeparateImages(const(Image)*, const ChannelType, ExceptionInfo*);
-	Image* SmushImages(const(Image)*, const MagickBooleanType, const ssize_t, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x668 )
+	{
+		Image* SmushImages(const(Image)*, const MagickBooleanType, const ssize_t, ExceptionInfo*);
+	}
 
 	ImageInfo* AcquireImageInfo();
 	ImageInfo* CloneImageInfo(const(ImageInfo)*);
@@ -506,7 +514,12 @@ extern(C)
 	MagickBooleanType SetImageInfo(ImageInfo*, const uint, ExceptionInfo*);
 	MagickBooleanType SetImageMask(Image*, const(Image)*);
 	MagickBooleanType SetImageOpacity(Image*, const Quantum);
-	MagickBooleanType SetImageChannels(Image*, const size_t);
+
+	static if ( MagickLibVersion >= 0x670 )
+	{
+		MagickBooleanType SetImageChannels(Image*, const size_t);
+	}
+
 	MagickBooleanType SetImageStorageClass(Image*, const ClassType);
 	MagickBooleanType SetImageType(Image*, const ImageType);
 	MagickBooleanType StripImage(Image*);
@@ -518,7 +531,10 @@ extern(C)
 
 	ssize_t GetImageReferenceCount(Image*);
 
-	size_t GetImageChannels(Image*);
+	static if ( MagickLibVersion >= 0x670 )
+	{
+		size_t GetImageChannels(Image*);
+	}
 
 	VirtualPixelMethod GetImageVirtualPixelMethod(const(Image)*);
 	VirtualPixelMethod SetImageVirtualPixelMethod(const(Image)*, const VirtualPixelMethod);

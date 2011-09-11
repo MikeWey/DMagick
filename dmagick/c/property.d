@@ -1,7 +1,10 @@
 module dmagick.c.property;
 
+import core.vararg;
+
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -16,6 +19,12 @@ extern(C)
 	MagickBooleanType DefineImageProperty(Image*, const(char)*);
 	MagickBooleanType DeleteImageProperty(Image*, const(char)*);
 	MagickBooleanType FormatImageProperty(Image*, const(char)*, const(char)*, ...);
+
+	static if ( MagickLibVersion < 0x670 )
+	{
+		MagickBooleanType FormatImagePropertyList(Image*, const(char)*, const(char)*, va_list);
+	}
+
 	MagickBooleanType SetImageProperty(Image*, const(char)*, const(char)*);
 
 	void DestroyImageProperties(Image*);

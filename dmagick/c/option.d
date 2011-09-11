@@ -6,80 +6,101 @@ import core.sys.posix.sys.types;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
-	enum CommandOption
+	mixin(
 	{
-		MagickUndefinedOptions = -1,
-		MagickAlignOptions = 0,
-		MagickAlphaOptions,
-		MagickBooleanOptions,
-		MagickChannelOptions,
-		MagickClassOptions,
-		MagickClipPathOptions,
-		MagickCoderOptions,
-		MagickColorOptions,
-		MagickColorspaceOptions,
-		MagickCommandOptions,
-		MagickComposeOptions,
-		MagickCompressOptions,
-		MagickConfigureOptions,
-		MagickDataTypeOptions,
-		MagickDebugOptions,
-		MagickDecorateOptions,
-		MagickDelegateOptions,
-		MagickDirectionOptions,
-		MagickDisposeOptions,
-		MagickDistortOptions,
-		MagickDitherOptions,
-		MagickEndianOptions,
-		MagickEvaluateOptions,
-		MagickFillRuleOptions,
-		MagickFilterOptions,
-		MagickFontOptions,
-		MagickFontsOptions,
-		MagickFormatOptions,
-		MagickFunctionOptions,
-		MagickGravityOptions,
-		MagickIntentOptions,
-		MagickInterlaceOptions,
-		MagickInterpolateOptions,
-		MagickKernelOptions,
-		MagickLayerOptions,
-		MagickLineCapOptions,
-		MagickLineJoinOptions,
-		MagickListOptions,
-		MagickLocaleOptions,
-		MagickLogEventOptions,
-		MagickLogOptions,
-		MagickMagicOptions,
-		MagickMethodOptions,
-		MagickMetricOptions,
-		MagickMimeOptions,
-		MagickModeOptions,
-		MagickModuleOptions,
-		MagickMorphologyOptions,
-		MagickNoiseOptions,
-		MagickOrientationOptions,
-		MagickPolicyOptions,
-		MagickPolicyDomainOptions,
-		MagickPolicyRightsOptions,
-		MagickPreviewOptions,
-		MagickPrimitiveOptions,
-		MagickQuantumFormatOptions,
-		MagickResolutionOptions,
-		MagickResourceOptions,
-		MagickSparseColorOptions,
-		MagickStatisticOptions,
-		MagickStorageOptions,
-		MagickStretchOptions,
-		MagickStyleOptions,
-		MagickThresholdOptions,
-		MagickTypeOptions,
-		MagickValidateOptions,
-		MagickVirtualPixelOptions
-	}
+		string options = "enum CommandOption
+		{
+			MagickUndefinedOptions = -1,
+			MagickAlignOptions = 0,
+			MagickAlphaOptions,
+			MagickBooleanOptions,
+			MagickChannelOptions,
+			MagickClassOptions,
+			MagickClipPathOptions,
+			MagickCoderOptions,
+			MagickColorOptions,
+			MagickColorspaceOptions,
+			MagickCommandOptions,
+			MagickComposeOptions,
+			MagickCompressOptions,
+			MagickConfigureOptions,
+			MagickDataTypeOptions,
+			MagickDebugOptions,
+			MagickDecorateOptions,
+			MagickDelegateOptions,
+			MagickDirectionOptions,
+			MagickDisposeOptions,
+			MagickDistortOptions,
+			MagickDitherOptions,
+			MagickEndianOptions,
+			MagickEvaluateOptions,
+			MagickFillRuleOptions,
+			MagickFilterOptions,
+			MagickFontOptions,
+			MagickFontsOptions,
+			MagickFormatOptions,
+			MagickFunctionOptions,
+			MagickGravityOptions,";
+
+			static if ( MagickLibVersion < 0x670 )
+			{
+				options ~= "MagickImageListOptions,";
+			}
+
+			options ~= "
+			MagickIntentOptions,
+			MagickInterlaceOptions,
+			MagickInterpolateOptions,
+			MagickKernelOptions,
+			MagickLayerOptions,
+			MagickLineCapOptions,
+			MagickLineJoinOptions,
+			MagickListOptions,
+			MagickLocaleOptions,
+			MagickLogEventOptions,
+			MagickLogOptions,
+			MagickMagicOptions,
+			MagickMethodOptions,
+			MagickMetricOptions,
+			MagickMimeOptions,
+			MagickModeOptions,
+			MagickModuleOptions,
+			MagickMorphologyOptions,
+			MagickNoiseOptions,
+			MagickOrientationOptions,
+			MagickPolicyOptions,
+			MagickPolicyDomainOptions,
+			MagickPolicyRightsOptions,
+			MagickPreviewOptions,
+			MagickPrimitiveOptions,
+			MagickQuantumFormatOptions,
+			MagickResolutionOptions,
+			MagickResourceOptions,
+			MagickSparseColorOptions,";
+
+			static if ( MagickLibVersion >= 0x669 )
+			{
+				options ~= "MagickStatisticOptions,";
+			}
+
+			options ~= "
+			MagickStorageOptions,
+			MagickStretchOptions,
+			MagickStyleOptions,
+			MagickThresholdOptions,
+			MagickTypeOptions,
+			MagickValidateOptions,
+			MagickVirtualPixelOptions
+		}";
+
+		return options;
+	}());
+
+	alias CommandOption MagickOption;
 
 	enum ValidateType
 	{
@@ -119,8 +140,13 @@ extern(C)
 			mnemonic;
 
 		ssize_t
-			type,
-			flags;
+			type;
+
+		static if ( MagickLibVersion >= 0x670 )
+		{
+			ssize_t
+				flags;
+		}
 
 		MagickBooleanType
 			stealth;
@@ -140,11 +166,22 @@ extern(C)
 	MagickBooleanType ListCommandOptions(FILE*, const CommandOption, ExceptionInfo*);
 	MagickBooleanType SetImageOption(ImageInfo*, const(char)*, const(char)*);
 
-	ssize_t GetCommandOptionFlags(const CommandOption, const MagickBooleanType, const(char)*);
+	static if ( MagickLibVersion >= 0x670 )
+	{
+		ssize_t GetCommandOptionFlags(const CommandOption, const MagickBooleanType, const(char)*);
+	}
+
 	ssize_t ParseChannelOption(const(char)*);
 	ssize_t ParseCommandOption(const CommandOption, const MagickBooleanType, const(char)*);
 
 	void DestroyImageOptions(ImageInfo*);
 	void ResetImageOptions(const(ImageInfo)*);
 	void ResetImageOptionIterator(const(ImageInfo)*);
+
+	//Renamed functions in 6.7.0
+	alias GetCommandOptions GetMagickOptions;
+	alias CommandOptionToMnemonic MagickOptionToMnemonic;
+	alias IsCommandOption IsMagickOption;
+	alias ListCommandOptions ListMagickOptions;
+	alias ParseCommandOption ParseMagickOption;
 }

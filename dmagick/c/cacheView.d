@@ -6,6 +6,7 @@ import dmagick.c.colorspace;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.pixel;
 
 extern(C)
@@ -60,7 +61,10 @@ extern(C)
 
 	MagickSizeType GetCacheViewExtent(const(CacheView)*);
 
-	size_t GetCacheViewChannels(const(CacheView)*);
+	static if ( MagickLibVersion >= 0x670 )
+	{
+		size_t GetCacheViewChannels(const(CacheView)*);
+	}
 
 	PixelPacket* GetCacheViewAuthenticPixelQueue(CacheView*);
 	PixelPacket* GetCacheViewAuthenticPixels(CacheView*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);

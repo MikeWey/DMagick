@@ -6,47 +6,59 @@ import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
-	enum KernelInfoType
+	mixin(
 	{
-		UndefinedKernel,    /* equivelent to UnityKernel */
-		UnityKernel,        /* The no-op or 'original image' kernel */
-		GaussianKernel,     /* Convolution Kernels, Gaussian Based */
-		DoGKernel,
-		LoGKernel,
-		BlurKernel,
-		CometKernel,
-		LaplacianKernel,    /* Convolution Kernels, by Name */
-		SobelKernel,
-		FreiChenKernel,
-		RobertsKernel,
-		PrewittKernel,
-		CompassKernel,
-		KirschKernel,
-		DiamondKernel,      /* Shape Kernels */
-		SquareKernel,
-		RectangleKernel,
-		OctagonKernel,
-		DiskKernel,
-		PlusKernel,
-		CrossKernel,
-		RingKernel,
-		PeaksKernel,        /* Hit And Miss Kernels */
-		EdgesKernel,
-		CornersKernel,
-		ThinDiagonalsKernel,
-		LineEndsKernel,
-		LineJunctionsKernel,
-		RidgesKernel,
-		ConvexHullKernel,
-		SkeletonKernel,
-		ChebyshevKernel,    /* Distance Measuring Kernels */
-		ManhattanKernel,
-		EuclideanKernel,
-		UserDefinedKernel   /* User Specified Kernel Array */
-	}
+		string info = "enum KernelInfoType
+		{
+			UndefinedKernel,    /* equivelent to UnityKernel */
+			UnityKernel,        /* The no-op or 'original image' kernel */
+			GaussianKernel,     /* Convolution Kernels, Gaussian Based */
+			DoGKernel,
+			LoGKernel,
+			BlurKernel,
+			CometKernel,
+			LaplacianKernel,    /* Convolution Kernels, by Name */
+			SobelKernel,
+			FreiChenKernel,
+			RobertsKernel,
+			PrewittKernel,
+			CompassKernel,
+			KirschKernel,
+			DiamondKernel,      /* Shape Kernels */
+			SquareKernel,
+			RectangleKernel,";
+
+			static if ( MagickLibVersion >= 0x670 )
+			{
+				info ~= "OctagonKernel,";
+			}
+
+			info ~= "
+			DiskKernel,
+			PlusKernel,
+			CrossKernel,
+			RingKernel,
+			PeaksKernel,        /* Hit And Miss Kernels */
+			EdgesKernel,
+			CornersKernel,
+			ThinDiagonalsKernel,
+			LineEndsKernel,
+			LineJunctionsKernel,
+			RidgesKernel,
+			ConvexHullKernel,
+			SkeletonKernel,
+			ChebyshevKernel,    /* Distance Measuring Kernels */
+			ManhattanKernel,
+			EuclideanKernel,
+			UserDefinedKernel   /* User Specified Kernel Array */
+		}";
+
+		return info;
+	}());
 
 	enum MorphologyMethod
 	{

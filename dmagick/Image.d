@@ -1799,8 +1799,16 @@ class Image
 	//TODO: replace this with a statistic function?
 	void medianFilter(size_t radius = 0)
 	{
-		MagickCoreImage* image = 
-			StatisticImage(imageRef, StatisticType.MedianStatistic, radius, radius, DMagickExceptionInfo());
+		static if ( is(typeof(StatisticImage)) )
+		{
+			MagickCoreImage* image = 
+				StatisticImage(imageRef, StatisticType.MedianStatistic, radius, radius, DMagickExceptionInfo());
+		}
+		else
+		{
+			MagickCoreImage* image = 
+				MedianFilterImage(imageRef, radius, DMagickExceptionInfo());
+		}
 
 		imageRef = ImageRef(image);
 	}
@@ -2244,8 +2252,16 @@ class Image
 	 */
 	void reduceNoise(size_t radius = 0)
 	{
-		MagickCoreImage* image = 
-			StatisticImage(imageRef, StatisticType.NonpeakStatistic, radius, radius, DMagickExceptionInfo());
+		static if ( is(typeof(StatisticImage)) )
+		{
+			MagickCoreImage* image = 
+				StatisticImage(imageRef, StatisticType.NonpeakStatistic, radius, radius, DMagickExceptionInfo());
+		}
+		else
+		{
+			MagickCoreImage* image = 
+				ReduceNoiseImage(imageRef, radius, DMagickExceptionInfo());
+		}
 
 		imageRef = ImageRef(image);
 	}

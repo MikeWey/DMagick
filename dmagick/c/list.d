@@ -4,13 +4,19 @@ import core.sys.posix.sys.types;
 
 import dmagick.c.exception;
 import dmagick.c.image;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
 	Image*  CloneImageList(const(Image)*, ExceptionInfo*);
 	Image*  CloneImages(const(Image)*, const(char)*, ExceptionInfo*);
 	Image*  DestroyImageList(Image*);
-	Image*  DuplicateImages(Image*, const size_t, const char*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x669 )
+	{
+		Image*  DuplicateImages(Image*, const size_t, const char*, ExceptionInfo*);
+	}
+
 	Image*  GetFirstImageInList(const(Image)*);
 	Image*  GetImageFromList(const(Image)*, const ssize_t);
 	Image*  GetLastImageInList(const(Image)*);
@@ -35,7 +41,12 @@ extern(C)
 	void InsertImageInList(Image**, Image*);
 	void PrependImageToList(Image**, Image*);
 	void ReplaceImageInList(Image**, Image*);
-	void ReplaceImageInListReturnLast(Image**, Image*);
+
+	static if ( MagickLibVersion >= 0x669 )
+	{
+		void ReplaceImageInListReturnLast(Image**, Image*);
+	}
+
 	void ReverseImageList(Image**);
 	void SyncImageList(Image*);
 }

@@ -12,6 +12,7 @@ import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.pixel;
 import dmagick.c.quantize;
 import dmagick.c.quantum;
@@ -76,13 +77,23 @@ deprecated extern(C)
 	Image* GetPreviousImage(const(Image)*);
 	Image* FlattenImages(Image*, ExceptionInfo*);
 	Image* MaximumImages(const(Image)*, ExceptionInfo*);
-	Image* MedianFilterImage(const Image*, const double, ExceptionInfo*);
-	Image* ModeImage(const(Image)*, const double, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x669 )
+	{
+		Image* MedianFilterImage(const Image*, const double, ExceptionInfo*);
+		Image* ModeImage(const(Image)*, const double, ExceptionInfo*);
+	}
+
 	Image* MinimumImages(const(Image)*, ExceptionInfo*);
 	Image* MosaicImages(Image*, ExceptionInfo*);
 	Image* PopImageList(Image**);
 	Image* RecolorImage(const(Image)*, const size_t, const(double)*, ExceptionInfo*);
-	Image* ReduceNoiseImage(const(Image)*, const double, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x669 )
+	{
+		Image* ReduceNoiseImage(const(Image)*, const double, ExceptionInfo*);
+	}
+
 	Image* ShiftImageList(Image**);
 	Image* SpliceImageList(Image*, const ssize_t, const size_t, const(Image)*, ExceptionInfo*);
 	Image* ZoomImage(const(Image)*, const size_t, const size_t, ExceptionInfo*);
@@ -107,7 +118,12 @@ deprecated extern(C)
 	MagickBooleanType DescribeImage(Image*, FILE*, const MagickBooleanType);
 	MagickBooleanType FormatImageAttribute(Image*, const(char)*, const(char)*, ...);
 	MagickBooleanType FormatImageAttributeList(Image*, const(char)*, const(char)*, va_list);
-	MagickBooleanType FormatImagePropertyList(Image*, const(char)*, const(char)*, va_list);
+
+	static if ( MagickLibVersion >= 0x670 )
+	{
+		MagickBooleanType FormatImagePropertyList(Image*, const(char)*, const(char)*, va_list);
+	}
+
 	MagickBooleanType FuzzyColorCompare(const(Image)*, const(PixelPacket)*, const(PixelPacket)*);
 	MagickBooleanType FuzzyOpacityCompare(const(Image)*, const(PixelPacket)*, const(PixelPacket)*);
 	MagickBooleanType LevelImageColors(Image*, const ChannelType, const(MagickPixelPacket)*, const(MagickPixelPacket)*, const MagickBooleanType);
@@ -151,8 +167,12 @@ deprecated extern(C)
 	size_t PopImagePixels(Image*, const QuantumType, ubyte*);
 	size_t PushImagePixels(Image*, const QuantumType, const(byte)*);
 
-	ssize_t FormatMagickString(char*, const size_t, const(char)*, ...);
-	ssize_t FormatMagickStringList(char*, const size_t, const(char)*, va_list);
+	static if ( MagickLibVersion >= 0x670 )
+	{
+		ssize_t FormatMagickString(char*, const size_t, const(char)*, ...);
+		ssize_t FormatMagickStringList(char*, const size_t, const(char)*, va_list);
+	}
+
 	ssize_t GetImageListIndex(const(Image)*);
 	ssize_t SetMagickRegistry(const RegistryType, const(void)*, const size_t, ExceptionInfo*);
 
