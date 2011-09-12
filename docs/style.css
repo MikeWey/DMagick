@@ -19,6 +19,7 @@ div#navigation
 	font-size: 0.875em;
 	float: left;
 	padding: 0 1.5em;
+	margin-bottom: 2em;
 }
 
 div#navigation h2
@@ -201,10 +202,3 @@ a:visited
 
 /* Focal symbol that is being documented */
 .ddoc_psymbol { color: #336600; }
-
-.red    { color: red; }
-.green  { color: green; }
-.blue   { color: blue; }
-.yellow { color: yellow; }
-.black  { color: black; }
-.white  { color: white; }

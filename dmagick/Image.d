@@ -4127,7 +4127,6 @@ class Image
 	}
 }
 
-
 /*
  * Initialize ImageMagick, only needed on Windows.
  */

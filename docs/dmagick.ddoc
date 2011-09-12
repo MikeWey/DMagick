@@ -4,7 +4,7 @@ DDOC =
 	<head>
 		<META http-equiv="content-type" content="text/html; charset=utf-8">
 		<title>$(TITLE)</title>
-		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="$(CSS)">
 	</head>
 	<body>
 		<div id="header"><!-- LOGO --></div>
@@ -30,20 +30,116 @@ NAVIGATION =
 <h2>dmagick</h2><br>
 
 $(LIST
-	$(LINK2 Color.html,     dmagick.Color),
-	$(LINK2 ColorCMYK.html, dmagick.ColorCMYK),
-	$(LINK2 ColorGray.html, dmagick.ColorGray),
-	$(LINK2 ColorHSL.html,  dmagick.ColorHSL),
-	$(LINK2 ColorRGB.html,  dmagick.ColorRGB),
-	$(LINK2 ColorYUV.html,  dmagick.ColorYUV),
-	$(LINK2 DrawingContext.html, dmagick.DrawingContext),
-	$(LINK2 Exception.html, dmagick.Exception),
-	$(LINK2 Geometry.html,  dmagick.Geometry),
-	$(LINK2 Image.html,     dmagick.Image),
-	$(LINK2 ImageView.html, dmagick.ImageView),
-	$(LINK2 Options.html,   dmagick.Options),
-	$(LINK2 Utils.html,     dmagick.Utils)
+	$(NAVLINK Color),
+	$(NAVLINK ColorCMYK),
+	$(NAVLINK ColorGray),
+	$(NAVLINK ColorHSL),
+	$(NAVLINK ColorRGB),
+	$(NAVLINK ColorYUV),
+	$(NAVLINK DrawingContext),
+	$(NAVLINK Exception),
+	$(NAVLINK Geometry),
+	$(NAVLINK Image),
+	$(NAVLINK ImageView),
+	$(NAVLINK Options),
+	$(NAVLINK Utils)
 )
+
+<br><h2>dmagick.c</h2><br>
+
+$(LIST
+	$(CNAVLINK accelerate),
+	$(CNAVLINK animate),
+	$(CNAVLINK annotate),
+	$(CNAVLINK artifact),
+	$(CNAVLINK attribute),
+	$(CNAVLINK blob),
+	$(CNAVLINK cache),
+	$(CNAVLINK cacheView),
+	$(CNAVLINK cipher),
+	$(CNAVLINK client),
+	$(CNAVLINK coder),
+	$(CNAVLINK color),
+	$(CNAVLINK colormap),
+	$(CNAVLINK colorspace),
+	$(CNAVLINK compare),
+	$(CNAVLINK composite),
+	$(CNAVLINK compress),
+	$(CNAVLINK configure),
+	$(CNAVLINK constitute),
+	$(CNAVLINK decorate),
+	$(CNAVLINK deprecate),
+	$(CNAVLINK display),
+	$(CNAVLINK distort),
+	$(CNAVLINK draw),
+	$(CNAVLINK effect),
+	$(CNAVLINK enhance),
+	$(CNAVLINK exception),
+	$(CNAVLINK feature),
+	$(CNAVLINK fourier),
+	$(CNAVLINK fx),
+	$(CNAVLINK gem),
+	$(CNAVLINK geometry),
+	$(CNAVLINK hashmap),
+	$(CNAVLINK histogram),
+	$(CNAVLINK identify),
+	$(CNAVLINK image),
+	$(CNAVLINK imageView),
+	$(CNAVLINK layer),
+	$(CNAVLINK list),
+	$(CNAVLINK locale),
+	$(CNAVLINK log),
+	$(CNAVLINK magic),
+	$(CNAVLINK MagickCore),
+	$(CNAVLINK magick),
+	$(CNAVLINK magickDelegate),
+	$(CNAVLINK magickModule),
+	$(CNAVLINK magickString),
+	$(CNAVLINK magickType),
+	$(CNAVLINK magickVersion),
+	$(CNAVLINK matrix),
+	$(CNAVLINK memory),
+	$(CNAVLINK mime),
+	$(CNAVLINK monitor),
+	$(CNAVLINK montage),
+	$(CNAVLINK morphology),
+	$(CNAVLINK option),
+	$(CNAVLINK paint),
+	$(CNAVLINK pixel),
+	$(CNAVLINK policy),
+	$(CNAVLINK prepress),
+	$(CNAVLINK profile),
+	$(CNAVLINK property),
+	$(CNAVLINK quantize),
+	$(CNAVLINK quantum),
+	$(CNAVLINK random),
+	$(CNAVLINK registry),
+	$(CNAVLINK resample),
+	$(CNAVLINK resize),
+	$(CNAVLINK resource),
+	$(CNAVLINK segment),
+	$(CNAVLINK semaphore),
+	$(CNAVLINK shear),
+	$(CNAVLINK signature),
+	$(CNAVLINK splayTree),
+	$(CNAVLINK statistic),
+	$(CNAVLINK stream),
+	$(CNAVLINK threshold),
+	$(CNAVLINK timer),
+	$(CNAVLINK token),
+	$(CNAVLINK transform),
+	$(CNAVLINK type),
+	$(CNAVLINK utility),
+	$(CNAVLINK xmlTree),
+	$(CNAVLINK xwindow)
+)
+
+CSS = style.css
+
+NAVLINK  = $(LINK2 $0.html,   dmagick.$0)
+CNAVLINK = $(LINK2 c/$0.html, dmagick.c.$0)
+
+COPYRIGHT = $(YEAR)
 
 DDOC_SUMMARY     = $(P $0)
 DDOC_DESCRIPTION = $(P $0)
@@ -64,12 +160,12 @@ DDOC_SECTION_H   = $(P $(B $0))
 DDOC_SECTION     = $(P $0)
 DDOC_PARAMS      = $(P $(B Parameters:)<table class=parms>$0</table>)
 
-RED    = <span class="red">$0</span>
-GREEN  = <span class="green">$0</span>
-BLUE   = <span class="blue">$0</span>
-YELLOW = <span class="yellow">$0</span>
-BLACK  = <span class="black">$0</span>
-WHITE  = <span class="white">$0</span>
+RED    = <span style="color:red">$0</span>
+GREEN  = <span style="color:green">$0</span>
+BLUE   = <span style="color:blue">$0</span>
+YELLOW = <span style="color:yellow">$0</span>
+BLACK  = <span style="color:black">$0</span>
+WHITE  = <span style="color:white">$0</span>
 
 D_COMMENT = <span class="d_comment">$0</span>
 D_STRING  = <span class="d_string">$0</span>
