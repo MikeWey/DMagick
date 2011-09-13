@@ -332,25 +332,60 @@ extern(C)
 			text;
 	}
 
+	/**
+	 * This is used to reprecent text/font mesurements.
+	 */
 	struct TypeMetric
 	{
-		PointInfo
-			pixels_per_em;
+		/**
+		 * Horizontal (x) and vertical (y) pixels per em.
+		 */
+		PointInfo pixels_per_em;
 
-		double
-			ascent,
-			descent,
-			width,
-			height,
-			max_advance,
-			underline_position,
-			underline_thickness;
+		/**
+		 * The distance in pixels from the text baseline to the
+		 * highest/upper grid coordinate used to place an outline point.
+		 * Always a positive value.
+		 */
+		double ascent;
 
-		SegmentInfo
-			bounds;
+		/**
+		 * The distance in pixels from the baseline to the lowest grid
+		 * coordinate used to place an outline point.
+		 * Always a negative value.
+		 */
+		double descent;
 
-		PointInfo
-			origin;
+		/**
+		 * Text width in pixels.
+		 */
+		double width;
+
+		/**
+		 * Text height in pixels.
+		 */
+		double height;
+
+		/**
+		 * The maximum horizontal advance (advance from the beginning
+		 * of a character to the beginning of the next character) in
+		 * pixels.
+		 */
+		double max_advance;
+
+		double underline_position;  ///
+		double underline_thickness; ///
+
+		/**
+		 * This is an imaginary box that encloses all glyphs from the font,
+		 * usually as tightly as possible.
+		 */
+		SegmentInfo bounds;
+
+		/**
+		 * A virtual point, located on the baseline, used to locate glyphs.
+		 */
+		PointInfo origin;
 	}
 
 	DrawInfo* AcquireDrawInfo();
