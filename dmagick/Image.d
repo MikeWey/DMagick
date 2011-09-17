@@ -12,6 +12,7 @@ import std.string;
 import std.typecons : Tuple;
 import core.memory;
 import core.runtime;
+import core.time;
 import core.stdc.string;
 import core.sys.posix.sys.types;
 
@@ -3076,18 +3077,17 @@ class Image
 	}
 
 	/**
-	 * Number of ticks which must expire before displaying the
-	 * next image in an animated sequence. The default number
-	 * of ticks is 0. By default there are 100 ticks per second.
+	 * Number time which must expire before displaying the
+	 * next image in an animated sequence.
 	 */
-	void animationDelay(ushort delay)
+	void animationDelay(Duration delay)
 	{
-		imageRef.delay = delay;
+		imageRef.delay = delay.total!"seconds"() * imageRef.ticks_per_second;
 	}
 	///ditto
-	ushort annimationDelay() const
+	Duration annimationDelay() const
 	{
-		return cast(ushort)imageRef.delay;
+		return dur!"seconds"(imageRef.delay * imageRef.ticks_per_second);
 	}
 
 	/**

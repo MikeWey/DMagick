@@ -8,6 +8,8 @@
 
 module dmagick.Array;
 
+import core.time;
+
 import dmagick.Exception;
 import dmagick.Geometry;
 import dmagick.Image;
@@ -15,7 +17,73 @@ import dmagick.Options;
 
 import dmagick.c.blob;
 import dmagick.c.constitute;
+import dmagick.c.display;
 import dmagick.c.image : MagickCoreImage = Image;
+import dmagick.c.statistic;
+
+/**
+ * Set the animationDelay for all images in the array.
+ */
+void animationDelay(Image[] images, Duration delay)
+{
+	size_t ticks = delay.total!"seconds"() * images[0].imageRef.ticks_per_second;
+
+	foreach ( image; images )
+	{
+		image.imageRef.delay = ticks;
+	}
+}
+
+/**
+ * Number of iterations to loop an animation.
+ */
+void animationIterations(Image[] images, size_t iterations)
+{
+	images[0].animationIterations = iterations;
+}
+
+/**
+ * Averages all the images together. Each image in the image must have
+ * the same width and height.
+ */
+Image average(Image[] images)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	MagickCoreImage* image =
+		EvaluateImages(images[0].imageRef, MagickEvaluateOperator.MeanEvaluateOperator, DMagickExceptionInfo());
+
+	return new Image(image);
+}
+
+/**
+ * Clone every image in the array.
+ */
+Image[] clone(const(Image)[] images)
+{
+	Image[] newImages = new Image[images.length];
+
+	foreach ( i, image; images )
+	{
+		newImages[i] = image.clone();
+	}
+
+	return newImages;
+}
+
+/**
+ * Repeatedly displays an image sequence to a X window screen.
+ */
+void display(Image[] images)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	DisplayImages(images[0].options.imageInfo, images[0].imageRef);
+
+	DMagickException.throwException(&(images[0].imageRef.exception));
+}
 
 /**
  * Read a multi frame Image by reading from the file or
