@@ -30,6 +30,7 @@ NAVIGATION =
 <h2>dmagick</h2><br>
 
 $(LIST
+	$(NAVLINK Array),
 	$(NAVLINK Color),
 	$(NAVLINK ColorCMYK),
 	$(NAVLINK ColorGray),

@@ -2134,6 +2134,18 @@ class Image
 
 		MagickCoreImage* image = ReadImage(options.imageInfo, DMagickExceptionInfo());
 
+		//Make sure a single image (frame) is read.
+		if ( image.next !is null )
+		{
+			MagickCoreImage* nextImage;
+
+			nextImage = image.next;
+			image.next = null;
+			nextImage.previous = null;
+
+			DestroyImageList(nextImage);
+		}
+
 		imageRef = ImageRef(image);
 	}
 
@@ -2164,6 +2176,18 @@ class Image
 	{
 		MagickCoreImage* image = 
 			BlobToImage(options.imageInfo, blob.ptr, blob.length, DMagickExceptionInfo());
+
+		//Make sure a single image (frame) is read.
+		if ( image.next !is null )
+		{
+			MagickCoreImage* nextImage;
+
+			nextImage = image.next;
+			image.next = null;
+			nextImage.previous = null;
+
+			DestroyImageList(nextImage);
+		}
 
 		imageRef = ImageRef(image);
 	}
