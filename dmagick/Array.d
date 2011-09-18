@@ -18,13 +18,17 @@ import dmagick.Image;
 import dmagick.Options;
 
 import dmagick.c.blob;
+import dmagick.c.colorspace;
 import dmagick.c.composite;
 import dmagick.c.constitute;
 import dmagick.c.display;
+import dmagick.c.fx;
 import dmagick.c.image : MagickCoreImage = Image;
 import dmagick.c.layer;
+import dmagick.c.magickType;
 import dmagick.c.memory;
 import dmagick.c.statistic;
+import dmagick.c.quantize;
 
 /**
  * Set the animationDelay for all images in the array.
@@ -164,7 +168,7 @@ void display(Image[] images)
  *     FX, The Special Effects Image Operator) for a detailed
  *     discussion of this option.
  */
-void fx(Image[] images; string expression, ChannelType channel = ChannelType.DefaultChannels)
+void fx(Image[] images, string expression, ChannelType channel = ChannelType.DefaultChannels)
 {
 	linkImages(images);
 	scope(exit) unlinkImages(images);
@@ -230,11 +234,11 @@ Image mergeLayers(Image[] layers, ImageLayerMethod method = ImageLayerMethod.Fla
  */
 Image[] morph(Image[] images, size_t frames)
 {
-	linkImages(layers);
-	scope(exit) unlinkImages(layers);
+	linkImages(images);
+	scope(exit) unlinkImages(images);
 
 	MagickCoreImage* image =
-		MergeImageLayers(layers[0].imageRef, frames, DMagickExceptionInfo());
+		MorphImages(images[0].imageRef, frames, DMagickExceptionInfo());
 
 	return imageListToArray(image);
 }
@@ -277,7 +281,7 @@ Image[] optimizePlusLayers(Image[] images)
  */
 void ping(string filename)
 {
-	options = new Options();
+	Options options = new Options();
 	options.filename = filename;
 
 	MagickCoreImage* image = PingImages(options.imageInfo, DMagickExceptionInfo());
@@ -348,15 +352,15 @@ void ping(void[] blob, Geometry size, string magick)
  *                    with: normalizedMeanError, normalizedMaxError
  *                    and meanErrorPerPixel.
  */
-Images[] quantize(Image[] images, bool measureError = false)
+void quantize(Image[] images, bool measureError = false)
 {
 	linkImages(images);
 	scope(exit) unlinkImages(images);
 
-	MagickCoreImage* image =
-		QuantizeImages(images[0].options.quantizeInfo, images[0].imageRef, DMagickExceptionInfo());
+	QuantizeImages(images[0].options.quantizeInfo, images[0].imageRef);
 
-	return imageListToArray(image);
+	foreach ( image; images )
+		DMagickException.throwException(&(image.imageRef.exception));
 }
 
 /**
@@ -371,7 +375,7 @@ void quantizeColors(Image[] images, size_t colors)
 	images[0].options.quantizeColors = colors;
 }
 ///ditto
-size_t quantizeColors(Image[] images) const
+size_t quantizeColors(const(Image)[] images)
 {
 	return images[0].options.quantizeColors;
 }
@@ -389,7 +393,7 @@ void quantizeColorSpace(Image[] images, ColorspaceType type)
 	images[0].options.quantizeColorSpace = type;
 }
 ///ditto
-ColorspaceType quantizeColorSpace(Image[] images) const
+ColorspaceType quantizeColorSpace(const(Image)[] images)
 {
 	return images[0].options.quantizeColorSpace;
 }
@@ -405,7 +409,7 @@ void quantizeDitherMethod(Image[] images, DitherMethod method)
 	images[0].options.quantizeDitherMethod = method;
 }
 ///ditto
-DitherMethod quantizeDitherMethod(Image[] images) const
+DitherMethod quantizeDitherMethod(const(Image)[] images)
 {
 	return images[0].options.quantizeDitherMethod;
 }
@@ -421,7 +425,7 @@ void quantizeTreeDepth(Image[] images, size_t depth)
 	images[0].options.quantizeTreeDepth = depth;
 }
 ///ditto
-size_t quantizeTreeDepth(Image[] images) const
+size_t quantizeTreeDepth(const(Image)[] images)
 {
 	return images[0].options.quantizeTreeDepth;
 }
@@ -518,7 +522,10 @@ void remap(Image[] images, Image referenceImage)
 	linkImages(images);
 	scope(exit) unlinkImages(images);
 
-	RemapImages(images[0].options.quantizeInfo, images[0].imageRef, referenceImage.imageRef, DMagickExceptionInfo());
+	RemapImages(images[0].options.quantizeInfo, images[0].imageRef, referenceImage.imageRef);
+
+	foreach ( image; images )
+		DMagickException.throwException(&(image.imageRef.exception));
 }
 
 /**
@@ -634,7 +641,7 @@ private void linkImages(Image[] images)
 /**
  * Actual implementation for ping.
  */
-private ping(void[] blob, Options options)
+private Image[] ping(void[] blob, Options options)
 {
 	MagickCoreImage* image = 
 		PingBlob(options.imageInfo, blob.ptr, blob.length, DMagickExceptionInfo());
