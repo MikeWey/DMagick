@@ -48,13 +48,13 @@ class ColorGray : Color
 	 */
 	void shade(double shade)
 	{
-		pixelPacket.red   = scaleDoubleToQuantum(shade);
-		pixelPacket.green = scaleDoubleToQuantum(shade);
-		pixelPacket.blue  = scaleDoubleToQuantum(shade);
+		packet.red   = scaleDoubleToQuantum(shade);
+		packet.green = scaleDoubleToQuantum(shade);
+		packet.blue  = scaleDoubleToQuantum(shade);
 	}
 	///ditto
 	double shade()
 	{
-		return scaleQuantumToDouble(pixelPacket.red);
+		return scaleQuantumToDouble(packet.red);
 	}
 }

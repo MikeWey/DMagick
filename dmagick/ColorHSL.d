@@ -55,15 +55,15 @@ class ColorHSL : Color
 	{
 		double oldHue, saturation, luminance;
 
-		ConvertRGBToHSL(pixelPacket.red, pixelPacket.green, pixelPacket.blue, &oldHue, &saturation, &luminance);
-		ConvertHSLToRGB(hue, saturation, luminance, &(pixelPacket.red), &(pixelPacket.green), &(pixelPacket.blue));
+		ConvertRGBToHSL(packet.red, packet.green, packet.blue, &oldHue, &saturation, &luminance);
+		ConvertHSLToRGB(hue, saturation, luminance, &(packet.red), &(packet.green), &(packet.blue));
 	}
 	///ditto
 	double hue()
 	{
 		double hue, saturation, luminance;
 
-		ConvertRGBToHSL(pixelPacket.red, pixelPacket.green, pixelPacket.blue, &hue, &saturation, &luminance);
+		ConvertRGBToHSL(packet.red, packet.green, packet.blue, &hue, &saturation, &luminance);
 
 		return hue;
 	}
@@ -75,15 +75,15 @@ class ColorHSL : Color
 	{
 		double hue, oldSaturation, luminance;
 
-		ConvertRGBToHSL(pixelPacket.red, pixelPacket.green, pixelPacket.blue, &hue, &oldSaturation, &luminance);
-		ConvertHSLToRGB(hue, saturation, luminance, &(pixelPacket.red), &(pixelPacket.green), &(pixelPacket.blue));
+		ConvertRGBToHSL(packet.red, packet.green, packet.blue, &hue, &oldSaturation, &luminance);
+		ConvertHSLToRGB(hue, saturation, luminance, &(packet.red), &(packet.green), &(packet.blue));
 	}
 	///ditto
 	double saturation()
 	{
 		double hue, saturation, luminance;
 
-		ConvertRGBToHSL(pixelPacket.red, pixelPacket.green, pixelPacket.blue, &hue, &saturation, &luminance);
+		ConvertRGBToHSL(packet.red, packet.green, packet.blue, &hue, &saturation, &luminance);
 
 		return saturation;
 	}
@@ -95,15 +95,15 @@ class ColorHSL : Color
 	{
 		double hue, saturation, oldLuminance;
 
-		ConvertRGBToHSL(pixelPacket.red, pixelPacket.green, pixelPacket.blue, &hue, &saturation, &oldLuminance);
-		ConvertHSLToRGB(hue, saturation, luminance, &(pixelPacket.red), &(pixelPacket.green), &(pixelPacket.blue));
+		ConvertRGBToHSL(packet.red, packet.green, packet.blue, &hue, &saturation, &oldLuminance);
+		ConvertHSLToRGB(hue, saturation, luminance, &(packet.red), &(packet.green), &(packet.blue));
 	}
 	///ditto
 	double luminance()
 	{
 		double hue, saturation, luminance;
 
-		ConvertRGBToHSL(pixelPacket.red, pixelPacket.green, pixelPacket.blue, &hue, &saturation, &luminance);
+		ConvertRGBToHSL(packet.red, packet.green, packet.blue, &hue, &saturation, &luminance);
 
 		return luminance;
 	}

@@ -49,15 +49,15 @@ class ColorCMYK : Color
 	{
 		double oldCyan, magenta, yellow, black;
 
-		convertRGBToCMYK(pixelPacket.red, pixelPacket.green, pixelPacket.blue, oldCyan, magenta, yellow, black);
-		convertCMYKToRGB(cyan, magenta, yellow, black, pixelPacket.red, pixelPacket.green, pixelPacket.blue);	
+		convertRGBToCMYK(packet.red, packet.green, packet.blue, oldCyan, magenta, yellow, black);
+		convertCMYKToRGB(cyan, magenta, yellow, black, packet.red, packet.green, packet.blue);	
 	}
 	///ditto
 	double cyan()
 	{
 		double cyan, magenta, yellow, black;
 
-		convertRGBToCMYK(pixelPacket.red, pixelPacket.green, pixelPacket.blue, cyan, magenta, yellow, black);
+		convertRGBToCMYK(packet.red, packet.green, packet.blue, cyan, magenta, yellow, black);
 
 		return cyan;
 	}
@@ -69,15 +69,15 @@ class ColorCMYK : Color
 	{
 		double cyan, oldMagenta, yellow, black;
 
-		convertRGBToCMYK(pixelPacket.red, pixelPacket.green, pixelPacket.blue, cyan, oldMagenta, yellow, black);
-		convertCMYKToRGB(cyan, magenta, yellow, black, pixelPacket.red, pixelPacket.green, pixelPacket.blue);	
+		convertRGBToCMYK(packet.red, packet.green, packet.blue, cyan, oldMagenta, yellow, black);
+		convertCMYKToRGB(cyan, magenta, yellow, black, packet.red, packet.green, packet.blue);	
 	}
 	///ditto
 	double magenta()
 	{
 		double cyan, magenta, yellow, black;
 
-		convertRGBToCMYK(pixelPacket.red, pixelPacket.green, pixelPacket.blue, cyan, magenta, yellow, black);
+		convertRGBToCMYK(packet.red, packet.green, packet.blue, cyan, magenta, yellow, black);
 
 		return magenta;
 	}
@@ -89,15 +89,15 @@ class ColorCMYK : Color
 	{
 		double cyan, magenta, oldYellow, black;
 
-		convertRGBToCMYK(pixelPacket.red, pixelPacket.green, pixelPacket.blue, cyan, magenta, oldYellow, black);
-		convertCMYKToRGB(cyan, magenta, yellow, black, pixelPacket.red, pixelPacket.green, pixelPacket.blue);	
+		convertRGBToCMYK(packet.red, packet.green, packet.blue, cyan, magenta, oldYellow, black);
+		convertCMYKToRGB(cyan, magenta, yellow, black, packet.red, packet.green, packet.blue);	
 	}
 	///ditto
 	double yellow()
 	{
 		double cyan, magenta, yellow, black;
 
-		convertRGBToCMYK(pixelPacket.red, pixelPacket.green, pixelPacket.blue, cyan, magenta, yellow, black);
+		convertRGBToCMYK(packet.red, packet.green, packet.blue, cyan, magenta, yellow, black);
 
 		return yellow;
 	}
@@ -109,15 +109,15 @@ class ColorCMYK : Color
 	{
 		double cyan, magenta, yellow, oldBlack;
 
-		convertRGBToCMYK(pixelPacket.red, pixelPacket.green, pixelPacket.blue, cyan, magenta, yellow, oldBlack);
-		convertCMYKToRGB(cyan, magenta, yellow, black, pixelPacket.red, pixelPacket.green, pixelPacket.blue);	
+		convertRGBToCMYK(packet.red, packet.green, packet.blue, cyan, magenta, yellow, oldBlack);
+		convertCMYKToRGB(cyan, magenta, yellow, black, packet.red, packet.green, packet.blue);	
 	}
 	///ditto
 	double black()
 	{
 		double cyan, magenta, yellow, black;
 
-		convertRGBToCMYK(pixelPacket.red, pixelPacket.green, pixelPacket.blue, cyan, magenta, yellow, black);
+		convertRGBToCMYK(packet.red, packet.green, packet.blue, cyan, magenta, yellow, black);
 
 		return black;
 	}

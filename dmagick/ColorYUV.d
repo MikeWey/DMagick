@@ -61,15 +61,15 @@ class ColorYUV : Color
 	{
 		double oldY, u, v;
 
-		convertRGBToYUV(pixelPacket.red, pixelPacket.green, pixelPacket.blue, oldY, u, v);
-		convertYUVToRGB(y, u, v, pixelPacket.red, pixelPacket.green, pixelPacket.blue);	
+		convertRGBToYUV(packet.red, packet.green, packet.blue, oldY, u, v);
+		convertYUVToRGB(y, u, v, packet.red, packet.green, packet.blue);	
 	}
 	///ditto
 	double y()
 	{
-		return 0.299 * scaleQuantumToDouble(pixelPacket.red) +
-		       0.587 * scaleQuantumToDouble(pixelPacket.green) +
-		       0.114 * scaleQuantumToDouble(pixelPacket.blue);
+		return 0.299 * scaleQuantumToDouble(packet.red) +
+		       0.587 * scaleQuantumToDouble(packet.green) +
+		       0.114 * scaleQuantumToDouble(packet.blue);
 	}
 
 	/**
@@ -79,15 +79,15 @@ class ColorYUV : Color
 	{
 		double y, oldU, v;
 
-		convertRGBToYUV(pixelPacket.red, pixelPacket.green, pixelPacket.blue, y, oldU, v);
-		convertYUVToRGB(y, u, v, pixelPacket.red, pixelPacket.green, pixelPacket.blue);
+		convertRGBToYUV(packet.red, packet.green, packet.blue, y, oldU, v);
+		convertYUVToRGB(y, u, v, packet.red, packet.green, packet.blue);
 	}
 	///ditto
 	double u()
 	{
-		return -0.147 * scaleQuantumToDouble(pixelPacket.red) +
-		       -0.289 * scaleQuantumToDouble(pixelPacket.green) +
-		        0.436 * scaleQuantumToDouble(pixelPacket.blue);
+		return -0.147 * scaleQuantumToDouble(packet.red) +
+		       -0.289 * scaleQuantumToDouble(packet.green) +
+		        0.436 * scaleQuantumToDouble(packet.blue);
 	}
 
 	/**
@@ -97,15 +97,15 @@ class ColorYUV : Color
 	{
 		double y, u, oldV;
 
-		convertRGBToYUV(pixelPacket.red, pixelPacket.green, pixelPacket.blue, y, u, oldV);
-		convertYUVToRGB(y, u, v, pixelPacket.red, pixelPacket.green, pixelPacket.blue);	
+		convertRGBToYUV(packet.red, packet.green, packet.blue, y, u, oldV);
+		convertYUVToRGB(y, u, v, packet.red, packet.green, packet.blue);	
 	}
 	///ditto
 	double v()
 	{
-		return  0.615 * scaleQuantumToDouble(pixelPacket.red) +
-		       -0.515 * scaleQuantumToDouble(pixelPacket.green) +
-		       -0.100 * scaleQuantumToDouble(pixelPacket.blue);
+		return  0.615 * scaleQuantumToDouble(packet.red) +
+		       -0.515 * scaleQuantumToDouble(packet.green) +
+		       -0.100 * scaleQuantumToDouble(packet.blue);
 	}
 
 	/**

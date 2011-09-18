@@ -57,12 +57,12 @@ class ColorRGB : Color
 	 */
 	void redByte(ubyte red)
 	{
-		pixelPacket.red = ScaleCharToQuantum(red);
+		packet.red = ScaleCharToQuantum(red);
 	}
 	///ditto
 	ubyte redByte()
 	{
-		return ScaleQuantumToChar(pixelPacket.red);
+		return ScaleQuantumToChar(packet.red);
 	}
 
 	/**
@@ -70,12 +70,12 @@ class ColorRGB : Color
 	 */
 	void greenByte(ubyte green)
 	{
-		pixelPacket.green = ScaleCharToQuantum(green);
+		packet.green = ScaleCharToQuantum(green);
 	}
 	///ditto
 	ubyte greenByte()
 	{
-		return ScaleQuantumToChar(pixelPacket.green);
+		return ScaleQuantumToChar(packet.green);
 	}
 
 	/**
@@ -83,12 +83,12 @@ class ColorRGB : Color
 	 */
 	void blueByte(ubyte blue)
 	{
-		pixelPacket.blue = ScaleCharToQuantum(blue);
+		packet.blue = ScaleCharToQuantum(blue);
 	}
 	///ditto
 	ubyte blueByte()
 	{
-		return ScaleQuantumToChar(pixelPacket.blue);
+		return ScaleQuantumToChar(packet.blue);
 	}
 
 	/**
@@ -96,12 +96,12 @@ class ColorRGB : Color
 	 */
 	void red(double red)
 	{
-		pixelPacket.red = scaleDoubleToQuantum(red);
+		packet.red = scaleDoubleToQuantum(red);
 	}
 	///ditto
 	double red()
 	{
-		return scaleQuantumToDouble(pixelPacket.red);
+		return scaleQuantumToDouble(packet.red);
 	}
 
 	/**
@@ -109,12 +109,12 @@ class ColorRGB : Color
 	 */
 	void green(double green)
 	{
-		pixelPacket.green = scaleDoubleToQuantum(green);
+		packet.green = scaleDoubleToQuantum(green);
 	}
 	///ditto
 	double green()
 	{
-		return scaleQuantumToDouble(pixelPacket.green);
+		return scaleQuantumToDouble(packet.green);
 	}
 
 	/**
@@ -122,11 +122,11 @@ class ColorRGB : Color
 	 */
 	void blue(double blue)
 	{
-		pixelPacket.blue = scaleDoubleToQuantum(blue);
+		packet.blue = scaleDoubleToQuantum(blue);
 	}
 	///ditto
 	double blue()
 	{
-		return scaleQuantumToDouble(pixelPacket.blue);
+		return scaleQuantumToDouble(packet.blue);
 	}
 }
