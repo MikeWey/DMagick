@@ -217,6 +217,8 @@ Image mergeLayers(Image[] layers, ImageLayerMethod method = ImageLayerMethod.Fla
 	return new Image(image);
 }
 
+//TODO: montage.
+
 /**
  * Transforms a image into another image by inserting n in-between images.
  * Requires at least two images. If more images are present, the 2nd image
@@ -238,48 +240,190 @@ Image[] morph(Image[] images, size_t frames)
 }
 
 /**
- * Creates a Binary Large OBject, a direct-to-memory
- * version of the image.
- *
- * if an image format is selected which is capable of supporting
- * fewer colors than the original image or quantization has been
- * requested, the original image will be quantized to fewer colors.
- * Use a copy of the original if this is a problem.
- *
- * Note, some image formats do not permit multiple images to the same
- * image stream (e.g. JPEG). in this instance, just the first image of
- * the sequence is returned as a blob.
- * 
- * Params:
- *     images = Images to write.
- *     magick = Specifies the image format to write.
- *     depth  = Specifies the image depth.
- *     adjoin = Join images into a single multi-image file.
+ * compares each image the GIF disposed forms of the previous image in the
+ * sequence.  From this it attempts to select the smallest cropped image to
+ * replace each frame, while preserving the results of the GIF animation.
  */
-void[] toBlob(Image[] images, string magick = null, size_t depth = 0, bool adjoin = true)
+Image[] optimizeLayers(Image[] images)
 {
-	size_t length;
-
-	AcquireMemoryHandler oldMalloc;
-	ResizeMemoryHandler  oldRealloc;
-	DestroyMemoryHandler oldFree;
-
-	if ( magick !is null )
-		images[0].magick = magick;
-	if ( depth != 0 )
-		images[0].depth = depth;
-
-	//Use the D GC to accolate the blob.
-	GetMagickMemoryMethods(&oldMalloc, &oldRealloc, &oldFree);
-	SetMagickMemoryMethods(&Image.malloc, &Image.realloc, &Image.free);
-	scope(exit) SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
-
 	linkImages(images);
 	scope(exit) unlinkImages(images);
 
-	void* blob = ImagesToBlob(images[0].options.imageInfo, images[0].imageRef, &length, DMagickExceptionInfo());
+	MagickCoreImage* image = OptimizeImageLayers(images[0].imageRef, DMagickExceptionInfo());
 
-	return blob[0 .. length];	
+	return imageListToArray(image);
+}
+
+/**
+ * Is exactly as optimizeLayers, but may also add or even remove extra
+ * frames in the animation, if it improves the total number of pixels in
+ * the resulting GIF animation.
+ */
+Image[] optimizePlusLayers(Image[] images)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	MagickCoreImage* image = OptimizePlusImageLayers(images[0].imageRef, DMagickExceptionInfo());
+
+	return imageListToArray(image);
+}
+
+/**
+ * Ping is similar to read except only enough of the image is read to
+ * determine the image columns, rows, and filesize. The columns, rows,
+ * and fileSize attributes are valid after invoking ping.
+ * The image data is not valid after calling ping.
+ */
+void ping(string filename)
+{
+	options = new Options();
+	options.filename = filename;
+
+	MagickCoreImage* image = PingImages(options.imageInfo, DMagickExceptionInfo());
+
+	return imageListToArray(image);
+}
+
+///ditto
+void ping(void[] blob)
+{
+	return ping(blob, new Options());
+}
+
+///ditto
+void ping(void[] blob, Geometry size)
+{
+	Options options = new Options();
+	options.size = size;
+
+	return ping(blob, options);
+}
+
+///ditto
+void ping(void[] blob, Geometry size, size_t depth)
+{
+	Options options = new Options();
+	options.size = size;
+	options.depth = depth;
+
+	return ping(blob, options);
+}
+
+///ditto
+void ping(void[] blob, Geometry size, size_t depth, string magick)
+{
+	Options options = new Options();
+	options.size = size;
+	options.depth = depth;
+	options.magick = magick;
+	//Also set the filename to the image format
+	options.filename = magick ~":";
+
+	return ping(blob, options);
+}
+
+///ditto
+void ping(void[] blob, Geometry size, string magick)
+{
+	Options options = new Options();
+	options.size = size;
+	options.magick = magick;
+	//Also set the filename to the image format
+	options.filename = magick ~":";
+
+	return ping(blob, options);
+}
+
+/**
+ * Analyzes the colors within a set of reference images and chooses a
+ * fixed number of colors to represent the set. The goal of the algorithm
+ * is to minimize the difference between the input and output images while
+ * minimizing the processing time.
+ * 
+ * Params:
+ *     images       = The images to quantize.
+ *     measureError = Set to true to calculate quantization errors
+ *                    when quantizing the image. These can be accessed
+ *                    with: normalizedMeanError, normalizedMaxError
+ *                    and meanErrorPerPixel.
+ */
+Images[] quantize(Image[] images, bool measureError = false)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	MagickCoreImage* image =
+		QuantizeImages(images[0].options.quantizeInfo, images[0].imageRef, DMagickExceptionInfo());
+
+	return imageListToArray(image);
+}
+
+/**
+ * Preferred number of _colors in the image.
+ * The actual number of _colors in the image may be less
+ * than your request, but never more. Images with less
+ * unique _colors than specified with this option will have
+ * any duplicate or unused _colors removed.
+ */
+void quantizeColors(Image[] images, size_t colors)
+{
+	images[0].options.quantizeColors = colors;
+}
+///ditto
+size_t quantizeColors(Image[] images) const
+{
+	return images[0].options.quantizeColors;
+}
+
+/**
+ * Colorspace to quantize colors in.
+ * Empirical evidence suggests that distances in color spaces
+ * such as YUV or YIQ correspond to perceptual color differences
+ * more closely than do distances in RGB space. These color spaces
+ * may give better results when color reducing an image.
+ * The default is RGB
+ */
+void quantizeColorSpace(Image[] images, ColorspaceType type)
+{
+	images[0].options.quantizeColorSpace = type;
+}
+///ditto
+ColorspaceType quantizeColorSpace(Image[] images) const
+{
+	return images[0].options.quantizeColorSpace;
+}
+
+/**
+ * The basic strategy of dithering is to trade intensity resolution for
+ * spatial resolution by averaging the intensities of several neighboring
+ * pixels. Images which suffer from severe contouring when reducing
+ * colors can be improved with this option. 
+ */
+void quantizeDitherMethod(Image[] images, DitherMethod method)
+{
+	images[0].options.quantizeDitherMethod = method;
+}
+///ditto
+DitherMethod quantizeDitherMethod(Image[] images) const
+{
+	return images[0].options.quantizeDitherMethod;
+}
+
+/**
+ * Depth of the quantization color classification tree.
+ * Values of 0 or 1 allow selection of the optimal tree _depth
+ * for the color reduction algorithm. Values between 2 and 8
+ * may be used to manually adjust the tree _depth.
+ */
+void quantizeTreeDepth(Image[] images, size_t depth)
+{
+	images[0].options.quantizeTreeDepth = depth;
+}
+///ditto
+size_t quantizeTreeDepth(Image[] images) const
+{
+	return images[0].options.quantizeTreeDepth;
 }
 
 /**
@@ -366,6 +510,63 @@ Image[] readImages(void[] blob, Geometry size, string magick)
 }
 
 /**
+ * Reduce the colors used in the imagelist to the set of colors in
+ * reference image.
+ */
+void remap(Image[] images, Image referenceImage)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	RemapImages(images[0].options.quantizeInfo, images[0].imageRef, referenceImage.imageRef, DMagickExceptionInfo());
+}
+
+/**
+ * Creates a Binary Large OBject, a direct-to-memory
+ * version of the image.
+ *
+ * if an image format is selected which is capable of supporting
+ * fewer colors than the original image or quantization has been
+ * requested, the original image will be quantized to fewer colors.
+ * Use a copy of the original if this is a problem.
+ *
+ * Note, some image formats do not permit multiple images to the same
+ * image stream (e.g. JPEG). in this instance, just the first image of
+ * the sequence is returned as a blob.
+ * 
+ * Params:
+ *     images = Images to write.
+ *     magick = Specifies the image format to write.
+ *     depth  = Specifies the image depth.
+ *     adjoin = Join images into a single multi-image file.
+ */
+void[] toBlob(Image[] images, string magick = null, size_t depth = 0, bool adjoin = true)
+{
+	size_t length;
+
+	AcquireMemoryHandler oldMalloc;
+	ResizeMemoryHandler  oldRealloc;
+	DestroyMemoryHandler oldFree;
+
+	if ( magick !is null )
+		images[0].magick = magick;
+	if ( depth != 0 )
+		images[0].depth = depth;
+
+	//Use the D GC to accolate the blob.
+	GetMagickMemoryMethods(&oldMalloc, &oldRealloc, &oldFree);
+	SetMagickMemoryMethods(&Image.malloc, &Image.realloc, &Image.free);
+	scope(exit) SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
+
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	void* blob = ImagesToBlob(images[0].options.imageInfo, images[0].imageRef, &length, DMagickExceptionInfo());
+
+	return blob[0 .. length];	
+}
+
+/**
  * Writes the image to the specified file. ImageMagick
  * determines image format from the prefix or extension.
  * 
@@ -427,6 +628,18 @@ private void linkImages(Image[] images)
 		if ( i < images.length-1 )
 			images[i].imageRef.next = images[i+1].imageRef;
 	}
+}
+
+
+/**
+ * Actual implementation for ping.
+ */
+private ping(void[] blob, Options options)
+{
+	MagickCoreImage* image = 
+		PingBlob(options.imageInfo, blob.ptr, blob.length, DMagickExceptionInfo());
+
+	return imageListToArray(image);
 }
 
 /**
