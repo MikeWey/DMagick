@@ -3082,12 +3082,12 @@ class Image
 	 */
 	void animationDelay(Duration delay)
 	{
-		imageRef.delay = delay.total!"seconds"() * imageRef.ticks_per_second;
+		imageRef.delay = (delay.total!"msecs"() * imageRef.ticks_per_second) / 1000;
 	}
 	///ditto
 	Duration annimationDelay() const
 	{
-		return dur!"seconds"(imageRef.delay * imageRef.ticks_per_second);
+		return dur!"msecs"((imageRef.delay * 1000) / imageRef.ticks_per_second);
 	}
 
 	/**

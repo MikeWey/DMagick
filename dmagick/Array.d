@@ -8,7 +8,9 @@
 
 module dmagick.Array;
 
+import std.string;
 import core.time;
+import core.sys.posix.sys.types;
 
 import dmagick.Exception;
 import dmagick.Geometry;
@@ -16,9 +18,12 @@ import dmagick.Image;
 import dmagick.Options;
 
 import dmagick.c.blob;
+import dmagick.c.composite;
 import dmagick.c.constitute;
 import dmagick.c.display;
 import dmagick.c.image : MagickCoreImage = Image;
+import dmagick.c.layer;
+import dmagick.c.memory;
 import dmagick.c.statistic;
 
 /**
@@ -26,7 +31,7 @@ import dmagick.c.statistic;
  */
 void animationDelay(Image[] images, Duration delay)
 {
-	size_t ticks = delay.total!"seconds"() * images[0].imageRef.ticks_per_second;
+	size_t ticks = (delay.total!"msecs"() * images[0].imageRef.ticks_per_second) / 1000;
 
 	foreach ( image; images )
 	{
@@ -73,6 +78,72 @@ Image[] clone(const(Image)[] images)
 }
 
 /**
+ * Merges all the images in the imagelist into a new imagelist. Each image
+ * in the new imagelist is formed by flattening all the previous images.
+ * 
+ * The length of time between images in the new image is specified by the
+ * delay attribute of the input image. The position of the image on the
+ * merged images is specified by the page attribute of the input image.
+ */
+Image[] coalesce(Image[] images)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	MagickCoreImage* image = CoalesceImages(images[0].imageRef, DMagickExceptionInfo());
+
+	return imageListToArray(image);
+}
+
+/**
+ * Compares each image with the next in a sequence and returns the minimum
+ * bounding region of all the pixel differences (of the ImageLayerMethod
+ * specified) it discovers.
+ * 
+ * Images do NOT have to be the same size, though it is best that all the
+ * images are 'coalesced' (images are all the same size, on a flattened
+ * canvas, so as to represent exactly how an specific frame should look).
+ * 
+ * No GIF dispose methods are applied, so GIF animations must be coalesced
+ * before applying this image operator to find differences to them.
+ */
+Image[] compareLayers(Image[] images, ImageLayerMethod method)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	MagickCoreImage* image =
+		CompareImageLayers(images[0].imageRef, method, DMagickExceptionInfo());
+
+	return imageListToArray(image);
+}
+
+/**
+ * An image from source is composited over an image from destination until
+ * one list is finished. Unlike a normal composite operation, the canvas
+ * offset is also included to the composite positioning. If one of the
+ * image lists only contains one image, that image is applied to all the
+ * images in the other image list, regardless of which list it is. In this
+ * case it is the image meta-data of the list which preserved.
+ */
+void compositeLayers(
+	ref Image[] destination,
+	Image[] source,
+	ssize_t xOffset,
+	ssize_t yOffset,
+	CompositeOperator operator = CompositeOperator.OverCompositeOp)
+{
+	linkImages(destination);
+	linkImages(source);
+	scope(exit) unlinkImages(source);
+	scope(failure) unlinkImages(destination);
+
+	CompositeLayers(destination[0].imageRef, operator, source[0].imageRef, xOffset, yOffset, DMagickExceptionInfo());
+
+	destination = imageListToArray(destination[0].imageRef);
+}
+
+/**
  * Repeatedly displays an image sequence to a X window screen.
  */
 void display(Image[] images)
@@ -83,6 +154,132 @@ void display(Image[] images)
 	DisplayImages(images[0].options.imageInfo, images[0].imageRef);
 
 	DMagickException.throwException(&(images[0].imageRef.exception));
+}
+
+/**
+ * Applies a mathematical expression to the specified images.
+ * 
+ * See_Aso:
+ *     $(LINK2 http://www.imagemagick.org/script/fx.php,
+ *     FX, The Special Effects Image Operator) for a detailed
+ *     discussion of this option.
+ */
+void fx(Image[] images; string expression, ChannelType channel = ChannelType.DefaultChannels)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	images[0].fx(expression, channel);
+}
+
+/**
+ * Composes all the image layers from the current given image onward
+ * to produce a single image of the merged layers.
+ * 
+ * The inital canvas's size depends on the given ImageLayerMethod, and is
+ * initialized using the first images background color. The images are then
+ * compositied onto that image in sequence using the given composition that
+ * has been assigned to each individual image.
+ * 
+ * Params:
+ *     layers = The images to merge.
+ *     method = The method of selecting the size of the initial canvas.
+ *              $(LIST
+ *                  $(B MergeLayer:) Merge all layers onto a canvas just
+ *                      large enough to hold all the actual images. The
+ *                      virtual canvas of the first image is preserved but
+ *                      otherwise ignored.,
+ *                  $(B FlattenLayer:) Use the virtual canvas size of first
+ *                      image. Images which fall outside this canvas is
+ *                      clipped. This can be used to 'fill out' a given
+ *                      virtual canvas.,
+ *                  $(B MosaicLayer:) Start with the virtual canvas of the
+ *                      first image enlarging left and right edges to
+ *                      contain all images. Images with negative offsets
+ *                      will be clipped.,
+ *                  $(B TrimBoundsLayer:) Determine the overall bounds of
+ *                      all the image layers just as in "MergeLayer". Then
+ *                      adjust the the canvas and offsets to be relative to
+ *                      those bounds. Without overlaying the images.
+ * 
+ *                      $(RED Warning:) a new image is not returned the
+ *                      original image sequence page data is modified instead.
+ *              )
+ */
+Image mergeLayers(Image[] layers, ImageLayerMethod method = ImageLayerMethod.FlattenLayer)
+{
+	linkImages(layers);
+	scope(exit) unlinkImages(layers);
+
+	MagickCoreImage* image =
+		MergeImageLayers(layers[0].imageRef, method, DMagickExceptionInfo());
+
+	return new Image(image);
+}
+
+/**
+ * Transforms a image into another image by inserting n in-between images.
+ * Requires at least two images. If more images are present, the 2nd image
+ * is transformed into the 3rd, the 3rd to the 4th, etc.
+ * 
+ * Params:
+ *     images = The images to use.
+ *     frames = The number of frames to inster between the images.
+ */
+Image[] morph(Image[] images, size_t frames)
+{
+	linkImages(layers);
+	scope(exit) unlinkImages(layers);
+
+	MagickCoreImage* image =
+		MergeImageLayers(layers[0].imageRef, frames, DMagickExceptionInfo());
+
+	return imageListToArray(image);
+}
+
+/**
+ * Creates a Binary Large OBject, a direct-to-memory
+ * version of the image.
+ *
+ * if an image format is selected which is capable of supporting
+ * fewer colors than the original image or quantization has been
+ * requested, the original image will be quantized to fewer colors.
+ * Use a copy of the original if this is a problem.
+ *
+ * Note, some image formats do not permit multiple images to the same
+ * image stream (e.g. JPEG). in this instance, just the first image of
+ * the sequence is returned as a blob.
+ * 
+ * Params:
+ *     images = Images to write.
+ *     magick = Specifies the image format to write.
+ *     depth  = Specifies the image depth.
+ *     adjoin = Join images into a single multi-image file.
+ */
+void[] toBlob(Image[] images, string magick = null, size_t depth = 0, bool adjoin = true)
+{
+	size_t length;
+
+	AcquireMemoryHandler oldMalloc;
+	ResizeMemoryHandler  oldRealloc;
+	DestroyMemoryHandler oldFree;
+
+	if ( magick !is null )
+		images[0].magick = magick;
+	if ( depth != 0 )
+		images[0].depth = depth;
+
+	//Use the D GC to accolate the blob.
+	GetMagickMemoryMethods(&oldMalloc, &oldRealloc, &oldFree);
+	SetMagickMemoryMethods(&Image.malloc, &Image.realloc, &Image.free);
+	scope(exit) SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
+
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	void* blob = ImagesToBlob(images[0].options.imageInfo, images[0].imageRef, &length, DMagickExceptionInfo());
+
+	return blob[0 .. length];	
 }
 
 /**
@@ -169,6 +366,55 @@ Image[] readImages(void[] blob, Geometry size, string magick)
 }
 
 /**
+ * Writes the image to the specified file. ImageMagick
+ * determines image format from the prefix or extension.
+ * 
+ * WriteImages generates multiple output files if necessary
+ * (or when requested). When adjoin is set to false, the filename is
+ * expected to include a printf-style formatting string for the frame
+ * number (e.g. "image%02d.png").
+ * 
+ * If an image format is selected which is capable of supporting
+ * fewer colors than the original image or quantization has been
+ * requested, the original image will be quantized to fewer colors.
+ * Use a copy of the original if this is a problem.
+ * 
+ * Params:
+ *     images   = Images to write.
+ *     filename = The file name to write to.
+ *     adjoin   = Join images into a single multi-image file.
+ */
+void writeImages(Image[] images, string filename, bool adjoin = true)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	images[0].options.adjoin = adjoin;
+
+	WriteImages(images[0].options.imageInfo, images[0].imageRef, toStringz(filename), DMagickExceptionInfo());
+}
+
+/**
+ * Turn an ImageMagick image list into a D array.
+ */
+private Image[] imageListToArray(MagickCoreImage* imageList)
+{
+	Image[] images;
+
+	do
+	{
+		images ~= new Image(imageList);
+
+		imageList = imageList.next;
+	}
+	while ( imageList !is null )
+
+	unlinkImages(images);
+
+	return images;
+}
+
+/**
  * Create an ImageMagick ImageList.
  */
 private void linkImages(Image[] images)
@@ -188,19 +434,9 @@ private void linkImages(Image[] images)
  */
 private Image[] readImages(Options options)
 {
-	Image[] images;
-
 	MagickCoreImage* image = ReadImage(options.imageInfo, DMagickExceptionInfo());
 
-	do
-	{
-		images ~= new Image(image);
-
-		image = image.next;
-	}
-	while ( image !is null )
-
-	return images;
+	return imageListToArray(image);
 }
 
 /**
@@ -208,22 +444,10 @@ private Image[] readImages(Options options)
  */
 private Image[] readImages(void[] blob, Options options)
 {
-	Image[] images;
-
 	MagickCoreImage* image = 
 		BlobToImage(options.imageInfo, blob.ptr, blob.length, DMagickExceptionInfo());
 
-	do
-	{
-		images ~= new Image(image);
-
-		image = image.next;
-	}
-	while ( image !is null )
-
-	unlinkImages(images);
-
-	return images;
+	return imageListToArray(image);
 }
 
 /**
