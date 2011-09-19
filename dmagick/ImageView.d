@@ -362,9 +362,12 @@ struct Pixels
 	 */
 	int opApply(int delegate(ref Color) dg)
 	{
+		Color color = new Color();
+
 		foreach ( ref PixelPacket pixel; pixels )
 		{
-			Color color = new Color(pixel);
+			color.pixelPacket = pixel;
+
 			int result = dg(color);
 
 			pixel = color.pixelPacket;

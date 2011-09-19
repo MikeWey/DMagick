@@ -79,9 +79,17 @@ class Color
 		this.packet = packet;
 	}
 
-	PixelPacket pixelPacket()
+	package PixelPacket pixelPacket() const
 	{
 		return *packet;
+	}
+
+	package void pixelPacket(PixelPacket packet)
+	{
+		this.packet.red     = packet.red;
+		this.packet.green   = packet.green;
+		this.packet.blue    = packet.blue;
+		this.packet.opacity = packet.opacity;
 	}
 
 	override bool opEquals(Object obj)
