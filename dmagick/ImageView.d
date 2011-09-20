@@ -360,9 +360,9 @@ struct Pixels
 	/**
 	 * Support using foreach on a row.
 	 */
-	int opApply(int delegate(ref Color) dg)
+	int opApply(T : Color)(int delegate(ref T) dg)
 	{
-		Color color = new Color();
+		T color = new T();
 
 		foreach ( ref PixelPacket pixel; pixels )
 		{
