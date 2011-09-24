@@ -42,6 +42,7 @@ $(LIST
 	$(NAVLINK Geometry),
 	$(NAVLINK Image),
 	$(NAVLINK ImageView),
+	$(NAVLINK Montage),
 	$(NAVLINK Options),
 	$(NAVLINK Utils)
 )
