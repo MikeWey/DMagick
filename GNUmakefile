@@ -10,8 +10,8 @@ all: lib
 ifndef DC
     ifneq ($(strip $(shell which dmd 2>/dev/null)),)
         DC=dmd
-    else ifneq ($(strip $(shell which ldc 2>/dev/null)),)
-        DC=ldc
+    else ifneq ($(strip $(shell which ldc2 2>/dev/null)),)
+        DC=ldc2
     else
         DC=gdc
     endif

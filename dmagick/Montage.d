@@ -220,8 +220,6 @@ class Montage
 	{
 		return to!(string)(montageInfoRef.texture);
 	}
-
-	//tile - rows and columns
 }
 
 /**

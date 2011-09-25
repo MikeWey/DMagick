@@ -15,6 +15,7 @@ import core.sys.posix.sys.types;
 import dmagick.Exception;
 import dmagick.Geometry;
 import dmagick.Image;
+import dmagick.Montage;
 import dmagick.Options;
 
 import dmagick.c.blob;
@@ -221,7 +222,23 @@ Image mergeLayers(Image[] layers, ImageLayerMethod method = ImageLayerMethod.Fla
 	return new Image(image);
 }
 
-//TODO: montage.
+/**
+ * Creates a composite image by reducing the size of the input images and
+ * arranging them in a grid on the background color or texture of your
+ * choice. There are many configuration options. For example, you can
+ * specify the number of columns and rows, the distance between images,
+ * and include a label with each small image (called a tile).
+ * 
+ * To add labels to the tiles, assign a "Label" property to each image.
+ */
+Image montage(Image[] images, Montage montageInfo)
+{
+	linkImages(images);
+	scope(exit) unlinkImages(images);
+
+	MagickCoreImage* image =
+		MontageImages(images[0].imageRef, montageInfo.montageInfoRef, DMagickExceptionInfo());
+}
 
 /**
  * Transforms a image into another image by inserting n in-between images.
