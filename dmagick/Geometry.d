@@ -32,8 +32,44 @@ struct Geometry
 
 	/**
 	 * Create a Geometry form a Imagemagick / X11 geometry string.
+	 * 
+	 * The string constist of a size and a optional offset, the size
+	 * can be a width, a height (prefixed with an x), or both
+	 * ( $(D widthxheight) ).
+	 * 
+	 * When a offset is needed ammend the size with an x an y offset
+	 * ( signs are required ) like this: $(D {size}+x+Y).
+	 * 
+	 * The way the size is interpreted can be determined by the
+	 * following flags:
+	 * 
+	 * $(TABLE 
+	 *     $(HEADERS Flag,   Explanation)
+	 *     $(ROW     $(D %), Normally the attributes are treated as pixels.
+	 *                       Use this flag when the width and height
+	 *                       attributes represent percentages.)
+	 *     $(ROW     $(D !), Use this flag when you want to force the new
+	 *                       image to have exactly the size specified by the
+	 *                       the width and height attributes.)
+	 *     $(ROW     $(D <), Use this flag when you want to change the size
+	 *                       of the image only if both its width and height
+	 *                       are smaller the values specified by those
+	 *                       attributes. The image size is changed
+	 *                       proportionally.)
+	 *     $(ROW     $(D >), Use this flag when you want to change the size
+	 *                       of the image if either its width and height
+	 *                       exceed the values specified by those attributes.
+	 *                       The image size is changed proportionally.)
+	 *     $(ROW     $(D ^), Use ^ to set a minimum image size limit. The
+	 *                       geometry $(D 640x480^) means the image width
+	 *                       will not be less than 640 and the image height
+	 *                       will not be less than 480 pixels after the
+	 *                       resize. One of those dimensions will match
+	 *                       the requested size. But the image will likely
+	 *                       overflow the space requested to preserve its
+	 *                       aspect ratio.)
+	 * )
 	 */
-	//TODO: expand the documentation for this constructor.
 	this(string geometry)
 	{
 		MagickStatusType flags;

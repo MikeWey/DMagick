@@ -267,7 +267,6 @@ class DrawingContext
 	 */
 	void decorate(DecorationType decoration)
 	{
-		//TODO: support oring decorations together.
 		operations ~= " decorate ";
 
 		final switch ( decoration )
