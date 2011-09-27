@@ -2455,7 +2455,30 @@ class Image
 		imageRef = ImageRef(image);
 	}
 
-	//TODO: implement separate, returns a range of images.
+	/**
+	 * Constructs a grayscale image for each channel specified.
+	 */
+	Image[] separate(ChannelType channel = ChannelType.DefaultChannels)
+	{
+		Image[] images;
+
+		if ( channel & ChannelType.RedChannel != 0 )
+			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.RedChannel) );
+		else if ( channel & ChannelType.GreenChannel != 0 )
+			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.GreenChannel) );
+		else if ( channel & ChannelType.BlueChannel != 0 )
+			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.BlueChannel) );
+		else if ( channel & ChannelType.OpacityChannel != 0 )
+			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.OpacityChannel) );
+		else if ( channel & ChannelType.TrueAlphaChannel != 0 )
+			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.TrueAlphaChannel) );
+		else if ( channel & ChannelType.GrayChannels != 0 )
+			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.GrayChannels) );
+
+		DMagickException.throwException(&(imageRef.exception));
+
+		return images;
+	}
 
 	/**
 	 * applies a special effect to the image, similar to the effect achieved

@@ -231,13 +231,15 @@ Image mergeLayers(Image[] layers, ImageLayerMethod method = ImageLayerMethod.Fla
  * 
  * To add labels to the tiles, assign a "Label" property to each image.
  */
-Image montage(Image[] images, Montage montageInfo)
+Image[] montage(Image[] images, Montage montageInfo)
 {
 	linkImages(images);
 	scope(exit) unlinkImages(images);
 
 	MagickCoreImage* image =
 		MontageImages(images[0].imageRef, montageInfo.montageInfoRef, DMagickExceptionInfo());
+
+	return imageListToArray(image);
 }
 
 /**
