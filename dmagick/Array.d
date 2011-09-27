@@ -28,6 +28,7 @@ import dmagick.c.image : MagickCoreImage = Image;
 import dmagick.c.layer;
 import dmagick.c.magickType;
 import dmagick.c.memory;
+import dmagick.c.montage;
 import dmagick.c.statistic;
 import dmagick.c.quantize;
 

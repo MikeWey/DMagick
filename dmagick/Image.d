@@ -1790,7 +1790,6 @@ class Image
 	 *              longer than you want to wait, and will not have
 	 *              significantly better results than much smaller values.
 	 */
-	//TODO: replace this with a statistic function?
 	void medianFilter(size_t radius = 0)
 	{
 		static if ( is(typeof(StatisticImage)) )
@@ -2072,7 +2071,6 @@ class Image
 	 *                    with: normalizedMeanError, normalizedMaxError
 	 *                    and meanErrorPerPixel.
 	 */
-	//TODO: should quantizeInfo be part of options?
 	void quantize(bool measureError = false)
 	{
 		options.quantizeInfo.measure_error = measureError;
@@ -2456,31 +2454,6 @@ class Image
 	}
 
 	/**
-	 * Constructs a grayscale image for each channel specified.
-	 */
-	Image[] separate(ChannelType channel = ChannelType.DefaultChannels)
-	{
-		Image[] images;
-
-		if ( channel & ChannelType.RedChannel != 0 )
-			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.RedChannel) );
-		else if ( channel & ChannelType.GreenChannel != 0 )
-			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.GreenChannel) );
-		else if ( channel & ChannelType.BlueChannel != 0 )
-			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.BlueChannel) );
-		else if ( channel & ChannelType.OpacityChannel != 0 )
-			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.OpacityChannel) );
-		else if ( channel & ChannelType.TrueAlphaChannel != 0 )
-			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.TrueAlphaChannel) );
-		else if ( channel & ChannelType.GrayChannels != 0 )
-			images ~= new Image( SeparateImageChannel(imageRef, ChannelType.GrayChannels) );
-
-		DMagickException.throwException(&(imageRef.exception));
-
-		return images;
-	}
-
-	/**
 	 * applies a special effect to the image, similar to the effect achieved
 	 * in a photo darkroom by sepia toning. A threshold of 80% is a good
 	 * starting point for a reasonable tone.
@@ -2703,6 +2676,30 @@ class Image
 			SpreadImage(imageRef, radius, DMagickExceptionInfo());
 
 		imageRef = ImageRef(image);
+	}
+
+	/**
+	 * Makes each pixel the min / max / median / mode / etc. of the
+	 * neighborhood of the specified width and height.
+	 * 
+	 * Params:
+	 *     type   = The type pf statistic to apply.
+	 *     width  = The width of the pixel neighborhood.
+	 *     height = The height of the pixel neighborhood.
+	 */
+	void statistic(StatisticType type, size_t width, size_t height)
+	{
+		static if ( is(typeof(StatisticImage)) )
+		{
+			MagickCoreImage* image =
+				StatisticImage(imageRef, type, width, height, DMagickExceptionInfo());
+
+			imageRef = ImageRef(image);
+		}
+		else
+		{
+			static assert(0, "dmagick.Image.Image.statistic requires MagickCore version >= 6.6.9");
+		}
 	}
 
 	/**
@@ -4063,8 +4060,6 @@ class Image
 	{
 		return Geometry(imageRef.columns, imageRef.rows);
 	}
-
-	//TODO: Statistics ?
 
 	/**
 	 * Number of colors in the image.
