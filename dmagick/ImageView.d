@@ -153,7 +153,6 @@ class ImageView
 	 * Support the usage of foreach to loop over the rows in the view.
 	 * The foreach is executed in parallel.
 	 */
-	//TODO: Should the foreach be parallel?
 	int opApply(int delegate(ref Pixels) dg)
 	{
 		shared(int) progress;
