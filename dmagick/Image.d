@@ -2845,12 +2845,12 @@ class Image
 
 	private extern(C)
 	{
-		static void* malloc(ulong sz)
+		static void* malloc(size_t sz)
 		{
 			return GC.malloc(sz, GC.BlkAttr.NO_SCAN);
 		}
 
-		static void* realloc(void* p, ulong sz)
+		static void* realloc(void* p, size_t sz)
 		{
 			return GC.realloc(p, sz, GC.BlkAttr.NO_SCAN);
 		}
@@ -3115,7 +3115,7 @@ class Image
 	 */
 	void animationDelay(Duration delay)
 	{
-		imageRef.delay = (delay.total!"msecs"() * imageRef.ticks_per_second) / 1000;
+		imageRef.delay = cast(size_t)(delay.total!"msecs"() * imageRef.ticks_per_second) / 1000;
 	}
 	///ditto
 	Duration annimationDelay() const

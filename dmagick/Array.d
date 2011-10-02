@@ -38,7 +38,7 @@ alias ptrdiff_t ssize_t;
  */
 void animationDelay(Image[] images, Duration delay)
 {
-	size_t ticks = (delay.total!"msecs"() * images[0].imageRef.ticks_per_second) / 1000;
+	size_t ticks = cast(size_t)(delay.total!"msecs"() * images[0].imageRef.ticks_per_second) / 1000;
 
 	foreach ( image; images )
 	{
