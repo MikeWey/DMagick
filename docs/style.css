@@ -4,7 +4,7 @@ body
 	padding: 0;
 	border: 0;
 	color: black;
-	background-color: #1f252b;
+	background-color: whiteSmoke;
 	font-size: 100%;
 	font-family: Verdana, "Deja Vu", "Bitstream Vera Sans", sans-serif;
 }
@@ -26,7 +26,7 @@ div#navigation h2
 {
 	font-family: Verdana, "Deja Vu", "Bitstream Vera Sans", sans-serif;
 	font-size: 1.35em;
-	color: #ccc;
+	color: #17457C;
 	margin: 0;
 }
 
@@ -46,21 +46,21 @@ div#navigation li
 #navigation a
 {
 	display: block;
-	color: #ccc;
+	color: #17457C;
 	text-decoration: none;
 	padding: 0.1em 0;
-	border-bottom: 1px dotted #494949;
+	border-bottom: 1px dotted #D0D0D0;
 }
 
 #navigation a:hover
 {
-	color: #eee;
+	color: darkRed;
 }
 
 #navigation a.active
 {
-	color: white;
-	border-color: white;
+	color: black;
+	border-color: black;
 }
 
 div#content
@@ -71,8 +71,8 @@ div#content
 	margin-right: 1.6em;
 	padding: 1.6em;
 	padding-top: 1.3em;
-	border: 0.6em solid #ccd5d5;
-	background-color: #f6f6f6;
+	border: 0.6em solid #D0D0D0;
+	background-color: white;
 	font-size: 0.875em;
 	line-height: 1.4em;
 }
@@ -87,15 +87,15 @@ div#copyright
 	clear: both;
 	margin-top: 2em;
 	padding: 1em 2em;
-	background-color: #303333;
-	color: #ccc;
+	background-color: #E4E9EF;
+	color: #17457C;
 	font-size: 0.75em;
 	text-align: center;
 }
 
 div#copyright a
 {
-	color: #ccc;
+	color: #17457C;
 }
 
 #lastupdate
@@ -106,14 +106,14 @@ div#copyright a
 	text-align: right;
 	font-size: 0.8em;
 	font-style: italic;
-	color: #666;
+	color: #D0D0D0;
 }
 
 h1, h2, h3, h4, h5, h6
 {
 	font-family: Georgia, "Times New Roman", Times, serif;
 	font-weight: normal;
-	color: #633;
+	color: darkRed;
 	line-height: normal;
 	text-align: left;
 }
@@ -143,7 +143,7 @@ h4
 
 pre
 {
-	background: white;
+	background: whiteSmoke;
 	padding: 1ex;
 	margin: 1em 0 1em 3em;
 	font-family: monospace;
@@ -180,6 +180,11 @@ a:visited
 	color: #606;
 }
 
+td
+{
+	vertical-align: top;
+}
+
 .d_inlinecode
 {
 	font-family: monospace;
@@ -189,7 +194,7 @@ a:visited
 .d_decl {
     font-weight: bold;
     background-color: #E4E9EF;
-    border-bottom: solid 2px #336600;
+    border-bottom: solid 2px #17457C;
     padding: 2px 0px 2px 2px;
 }
 
@@ -201,4 +206,4 @@ a:visited
 .d_param   { font-style: italic; }
 
 /* Focal symbol that is being documented */
-.ddoc_psymbol { color: #336600; }
+.ddoc_psymbol { color: #17457C; }

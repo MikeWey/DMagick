@@ -681,7 +681,7 @@ class Image
 	 * which includes the slop, offset, and power for each of
 	 * the RGB channels as well as the saturation.
 	 * 
-	 * See_Also: $(LINK2 http://http://en.wikipedia.org/wiki/ASC_CDL,
+	 * See_Also: $(LINK2 http://en.wikipedia.org/wiki/ASC_CDL,
 	 *         Wikipedia ASC CDL).
 	 */
 	void colorDecisionList(string colorCorrectionCollection)
@@ -1227,7 +1227,7 @@ class Image
 	 * to produce the "negative" of an image.
 	 *
 	 * See_Also: $(LINK2 http://www.imagemagick.org/script/command-line-options.php#evaluate,
-	 *     ImageMagick's -evaluate option).
+	 *     ImageMagick's -_evaluate option).
 	 */
 	void evaluate(MagickEvaluateOperator op, double value, ChannelType channel = ChannelType.DefaultChannels)
 	{

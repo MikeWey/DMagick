@@ -31,7 +31,7 @@ NAVIGATION =
 
 $(LIST
 	$(NAVLINK Array),
-	$(NAVLINK Coderinfo),
+	$(NAVLINK CoderInfo),
 	$(NAVLINK Color),
 	$(NAVLINK ColorCMYK),
 	$(NAVLINK ColorGray),
