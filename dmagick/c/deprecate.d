@@ -2,7 +2,6 @@ module dmagick.c.deprecate;
 
 import core.vararg;
 import core.stdc.stdio;
-import core.sys.posix.sys.types;
 
 import dmagick.c.cacheView;
 import dmagick.c.colorspace;
@@ -19,6 +18,8 @@ import dmagick.c.quantum;
 import dmagick.c.registry;
 import dmagick.c.resample;
 import dmagick.c.semaphore;
+
+alias ptrdiff_t ssize_t;
 
 deprecated extern(C)
 {

@@ -1,7 +1,6 @@
 module dmagick.c.image;
 
 import core.stdc.stdio;
-import core.sys.posix.sys.types;
 
 import dmagick.c.cacheView;
 import dmagick.c.color;
@@ -23,6 +22,8 @@ import dmagick.c.resample;
 import dmagick.c.semaphore;
 import dmagick.c.stream;
 import dmagick.c.timer;
+
+alias ptrdiff_t ssize_t;
 
 extern(C)
 {

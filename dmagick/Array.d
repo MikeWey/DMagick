@@ -10,7 +10,6 @@ module dmagick.Array;
 
 import std.string;
 import core.time;
-import core.sys.posix.sys.types;
 
 import dmagick.Exception;
 import dmagick.Geometry;
@@ -31,6 +30,8 @@ import dmagick.c.memory;
 import dmagick.c.montage;
 import dmagick.c.statistic;
 import dmagick.c.quantize;
+
+alias ptrdiff_t ssize_t;
 
 /**
  * Set the animationDelay for all images in the array.

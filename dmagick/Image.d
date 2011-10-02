@@ -14,7 +14,6 @@ import core.memory;
 import core.runtime;
 import core.time;
 import core.stdc.string;
-import core.sys.posix.sys.types;
 
 import dmagick.Color;
 import dmagick.Exception;
@@ -25,6 +24,8 @@ import dmagick.Utils;
 
 //Import all translated c headers.
 import dmagick.c.MagickCore;
+
+alias ptrdiff_t ssize_t;
 
 /**
  * The image

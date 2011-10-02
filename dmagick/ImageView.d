@@ -11,7 +11,6 @@ import std.parallelism;
 import std.range;
 import std.string;
 import core.atomic;
-import core.sys.posix.sys.types;
 
 import dmagick.Color;
 import dmagick.Exception;
@@ -25,6 +24,8 @@ import dmagick.c.image : MagickCoreImage = Image;
 import dmagick.c.magickType;
 import dmagick.c.memory;
 import dmagick.c.pixel;
+
+alias ptrdiff_t ssize_t;
 
 /**
  * The ImageView allows changing induvidual pixels with the slicing and

@@ -1,10 +1,10 @@
 module dmagick.c.layer;
 
-import core.sys.posix.sys.types;
-
 import dmagick.c.composite;
 import dmagick.c.exception;
 import dmagick.c.image;
+
+alias ptrdiff_t ssize_t;
 
 extern(C)
 {

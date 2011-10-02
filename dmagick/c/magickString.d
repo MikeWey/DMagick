@@ -2,12 +2,13 @@ module dmagick.c.magickString;
 
 import core.stdc.stdio;
 import core.stdc.time;
-import core.sys.posix.sys.types;
 import core.vararg;
 
 import dmagick.c.exception;
 import dmagick.c.magickType;
 import dmagick.c.magickVersion;
+
+alias ptrdiff_t ssize_t;
 
 extern(C)
 {

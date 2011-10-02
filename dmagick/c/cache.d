@@ -1,12 +1,12 @@
 module dmagick.c.cache;
 
-import core.sys.posix.sys.types;
-
 import dmagick.c.image;
 import dmagick.c.pixel;
 import dmagick.c.exception;
 import dmagick.c.magickType;
 import dmagick.c.cacheView;
+
+alias ptrdiff_t ssize_t;
 
 extern(C)
 {

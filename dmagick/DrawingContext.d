@@ -11,7 +11,6 @@ import std.array;
 import std.conv;
 import std.file;
 import std.string;
-import core.sys.posix.sys.types;
 
 import dmagick.Color;
 import dmagick.Exception;
@@ -24,6 +23,8 @@ import dmagick.c.composite;
 import dmagick.c.draw;
 import dmagick.c.geometry;
 import dmagick.c.type;
+
+alias ptrdiff_t ssize_t;
 
 /**
  * Drawable provides a convenient interface for preparing vector,

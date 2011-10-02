@@ -1,13 +1,13 @@
 module dmagick.c.fx;
 
-import core.sys.posix.sys.types;
-
 import dmagick.c.draw;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
 import dmagick.c.morphology;
 import dmagick.c.pixel;
+
+alias ptrdiff_t ssize_t;
 
 extern(C)
 {

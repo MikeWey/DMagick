@@ -1,13 +1,14 @@
 module dmagick.c.locale;
 
 import core.stdc.stdio;
-import core.sys.posix.sys.types;
 import core.vararg;
 
 import dmagick.c.exception;
 import dmagick.c.hashmap;
 import dmagick.c.magickType;
 import dmagick.c.magickVersion;
+
+alias ptrdiff_t ssize_t;
 
 extern(C)
 {

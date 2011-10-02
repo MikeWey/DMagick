@@ -1,12 +1,12 @@
 module dmagick.c.transform;
 
-import core.sys.posix.sys.types;
-
 import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.image;
 import dmagick.c.magickType;
 import dmagick.c.magickVersion;
+
+alias ptrdiff_t ssize_t;
 
 extern(C)
 {

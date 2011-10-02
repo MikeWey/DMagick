@@ -9,11 +9,12 @@ module dmagick.Geometry;
 import std.conv;
 import std.ascii;
 import std.string;
-import core.sys.posix.sys.types;
 
 import dmagick.c.geometry;
 import dmagick.c.magickString;
 import dmagick.c.magickType;
+
+alias ptrdiff_t ssize_t;
 
 /**
  * Geometry provides a convenient means to specify a geometry argument.
