@@ -213,8 +213,8 @@ DOCS= \
 	docs\c\xmlTree.html \
 	docs\c\xwindow.html
 
-html: doc
-doc: $(DOCS)
+html: docs
+docs: $(DOCS)
 
 docs\Array.html: dmagick\Array.d
 	$(DMD) $** $(DFLAGS) -c -o- -I. docs\dmagick.ddoc -Df$@
@@ -521,6 +521,14 @@ docs\c\xwindow.html: dmagick\c\xwindow.d
 $(LIBNAME): $(SOURCE)
 	$(DMD) -lib -of$(LIBNAME) $(DFLAGS) $(SOURCE)
 
+unittest: stubmain.d $(SOURCE)
+	$(DMD) -of$@.exe -unittest $(DFLAGS) $** MagickCore.lib
+	unittest
+
+stubmain.d:
+	echo void main(){} > $@
+
 clean:
 	del $(LIBNAME)
 	del $(DOCS)
+	del stubmain.d unittest.obj unittest.exe
