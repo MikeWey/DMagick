@@ -2,8 +2,10 @@ DMD=dmd
 DFLAGS=-O -release
 
 LIBNAME=DMagick.lib
+MAGICKCOREDLLNAME=CORE_RL_magick_.dll
+MAGICKCORELIBNAME=MagickCore.lib
 
-target : $(LIBNAME)
+target : $(LIBNAME) $(MAGICKCORELIBNAME)
 
 SOURCE= \
 	dmagick\Array.d \
@@ -521,14 +523,22 @@ docs\c\xwindow.html: dmagick\c\xwindow.d
 $(LIBNAME): $(SOURCE)
 	$(DMD) -lib -of$(LIBNAME) $(DFLAGS) $(SOURCE)
 
-unittest: stubmain.d $(SOURCE)
-	$(DMD) -of$@.exe -unittest $(DFLAGS) $** MagickCore.lib
+unittest: stubmain.d $(SOURCE) $(MAGICKCORELIBNAME)
+	$(DMD) -of$@.exe -unittest $(DFLAGS) $**
 	unittest
+
+$(MAGICKCORELIBNAME):
+	@echo @FOR /F "delims=;" %%i IN ('where $(MAGICKCOREDLLNAME)') DO @copy "%%i" > copydll.bat
+	copydll
+	implib /s $@ $(MAGICKCOREDLLNAME)
+	@del copydll.bat
+	del $(MAGICKCOREDLLNAME)
 
 stubmain.d:
 	echo void main(){} > $@
 
 clean:
 	del $(LIBNAME)
+	del $(MAGICKCORELIBNAME)
 	del $(DOCS)
 	del stubmain.d unittest.obj unittest.exe
