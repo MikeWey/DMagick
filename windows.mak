@@ -528,8 +528,8 @@ unittest: stubmain.d $(SOURCE) $(MAGICKCORELIBNAME)
 	unittest
 
 $(MAGICKCORELIBNAME):
-	@echo @FOR /F "delims=;" %%i IN ('where $(MAGICKCOREDLLNAME)') DO @copy "%%i" > copydll.bat
-	copydll
+	@echo @FOR /F "delims=;" %%i IN ('where %1') DO @copy "%%i" > copydll.bat
+	copydll $(MAGICKCOREDLLNAME)
 	implib /s $@ $(MAGICKCOREDLLNAME)
 	@del copydll.bat
 	del $(MAGICKCOREDLLNAME)
