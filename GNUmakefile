@@ -2,10 +2,12 @@
 SHELL=/bin/sh
 prefix=/usr/local
 
+DMAGICK_VERSION=0.0.1
+
 OS=$(shell uname || uname -s)
 ARCH=$(shell arch || uname -m)
 
-all: lib
+all: lib pkgconfig
 
 ifndef DC
     ifneq ($(strip $(shell which dmd 2>/dev/null)),)
@@ -47,11 +49,15 @@ QUANTUMDEPTH = $(lastword $(shell MagickCore-config --version))
 MAGICKVERSION = $(subst .,,$(firstword $(shell MagickCore-config --version)))
 
 ifneq ("$(QUANTUMDEPTH)","Q16")
-    DCFLAGS+= -version=$(subst Q,Quantum,$(QUANTUMDEPTH))
+    VERSIONS+= -version=$(subst Q,Quantum,$(QUANTUMDEPTH))
 endif
 
 ifneq ("$(MAGICKVERSION)","672")
-    DCFLAGS+= -version=MagickCore_$(MAGICKVERSION)
+    VERSIONS+= -version=MagickCore_$(MAGICKVERSION)
+endif
+
+ifndef VERSIONS
+	DCFLAGS+=$(VERSIONS)
 endif
 
 #######################################################################
@@ -100,15 +106,32 @@ docs/c/%.html : dmagick/c/%.d
 
 #######################################################################
 
-install: lib
+pkgconfig: DMagick.pc
+
+DMagick.pc:
+	echo Name: DMagick > $@
+	echo Description: DMagick - A D binding for ImageMagick. >> $@
+	echo Version: $(DMAGICK_VERSION) >> $@
+	echo Libs: -L-L$(prefix)/lib/ -L-lDMagick -L-lMagickCore >> $@
+	echo Cflags: -I$(prefix)/include/d/ $(VERSIONS) >> $@
+
+#######################################################################
+
+install: lib pkgconfig
 	install -d $(DESTDIR)$(prefix)/include/d
 	(echo $(SOURCES_DMAGICK) | xargs tar c) | (cd $(DESTDIR)$(prefix)/include/d; tar xv)
+	install -d $(DESTDIR)$(prefix)/lib/pkgconfig
+	install -m 644 DMagick.pc $(DESTDIR)$(prefix)/lib/pkgconfig
 	install -d $(DESTDIR)$(prefix)/lib
 	install -m 644 $(LIBNAME_DMAGICK) $(DESTDIR)$(prefix)/lib
 	
 uninstall:
 	rm -rf $(DESTDIR)$(prefix)/include/d/dmagick
 	rm -f $(DESTDIR)$(prefix)/lib/$(LIBNAME_DMAGICK)
+	rm -f $(DESTDIR)$(prefix)/lib/pkgconfig/DMagick.pc
 
 clean:
-	-rm -rf $(LIBNAME_DMAGICK) $(OBJECTS_DMAGICK) $(DOCS_DMAGICK) docs/c unittest.o unittest
+	rm -rf $(LIBNAME_DMAGICK) $(OBJECTS_DMAGICK)
+	rm -rf $(DOCS_DMAGICK) docs/c
+	rm -rf unittest.o unittest
+	rm -rf DMagick.pc
