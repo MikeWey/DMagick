@@ -85,7 +85,7 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 #######################################################################
 
 /tmp/stubmain.d:
-	$(shell echo "void main(){}" > /tmp/stubmain.d)
+	echo "void main(){}" > $@)
 
 unittest: /tmp/stubmain.d $(SOURCES_DMAGICK)
 	$(DC) $(DCFLAGS) $(UNITTESTFLAG) $(LINKERFLAG)-lMagickCore $^ $(output)
@@ -112,7 +112,7 @@ DMagick.pc:
 	echo Name: DMagick > $@
 	echo Description: DMagick - A D binding for ImageMagick. >> $@
 	echo Version: $(DMAGICK_VERSION) >> $@
-	echo Libs: -L-L$(prefix)/lib/ -L-lDMagick -L-lMagickCore >> $@
+	echo Libs: $(LINKERFLAG)-L$(prefix)/lib/ $(LINKERFLAG)-lDMagick $(LINKERFLAG)-lMagickCore >> $@
 	echo Cflags: -I$(prefix)/include/d/ $(VERSIONS) >> $@
 
 #######################################################################
