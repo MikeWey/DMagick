@@ -69,6 +69,11 @@ deprecated extern(C)
 	const(PixelPacket)* AcquireCacheViewPixels(const(CacheView)*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
 	const(PixelPacket)* AcquireImagePixels(const(Image)*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);
 
+	static if ( MagickLibVersion >= 0x673 )
+	{
+		FILE* OpenMagickStream(const(char)*, const(char)*);
+	}
+
 	Image* AllocateImage(const(ImageInfo)*);
 	Image* AverageImages(const(Image)*, ExceptionInfo*);
 	Image* ExtractSubimageFromImage(Image*, const(Image)*, ExceptionInfo*);

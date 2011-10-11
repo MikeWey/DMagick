@@ -63,6 +63,12 @@ extern(C)
 	ssize_t	FormatMagickTime(const time_t, const size_t, char*);
 
 	StringInfo* AcquireStringInfo(const size_t);
+
+	static if ( MagickLibVersion >= 0x673 )
+	{
+		StringInfo* BlobToStringInfo(const(void)*, const size_t);
+	}
+
 	StringInfo* CloneStringInfo(const(StringInfo)*);
 	StringInfo* ConfigureFileToStringInfo(const(char)*);
 	StringInfo* DestroyStringInfo(StringInfo*);

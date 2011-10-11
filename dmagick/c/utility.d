@@ -26,7 +26,10 @@ extern(C)
 	char** GetPathComponents(const(char)*, size_t*);
 	char** ListFiles(const(char)*, const(char)*, size_t*);
 
-	FILE* OpenMagickStream(const(char)*, const(char)*);
+	static if ( MagickLibVersion < 0x673 )
+	{
+		FILE* OpenMagickStream(const(char)*, const(char)*);
+	}
 
 	int SystemCommand(const MagickBooleanType, const MagickBooleanType, const(char)*, ExceptionInfo*);
 
