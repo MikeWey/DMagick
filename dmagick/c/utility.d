@@ -4,6 +4,7 @@ import core.stdc.stdio;
 
 import dmagick.c.exception;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 alias ptrdiff_t ssize_t;
 

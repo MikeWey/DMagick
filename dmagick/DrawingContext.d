@@ -1017,7 +1017,7 @@ struct Gradient
 	private bool isDefined = false;
 
 	GradientType  type;
-	GradientUnits units;
+	//GradientUnits units;
 	double x1, y1, x2, y2, radius;
 	StopColor[] stopColors;
 
@@ -1090,6 +1090,8 @@ struct Gradient
 		return radial(xCenter, yCenter, xCenter, yCenter, radius);
 	}
 
+	/+
+	 + gradient units arn't implemented in imageMagick.
 	/**
 	 * Defines the coordinate system to use.
 	 */
@@ -1099,6 +1101,7 @@ struct Gradient
 
 		return this;
 	}
+	+/
 
 	/**
 	 * Define the color to use, and there offsets in the gradient.
@@ -1139,8 +1142,10 @@ struct Gradient
 				currentCount, x1, y1, x2, y2, radius);
 		}
 
+		/+
 		if ( units != GradientUnits.Undefined )
 			operations ~= format(" gradient-units %s", units);
+		+/
 
 		foreach ( stop; stopColors )
 		{
@@ -1202,6 +1207,9 @@ enum FontWeight : string
         Lighter = "lighter", /// Decreases weight by 100.
 }
 
+
+/+
+ + gradient units arn't implemented in imageMagick.
 /**
  * Defines the coordinate system to use for Gradients.
  */
@@ -1239,3 +1247,4 @@ enum GradientUnits : string
 	 */
 	ObjectBoundingBox = "objectBoundingBox",
 }
++/
