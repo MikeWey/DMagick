@@ -1033,13 +1033,13 @@ struct Gradient
 	 * Define a linear gradient.
 	 * 
 	 * Params:
-	 *     size       = The height or with of the gradient.
 	 *     startColor = The starting Color.
 	 *     endColor   = The end Color.
+	 *     size       = The height or with of the gradient.
 	 *     Direction  = Determines is the gradient fades from top to bottom
 	 *                  or from left to right.
 	 */
-	this(size_t size, Color startColor, Color endColor, GradientDirection direction = GradientDirection.Vertical)
+	this(Color startColor, Color endColor, size_t size, GradientDirection direction = GradientDirection.Vertical)
 	{
 		currentCount = count++;
 
