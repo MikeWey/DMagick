@@ -1007,6 +1007,142 @@ class DrawingContext
 
 /**
  * This defines a Gradient used when drawing.
+ * 
+ * One thing to remember it that the gradient is always drawn from the
+ * top left corner of the image. And is repeated if it's smaller then the
+ * image height or width. This mean that the gradien you see in the object
+ * you are filling does not determine the stating point of the gradient
+ * but is filled the part of the gradient that whould be there when starting
+ * at the top left corneer of the image.
+ */
+struct Gradient
+{
+	private static size_t count;
+	private size_t currentCount;
+
+	//Is the id to use this gradient already set.
+	private bool isDefined = false;
+
+	size_t size;
+	GradientDirection direction;
+
+	Color startColor;
+	Color endColor;
+
+	/**
+	 * Define a linear gradient.
+	 * 
+	 * Params:
+	 *     size       = The height or with of the gradient.
+	 *     startColor = The starting Color.
+	 *     endColor   = The end Color.
+	 *     Direction  = Determines is the gradient fades from top to bottom
+	 *                  or from left to right.
+	 */
+	this(size_t size, Color startColor, Color endColor, GradientDirection direction = GradientDirection.Vertical)
+	{
+		currentCount = count++;
+
+		this.size = size;
+		this.direction = direction;
+		this.startColor = startColor;
+		this.endColor = endColor;
+	}
+
+	/**
+	 * Generate the string used to define this gradient.
+	 */
+	private string defineGradient()
+	{
+		if ( isDefined )
+			return "";
+
+		string operations = " push defs push defs push gradient";
+
+		if ( direction == GradientDirection.Vertical )
+		{
+			operations ~= format(" grad%s linear %s,%s %s,%s",
+					currentCount, 0, 0, 0, size);
+		}
+		else
+		{
+			operations ~= format(" grad%s linear %s,%s %s,%s",
+					currentCount, 0, 0, size, 0);
+		}
+
+		operations ~= format(" stop-color %s %s", startColor, 0);
+		operations ~= format(" stop-color %s %s", endColor, 1);
+
+		operations ~= " pop gradient pop defs";
+
+		return operations;
+	}
+
+	/**
+	 * If the gradient is defined, this id is neded to use it.
+	 */
+	private string id()
+	{
+		return format("grad%s", currentCount);
+	}
+
+}
+
+/**
+ * This enumeration lists specific character repertories (i.e., charsets),
+ * and not text encoding methods (e.g., UTF-8, UTF-16, etc.).
+ */
+enum FontEncoding : string
+{
+	AdobeCustom   = "AdobeCustom",    ///
+	AdobeExpert   = "AdobeExpert",    ///ditto
+	AdobeStandard = "AdobeStandard",  ///ditto
+	AppleRoman    = "AppleRoman",     ///ditto
+	BIG5     = "BIG5",                ///ditto
+	GB2312   = "GB2312",              ///ditto
+	Johab    = "Johab",               ///ditto
+	Latin1   = "Latin-1",             ///ditto
+	Latin2   = "Latin-2",             ///ditto
+	None     = "None",                ///ditto
+	SJIScode = "SJIScode",            ///ditto
+	Symbol   = "Symbol",              ///ditto
+	Unicode  = "Unicode",             ///ditto
+	Wansung  = "Wansung",             ///ditto
+}
+
+/**
+ * The font weight can be specified as one of 100, 200, 300, 400, 500,
+ * 600, 700, 800, or 900, or one of the following constants.
+ */
+enum FontWeight : string
+{
+        Any     = "all",     /// No weight specified.
+        Normal  = "normal",  /// Normal weight, equivalent to 400.
+        Bold    = "bold",    /// Bold. equivalent to 700. 
+        Bolder  = "bolder",  /// Increases weight by 100.
+        Lighter = "lighter", /// Decreases weight by 100.
+}
+
+/**
+ * GradientDirection determines if the gradient fades from top to bottom
+ * or from left to right.
+ */
+enum GradientDirection
+{
+	Horizontal, /// Top to bottom.
+	Vertical    /// Left to right.
+}
+
+/+
+ + ImageMagick's gradient implementation is a lot more limmiting then
+ + it whoud seem. This was the first Gradient implementation based on:
+ + http://www.imagemagick.org/script/magick-vector-graphics.php and
+ + http://www.linux-nantes.org/~fmonnier/OCaml/MVG/
+ + But a look at the source of DrawImage reveals that only simple
+ + linear gradients are supported.
+
+/**
+ * This defines a Gradient used when drawing.
  */
 struct Gradient
 {
@@ -1090,8 +1226,6 @@ struct Gradient
 		return radial(xCenter, yCenter, xCenter, yCenter, radius);
 	}
 
-	/+
-	 + gradient units arn't implemented in imageMagick.
 	/**
 	 * Defines the coordinate system to use.
 	 */
@@ -1101,7 +1235,6 @@ struct Gradient
 
 		return this;
 	}
-	+/
 
 	/**
 	 * Define the color to use, and there offsets in the gradient.
@@ -1138,15 +1271,13 @@ struct Gradient
 		}
 		else
 		{
-			operations ~= format(" push gradient grad%s radial %s,%s %s,%s $s",
+			operations ~= format(" push gradient grad%s radial %s,%s %s,%s %s",
 				currentCount, x1, y1, x2, y2, radius);
 		}
 
-		/+
 		if ( units != GradientUnits.Undefined )
 			operations ~= format(" gradient-units %s", units);
-		+/
-
+		
 		foreach ( stop; stopColors )
 		{
 			operations ~= format(" stop-color %s %s", stop.color, stop.offset);
@@ -1172,44 +1303,6 @@ struct Gradient
 	}
 }
 
-/**
- * This enumeration lists specific character repertories (i.e., charsets),
- * and not text encoding methods (e.g., UTF-8, UTF-16, etc.).
- */
-enum FontEncoding : string
-{
-	AdobeCustom   = "AdobeCustom",    ///
-	AdobeExpert   = "AdobeExpert",    ///ditto
-	AdobeStandard = "AdobeStandard",  ///ditto
-	AppleRoman    = "AppleRoman",     ///ditto
-	BIG5     = "BIG5",                ///ditto
-	GB2312   = "GB2312",              ///ditto
-	Johab    = "Johab",               ///ditto
-	Latin1   = "Latin-1",             ///ditto
-	Latin2   = "Latin-2",             ///ditto
-	None     = "None",                ///ditto
-	SJIScode = "SJIScode",            ///ditto
-	Symbol   = "Symbol",              ///ditto
-	Unicode  = "Unicode",             ///ditto
-	Wansung  = "Wansung",             ///ditto
-}
-
-/**
- * The font weight can be specified as one of 100, 200, 300, 400, 500,
- * 600, 700, 800, or 900, or one of the following constants.
- */
-enum FontWeight : string
-{
-        Any     = "all",     /// No weight specified.
-        Normal  = "normal",  /// Normal weight, equivalent to 400.
-        Bold    = "bold",    /// Bold. equivalent to 700. 
-        Bolder  = "bolder",  /// Increases weight by 100.
-        Lighter = "lighter", /// Decreases weight by 100.
-}
-
-
-/+
- + gradient units arn't implemented in imageMagick.
 /**
  * Defines the coordinate system to use for Gradients.
  */
