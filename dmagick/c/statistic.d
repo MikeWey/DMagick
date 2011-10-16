@@ -55,7 +55,9 @@ extern(C)
 		SineEvaluateOperator,
 		AddModulusEvaluateOperator,
 		MeanEvaluateOperator,
-		AbsEvaluateOperator
+		AbsEvaluateOperator,
+		ExponentialEvaluateOperator,
+		MedianEvaluateOperator
 	}
 
 	enum MagickFunction

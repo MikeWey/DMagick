@@ -201,6 +201,12 @@ deprecated extern(C)
 	void* AcquireMemory(const size_t);
 	void  AllocateNextImage(const(ImageInfo)*, Image*);
 	void* CloneMemory(void*, const(void)*, const size_t);
+
+	static if ( MagickLibVersion >= 0x655 )
+	{
+		void DestroyConstitute();
+	}
+
 	void  DestroyImageAttributes(Image*);
 	void  DestroyImages(Image*);
 	void  DestroyMagick();

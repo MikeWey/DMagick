@@ -4,6 +4,7 @@ import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.pixel;
 
 alias ptrdiff_t ssize_t;
@@ -45,4 +46,9 @@ extern(C)
 	RectangleInfo GetImageViewExtent(const(ImageView)*);
 
 	void SetImageViewDescription(ImageView*, const(char)*);
+
+	static if ( MagickLibVersion >= 0x655 )
+	{
+		void SetImageViewThreads(ImageView*, const size_t);
+	}
 }
