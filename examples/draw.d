@@ -32,7 +32,6 @@ void main()
 
 	//Define the Gradients to use;
 	Gradient cylinderEmptyColor  = Gradient(new Color("white"),  new Color("gray"),      imageHeight/2);
-	Gradient cylinderinsideColor = Gradient(new Color("white"),  new Color("darkgray"),  imageHeight/2);
 	Gradient cylinderFullColor   = Gradient(new Color("green2"), new Color("darkgreen"), imageHeight/2);
 	Gradient cylinderOutColor    = Gradient(new Color("lime"),   new Color("green4"),    imageHeight/2);
 

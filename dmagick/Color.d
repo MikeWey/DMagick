@@ -130,6 +130,18 @@ class Color
 	}
 
 	/**
+	 * Support casting between different colors.
+	 * You can also use std.conv.to
+	 */
+	T opCast(T : Color)()
+	{
+		T color = new T();
+		color.packet = packet;
+
+		return color;
+	}
+
+	/**
 	 * The value for red in the range [0 .. QuantumRange]
 	 */
 	void redQuantum(Quantum red)

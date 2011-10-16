@@ -316,14 +316,6 @@ struct Pixels
 		return new Color(pixels.ptr + pixel);
 	}
 
-	/**
-	 * Sync the pixels back to the image. The destructor does this for you.
-	 */
-	void sync()
-	{
-		SyncAuthenticPixelCacheNexus(image.imageRef, &nexus, DMagickExceptionInfo());
-	}
-
 	///ditto
 	void opIndexAssign(Color color, size_t index)
 	{
@@ -355,6 +347,14 @@ struct Pixels
 	{
 		foreach( i; left .. right )
 			this[i] = color;
+	}
+
+	/**
+	 * Sync the pixels back to the image. The destructor does this for you.
+	 */
+	void sync()
+	{
+		SyncAuthenticPixelCacheNexus(image.imageRef, &nexus, DMagickExceptionInfo());
 	}
 
 	/**
