@@ -2,7 +2,14 @@ module dmagick.c.magickVersion;
 
 extern(C)
 {
-	version(MagickCore_664)
+	version(MagickCore_663)
+	{
+		/// Defines the version of ImageMagick where these headers are based on.
+		enum MagickLibVersion = 0x663;
+		///ditto
+		enum MagickLibVersionText = "6.6.3";
+	}
+	else version(MagickCore_664)
 	{
 		/// Defines the version of ImageMagick where these headers are based on.
 		enum MagickLibVersion = 0x664;
@@ -16,7 +23,7 @@ extern(C)
 		///ditto
 		enum MagickLibVersionText = "6.6.5";
 	}
-	version(MagickCore_666)
+	else version(MagickCore_666)
 	{
 		/// Defines the version of ImageMagick where these headers are based on.
 		enum MagickLibVersion = 0x666;

@@ -2688,7 +2688,7 @@ class Image
 	 *     width  = The width of the pixel neighborhood.
 	 *     height = The height of the pixel neighborhood.
 	 */
-	void statistic(StatisticType type, size_t width, size_t height)
+	void statistic()(StatisticType type, size_t width, size_t height)
 	{
 		static if ( is(typeof(StatisticImage)) )
 		{

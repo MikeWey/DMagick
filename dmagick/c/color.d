@@ -5,6 +5,7 @@ import core.stdc.stdio;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.pixel;
 
 alias ptrdiff_t ssize_t;
@@ -67,10 +68,20 @@ extern(C)
 	MagickBooleanType IsOpacitySimilar(const(Image)*, const(PixelPacket)*, const(PixelPacket)*);
 	MagickBooleanType IsOpaqueImage(const(Image)*, ExceptionInfo*);
 	MagickBooleanType ListColorInfo(FILE*, ExceptionInfo*);
-	MagickBooleanType QueryColorCompliance(const(char)*, const ComplianceType, PixelPacket*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x664 )
+	{
+		MagickBooleanType QueryColorCompliance(const(char)*, const ComplianceType, PixelPacket*, ExceptionInfo*);
+	}
+
 	MagickBooleanType QueryColorDatabase(const(char)*, PixelPacket*, ExceptionInfo*);
 	MagickBooleanType QueryColorname(const(Image)*, const(PixelPacket)*, const ComplianceType, char*, ExceptionInfo*);
-	MagickBooleanType QueryMagickColorCompliance(const(char)*, const ComplianceType, MagickPixelPacket*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x664 )
+	{
+		MagickBooleanType QueryMagickColorCompliance(const(char)*, const ComplianceType, MagickPixelPacket*, ExceptionInfo*);
+	}
+
 	MagickBooleanType QueryMagickColor(const(char)*, MagickPixelPacket*, ExceptionInfo*);
 	MagickBooleanType QueryMagickColorname(const(Image)*, const(MagickPixelPacket)*, const ComplianceType, char*, ExceptionInfo*);
 

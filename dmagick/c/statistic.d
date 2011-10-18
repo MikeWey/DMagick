@@ -3,6 +3,7 @@ module dmagick.c.statistic;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -11,18 +12,31 @@ extern(C)
 		size_t
 			depth;
 
-		double
-			minima,
-			maxima,
-			sum,
-			sum_squared,
-			sum_cubed,
-			sum_fourth_power,
-			mean,
-			variance,
-			standard_deviation,
-			kurtosis,
-			skewness;
+		static if ( MagickLibVersion >= 0x664 )
+		{
+			double
+				minima,
+				maxima,
+				sum,
+				sum_squared,
+				sum_cubed,
+				sum_fourth_power,
+				mean,
+				variance,
+				standard_deviation,
+				kurtosis,
+				skewness;
+		}
+		else
+		{
+			double
+				minima,
+				maxima,
+				mean,
+				standard_deviation,
+				kurtosis,
+				skewness;
+		}
 	}
 
 	enum MagickEvaluateOperator
