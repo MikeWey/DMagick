@@ -53,6 +53,7 @@ extern(C)
 			RobidouxFilter,
 			SentinelFilter,  /* a count of all the filters, not a real filter */
 
+			BesselFilter         = JincFilter,
 			Lanczos2DFilter      = Lanczos2Filter,
 			Lanczos2DSharpFilter = Lanczos2SharpFilter
 		}
@@ -87,7 +88,9 @@ extern(C)
 			Lanczos2DFilter,
 			Lanczos2DSharpFilter,
 			RobidouxFilter,
-			SentinelFilter  /* a count of all the filters, not a real filter */
+			SentinelFilter,  /* a count of all the filters, not a real filter */
+
+			BesselFilter         = JincFilter
 		}
 	}
 

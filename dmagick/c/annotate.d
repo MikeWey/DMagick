@@ -18,7 +18,14 @@ extern(C)
 	MagickBooleanType GetMultilineTypeMetrics(Image*, const(DrawInfo)*, TypeMetric*);
 	MagickBooleanType GetTypeMetrics(Image*, const(DrawInfo)*, TypeMetric*);
 
-	ssize_t FormatMagickCaption(Image*, DrawInfo*, const MagickBooleanType, TypeMetric*, char**);
+	static if ( MagickLibVersion >= 0x665 )
+	{
+		ssize_t FormatMagickCaption(Image*, DrawInfo*, const MagickBooleanType, TypeMetric*, char**);
+	}
+	else
+	{
+		ssize_t FormatMagickCaption(Image*, DrawInfo*, TypeMetric*, char**);
+	}
 
 	static if ( MagickLibVersion >= 0x668 )
 	{

@@ -102,7 +102,11 @@ deprecated extern(C)
 
 	Image* ShiftImageList(Image**);
 	Image* SpliceImageList(Image*, const ssize_t, const size_t, const(Image)*, ExceptionInfo*);
-	Image* ZoomImage(const(Image)*, const size_t, const size_t, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x665 )
+	{
+		Image* ZoomImage(const(Image)*, const size_t, const size_t, ExceptionInfo*);
+	}
 
 	IndexPacket* GetCacheViewIndexes(CacheView*);
 	IndexPacket* GetIndexes(const(Image)*);
