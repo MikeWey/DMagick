@@ -328,7 +328,7 @@ extern(C)
 			DirectionType
 				direction;
 		}
-		else
+		else static if (MagickLibVersion == 0x661)
 		{
 			double
 				direction;

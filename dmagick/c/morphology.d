@@ -198,7 +198,12 @@ extern(C)
 
 	KernelInfo* AcquireKernelInfo(const(char)*);
 	KernelInfo* AcquireKernelBuiltIn(const KernelInfoType, const(GeometryInfo)*);
-	KernelInfo* CloneKernelInfo(const(KernelInfo)*);
+
+	static if ( MagickLibVersion >= 0x661 )
+	{
+		KernelInfo* CloneKernelInfo(const(KernelInfo)*);
+	}
+
 	KernelInfo* DestroyKernelInfo(KernelInfo*);
 
 	Image* MorphologyImage(const(Image)*, const MorphologyMethod, const ssize_t, const(KernelInfo)*, ExceptionInfo*);
@@ -208,7 +213,7 @@ extern(C)
 	{
 		void ScaleGeometryKernelInfo(KernelInfo*, const(char)*);
 	}
-	else
+	else static if ( MagickLibVersion == 0x661 )
 	{
 		void ScaleKernelInfo(KernelInfo*, const double, const GeometryFlags);
 	}

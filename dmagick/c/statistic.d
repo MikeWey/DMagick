@@ -85,7 +85,15 @@ extern(C)
 
 	ChannelStatistics* GetImageChannelStatistics(const(Image)*, ExceptionInfo*);
 
-	Image* EvaluateImages(const(Image)*, const MagickEvaluateOperator, ExceptionInfo*);
+	static if ( MagickLibVersion < 0x661 )
+	{
+		Image* AverageImages(const(Image)*, ExceptionInfo*);
+	}
+
+	static if ( MagickLibVersion >= 0x661 )
+	{
+		Image* EvaluateImages(const(Image)*, const MagickEvaluateOperator, ExceptionInfo*);
+	}
 
 	MagickBooleanType EvaluateImage(Image*, const MagickEvaluateOperator, const double, ExceptionInfo*);
 	MagickBooleanType EvaluateImageChannel(Image*, const ChannelType, const MagickEvaluateOperator, const double, ExceptionInfo*);

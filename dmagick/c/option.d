@@ -41,8 +41,14 @@ extern(C)
 			MagickDataTypeOptions,
 			MagickDebugOptions,
 			MagickDecorateOptions,
-			MagickDelegateOptions,
-			MagickDirectionOptions,
+			MagickDelegateOptions,";
+
+			static if ( MagickLibVersion >= 0x661 )
+			{
+				options ~= "MagickDirectionOptions,";
+			}
+
+			options ~= "
 			MagickDisposeOptions,
 			MagickDistortOptions,
 			MagickDitherOptions,

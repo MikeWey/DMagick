@@ -75,14 +75,23 @@ deprecated extern(C)
 	}
 
 	Image* AllocateImage(const(ImageInfo)*);
-	Image* AverageImages(const(Image)*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x661 )
+	{
+		Image* AverageImages(const(Image)*, ExceptionInfo*);
+	}
+
 	Image* ExtractSubimageFromImage(Image*, const(Image)*, ExceptionInfo*);
 	Image* GetImageFromMagickRegistry(const(char)*, ssize_t* id, ExceptionInfo*);
 	Image* GetImageList(const(Image)*, const ssize_t, ExceptionInfo*);
 	Image* GetNextImage(const(Image)*);
 	Image* GetPreviousImage(const(Image)*);
 	Image* FlattenImages(Image*, ExceptionInfo*);
-	Image* MaximumImages(const(Image)*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x661 )
+	{
+		Image* MaximumImages(const(Image)*, ExceptionInfo*);
+	}
 
 	static if ( MagickLibVersion >= 0x669 )
 	{
@@ -90,10 +99,18 @@ deprecated extern(C)
 		Image* ModeImage(const(Image)*, const double, ExceptionInfo*);
 	}
 
-	Image* MinimumImages(const(Image)*, ExceptionInfo*);
+	static if ( MagickLibVersion >= 0x661 )
+	{
+		Image* MinimumImages(const(Image)*, ExceptionInfo*);
+	}
+
 	Image* MosaicImages(Image*, ExceptionInfo*);
 	Image* PopImageList(Image**);
-	Image* RecolorImage(const(Image)*, const size_t, const(double)*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x661 )
+	{
+		Image* RecolorImage(const(Image)*, const size_t, const(double)*, ExceptionInfo*);
+	}
 
 	static if ( MagickLibVersion >= 0x669 )
 	{
