@@ -4,7 +4,28 @@ import core.stdc.config;
 
 extern(C)
 {
-	version(MagickCore_663)
+	version(MagickCore_660)
+	{
+		/// Defines the version of ImageMagick where these headers are based on.
+		enum MagickLibVersion = 0x660;
+		///ditto
+		enum MagickLibVersionText = "6.6.0";
+	}
+	else version(MagickCore_661)
+	{
+		/// Defines the version of ImageMagick where these headers are based on.
+		enum MagickLibVersion = 0x661;
+		///ditto
+		enum MagickLibVersionText = "6.6.1";
+	}
+	else version(MagickCore_662)
+	{
+		/// Defines the version of ImageMagick where these headers are based on.
+		enum MagickLibVersion = 0x662;
+		///ditto
+		enum MagickLibVersionText = "6.6.2";
+	}
+	else version(MagickCore_663)
 	{
 		/// Defines the version of ImageMagick where these headers are based on.
 		enum MagickLibVersion = 0x663;

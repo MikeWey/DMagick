@@ -319,8 +319,11 @@ extern(C)
 		MagickSizeType
 			extent;
 
-		MagickBooleanType
-			ping;
+		static if ( MagickLibVersion >= 0x662 )
+		{
+			MagickBooleanType
+				ping;
+		}
 
 		static if ( MagickLibVersion >= 0x670 )
 		{
@@ -496,6 +499,11 @@ extern(C)
 	ImageInfo* CloneImageInfo(const(ImageInfo)*);
 	ImageInfo* DestroyImageInfo(ImageInfo*);
 
+	static if (MagickLibVersion < 0x662)
+	{
+		MagickBooleanType AcquireImageColormap(Image*, const size_t);
+	}
+
 	MagickBooleanType ClipImage(Image*);
 	MagickBooleanType ClipImagePath(Image*, const(char)*, const MagickBooleanType);
 	MagickBooleanType GetImageAlphaChannel(const(Image)*);
@@ -510,6 +518,12 @@ extern(C)
 	MagickBooleanType SetImageAlphaChannel(Image*, const AlphaChannelType);
 	MagickBooleanType SetImageBackgroundColor(Image*);
 	MagickBooleanType SetImageClipMask(Image*, const(Image)*);
+
+	static if (MagickLibVersion >= 0x662)
+	{
+		MagickBooleanType SetImageColor(Image*, const(MagickPixelPacket)*);
+	}
+
 	MagickBooleanType SetImageColor(Image*, const(MagickPixelPacket)*);
 	MagickBooleanType SetImageExtent(Image*, const size_t, const size_t);
 	MagickBooleanType SetImageInfo(ImageInfo*, const uint, ExceptionInfo*);

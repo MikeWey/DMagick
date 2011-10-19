@@ -4,6 +4,7 @@ import dmagick.c.composite;
 import dmagick.c.geometry;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.pixel;
 import dmagick.c.type;
 
@@ -34,11 +35,23 @@ extern(C)
 		LineThroughDecoration
 	}
 
-	enum DirectionType
+	static if (MagickLibVersion >= 0x662)
 	{
-		UndefinedDirection,
-		RightToLeftDirection,
-		LeftToRightDirection
+		enum DirectionType
+		{
+			UndefinedDirection,
+			RightToLeftDirection,
+			LeftToRightDirection
+		}
+	}
+	else
+	{
+		enum DirectionType
+		{
+			UndefinedDirection,
+			LeftToRightDirection,
+			RightToLeftDirection
+		}
 	}
 
 	enum FillRule
@@ -310,8 +323,16 @@ extern(C)
 			interword_spacing,
 			interline_spacing;
 
-		DirectionType
-			direction;
+		static if (MagickLibVersion >= 0x662)
+		{
+			DirectionType
+				direction;
+		}
+		else
+		{
+			double
+				direction;
+		}
 	}
 
 	struct PrimitiveInfo
