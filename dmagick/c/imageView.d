@@ -47,7 +47,7 @@ extern(C)
 
 	void SetImageViewDescription(ImageView*, const(char)*);
 
-	static if ( MagickLibVersion >= 0x655 )
+	static if ( MagickLibVersion >= 0x665 )
 	{
 		void SetImageViewThreads(ImageView*, const size_t);
 	}

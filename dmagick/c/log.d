@@ -5,32 +5,62 @@ import core.vararg;
 
 import dmagick.c.exception;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
-	enum LogEventType
+	static if (MagickLibVersion >= 0x663)
 	{
-		UndefinedEvents,
-		NoEvents = 0x00000,
-		TraceEvent = 0x00001,
-		AnnotateEvent = 0x00002,
-		BlobEvent = 0x00004,
-		CacheEvent = 0x00008,
-		CoderEvent = 0x00010,
-		ConfigureEvent = 0x00020,
-		DeprecateEvent = 0x00040,
-		DrawEvent = 0x00080,
-		ExceptionEvent = 0x00100,
-		ImageEvent = 0x00200,
-		LocaleEvent = 0x00400,
-		ModuleEvent = 0x00800,
-		PolicyEvent = 0x01000,
-		ResourceEvent = 0x02000,
-		TransformEvent = 0x04000,
-		UserEvent = 0x09000,
-		WandEvent = 0x10000,
-		X11Event = 0x20000,
-		AllEvents = 0x7fffffff
+		enum LogEventType
+		{
+			UndefinedEvents,
+			NoEvents = 0x00000,
+			TraceEvent = 0x00001,
+			AnnotateEvent = 0x00002,
+			BlobEvent = 0x00004,
+			CacheEvent = 0x00008,
+			CoderEvent = 0x00010,
+			ConfigureEvent = 0x00020,
+			DeprecateEvent = 0x00040,
+			DrawEvent = 0x00080,
+			ExceptionEvent = 0x00100,
+			ImageEvent = 0x00200,
+			LocaleEvent = 0x00400,
+			ModuleEvent = 0x00800,
+			PolicyEvent = 0x01000,
+			ResourceEvent = 0x02000,
+			TransformEvent = 0x04000,
+			UserEvent = 0x09000,
+			WandEvent = 0x10000,
+			X11Event = 0x20000,
+			AllEvents = 0x7fffffff
+		}
+	}
+	else
+	{
+		enum LogEventType
+		{
+			UndefinedEvents,
+			NoEvents = 0x00000,
+			TraceEvent = 0x00001,
+			AnnotateEvent = 0x00002,
+			BlobEvent = 0x00004,
+			CacheEvent = 0x00008,
+			CoderEvent = 0x00010,
+			ConfigureEvent = 0x00020,
+			DeprecateEvent = 0x00040,
+			DrawEvent = 0x00080,
+			ExceptionEvent = 0x00100,
+			LocaleEvent = 0x00200,
+			ModuleEvent = 0x00400,
+			PolicyEvent = 0x00800,
+			ResourceEvent = 0x01000,
+			TransformEvent = 0x02000,
+			UserEvent = 0x04000,
+			WandEvent = 0x08000,
+			X11Event = 0x10000,
+			AllEvents = 0x7fffffff
+		}
 	}
 
 	struct LogInfo {}

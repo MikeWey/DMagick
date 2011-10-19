@@ -52,5 +52,9 @@ extern(C)
 	void ChopPathComponents(char*, const size_t);
 	void ExpandFilename(char*);
 	void GetPathComponent(const(char)*, PathType, char*);
-	void MagickDelay(const MagickSizeType);
+
+	static if ( MagickLibVersion >= 0x663 )
+	{
+		void MagickDelay(const MagickSizeType);
+	}
 }

@@ -19,7 +19,14 @@ extern(C)
 			GaussianKernel,     /* Convolution Kernels, Gaussian Based */
 			DoGKernel,
 			LoGKernel,
-			BlurKernel,
+			BlurKernel,";
+
+			static if ( MagickLibVersion < 0x663 )
+			{
+				info ~= "DOBKernel,";
+			}
+
+			info ~= "
 			CometKernel,
 			LaplacianKernel,    /* Convolution Kernels, by Name */
 			SobelKernel,
@@ -44,11 +51,27 @@ extern(C)
 			RingKernel,
 			PeaksKernel,        /* Hit And Miss Kernels */
 			EdgesKernel,
-			CornersKernel,
-			ThinDiagonalsKernel,
+			CornersKernel,";
+
+			static if ( MagickLibVersion < 0x663 )
+			{
+				info ~= "RidgesKernel";
+			}
+			static if ( MagickLibVersion >= 0x663 )
+			{
+				info ~= "ThinDiagonalsKernel,";
+			}
+
+			info ~= "
 			LineEndsKernel,
-			LineJunctionsKernel,
-			RidgesKernel,
+			LineJunctionsKernel,";
+
+			static if ( MagickLibVersion >= 0x663 )
+			{
+				info ~= "RidgesKernel,";
+			}
+
+			info ~= "
 			ConvexHullKernel,
 			SkeletonKernel,
 			ChebyshevKernel,    /* Distance Measuring Kernels */

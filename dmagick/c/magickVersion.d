@@ -1,5 +1,7 @@
 module dmagick.c.magickVersion;
 
+import core.stdc.config;
+
 extern(C)
 {
 	version(MagickCore_663)
@@ -78,6 +80,15 @@ extern(C)
 		enum MagickLibVersion = 0x673;
 		///ditto
 		enum MagickLibVersionText = "6.7.3";
+	}
+
+	/*
+	 * With ImageMagick 6.6.3 long and unsinged long were changed to
+	 * ssize_t and size_t. This is only a problem for 64bits windows.
+	 */
+	static if (MagickLibVersion < 0x663 && c_ulong.sizeof != size_t.sizeof)
+	{
+		static assert(0, "Only ImageMagick version 6.6.3 and up are supported on your platform");
 	}
 
 	char* GetMagickHomeURL();
