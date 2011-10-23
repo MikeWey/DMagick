@@ -24,6 +24,7 @@ import dmagick.c.quantum;
  */
 class ColorYUV : Color
 {
+	/** */
 	this()
 	{
 		super();

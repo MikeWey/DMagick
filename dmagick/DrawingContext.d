@@ -24,6 +24,16 @@ import dmagick.c.draw;
 import dmagick.c.geometry;
 import dmagick.c.type;
 
+private alias dmagick.c.draw.AlignType AlignType;
+private alias dmagick.c.draw.ClipPathUnits ClipPathUnits;
+private alias dmagick.c.draw.DecorationType DecorationType;
+private alias dmagick.c.draw.FillRule FillRule;
+private alias dmagick.c.draw.LineCap LineCap;
+private alias dmagick.c.draw.LineJoin LineJoin;
+private alias dmagick.c.draw.PaintMethod PaintMethod;
+private alias dmagick.c.type.StretchType StretchType;
+private alias dmagick.c.type.StyleType StyleType;
+
 alias ptrdiff_t ssize_t;
 
 /**
@@ -898,7 +908,7 @@ class DrawingContext
 	}
 
 	/**
-	 * Generate to operations for the profide pattern.
+	 * Generate to operations to define the pattern.
 	 */
 	private string definePattern(size_t x, size_t y, size_t width, size_t height, void delegate(DrawingContext path) pattern)
 	{

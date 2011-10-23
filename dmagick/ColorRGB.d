@@ -16,6 +16,7 @@ import dmagick.c.quantum;
  */
 class ColorRGB : Color
 {
+	/** */
 	this()
 	{
 		super();

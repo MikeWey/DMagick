@@ -31,6 +31,8 @@ import dmagick.c.montage;
 import dmagick.c.statistic;
 import dmagick.c.quantize;
 
+public alias dmagick.c.layer.ImageLayerMethod ImageLayerMethod;
+
 alias ptrdiff_t ssize_t;
 
 /**

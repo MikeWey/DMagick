@@ -23,6 +23,7 @@ import dmagick.c.quantum;
  */
 class ColorHSL : Color
 {
+	/** */
 	this()
 	{
 		super();

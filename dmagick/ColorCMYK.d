@@ -25,6 +25,7 @@ import dmagick.c.quantum;
  */
 class ColorCMYK : Color
 {
+	/** */
 	this()
 	{
 		super();

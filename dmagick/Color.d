@@ -74,7 +74,7 @@ class Color
 	 * Create a Color and set the internal pointer to this PixelPacket.
 	 * We can use this to change pixels in an image through Color.
 	 */
-	this(PixelPacket* packet)
+	package this(PixelPacket* packet)
 	{
 		this.packet = packet;
 	}
@@ -92,6 +92,7 @@ class Color
 		this.packet.opacity = packet.opacity;
 	}
 
+	/** */
 	override bool opEquals(Object obj)
 	{
 		Color color = cast(Color)obj;
@@ -102,6 +103,9 @@ class Color
 		return pixelPacket == color.pixelPacket;
 	}
 
+	/**
+	 * Returns the value as a hex string.
+	 */
 	override string toString()
 	{
 		static if ( MagickQuantumDepth == 8 )

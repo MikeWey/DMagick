@@ -16,7 +16,7 @@ import dmagick.c.quantum;
  */
 class ColorGray : Color
 {
-	///
+	/** */
 	this()
 	{
 		super();

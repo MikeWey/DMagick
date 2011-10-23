@@ -106,14 +106,6 @@ struct Geometry
 		assert( geo.width == 595 && geo.height == 842);
 	}
 
-	this(RectangleInfo rectangle)
-	{
-		this.width = rectangle.width;
-		this.height = rectangle.height;
-		this.xOffset = rectangle.x;
-		this.yOffset = rectangle.y;
-	}
-
 	/**
 	 * Initialize with width heigt and offsets.
 	 */
@@ -123,6 +115,15 @@ struct Geometry
 		this.height  = height;
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
+	}
+
+	/** */
+	package this(RectangleInfo rectangle)
+	{
+		this.width = rectangle.width;
+		this.height = rectangle.height;
+		this.xOffset = rectangle.x;
+		this.yOffset = rectangle.y;
 	}
 
 	/**
@@ -179,7 +180,8 @@ struct Geometry
 		assert(absolute.height == 50);
 	}
 
-	RectangleInfo rectangleInfo()
+	/** */
+	package RectangleInfo rectangleInfo()
 	{
 		RectangleInfo info;
 
@@ -191,6 +193,7 @@ struct Geometry
 		return info;
 	}
 
+	/** */
 	size_t opCmp(ref const Geometry geometry)
 	{
 		return width*height - geometry.width*geometry.height;
