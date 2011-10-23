@@ -21,7 +21,7 @@ endif
 
 ifeq ("$(DC)","gdc")
     DCFLAGS=-O2
-    LINKERFLAG=-Xlinker
+    LINKERFLAG=-Xlinker 
     UNITTESTFLAG=-funittest
     DDOCFLAGS=-fdoc-file=$@
     output=-o $@
