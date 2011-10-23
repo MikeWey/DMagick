@@ -85,7 +85,7 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 #######################################################################
 
 /tmp/stubmain.d:
-	echo "void main(){}" > $@)
+	echo "void main(){}" > $@
 
 unittest: /tmp/stubmain.d $(SOURCES_DMAGICK)
 	$(DC) $(DCFLAGS) $(UNITTESTFLAG) $(LINKERFLAG)-lMagickCore $^ $(output)

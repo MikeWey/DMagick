@@ -987,7 +987,7 @@ class DrawingContext
 			else
 				filename ~= ".png";
 		}
-		while ( filename.exists )
+		while ( filename.exists );
 
 		image.write(filename);
 

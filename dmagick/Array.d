@@ -300,7 +300,7 @@ Image[] optimizePlusLayers(Image[] images)
  * and fileSize attributes are valid after invoking ping.
  * The image data is not valid after calling ping.
  */
-void ping(string filename)
+Image[] ping(string filename)
 {
 	Options options = new Options();
 	options.filename = filename;
@@ -311,13 +311,13 @@ void ping(string filename)
 }
 
 ///ditto
-void ping(void[] blob)
+Image[] ping(void[] blob)
 {
 	return ping(blob, new Options());
 }
 
 ///ditto
-void ping(void[] blob, Geometry size)
+Image[] ping(void[] blob, Geometry size)
 {
 	Options options = new Options();
 	options.size = size;
@@ -326,7 +326,7 @@ void ping(void[] blob, Geometry size)
 }
 
 ///ditto
-void ping(void[] blob, Geometry size, size_t depth)
+Image[] ping(void[] blob, Geometry size, size_t depth)
 {
 	Options options = new Options();
 	options.size = size;
@@ -336,7 +336,7 @@ void ping(void[] blob, Geometry size, size_t depth)
 }
 
 ///ditto
-void ping(void[] blob, Geometry size, size_t depth, string magick)
+Image[] ping(void[] blob, Geometry size, size_t depth, string magick)
 {
 	Options options = new Options();
 	options.size = size;
@@ -349,7 +349,7 @@ void ping(void[] blob, Geometry size, size_t depth, string magick)
 }
 
 ///ditto
-void ping(void[] blob, Geometry size, string magick)
+Image[] ping(void[] blob, Geometry size, string magick)
 {
 	Options options = new Options();
 	options.size = size;
@@ -636,7 +636,7 @@ private Image[] imageListToArray(MagickCoreImage* imageList)
 
 		imageList = imageList.next;
 	}
-	while ( imageList !is null )
+	while ( imageList !is null );
 
 	unlinkImages(images);
 
