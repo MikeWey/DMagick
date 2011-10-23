@@ -45,8 +45,8 @@ endif
 AR=ar
 RANLIB=ranlib
 
-QUANTUMDEPTH = $(lastword $(shell MagickCore-config --version))
-MAGICKVERSION = $(subst .,,$(firstword $(shell MagickCore-config --version)))
+QUANTUMDEPTH = $(word 5,$(shell convert --version))
+MAGICKVERSION = $(firstword $(subst -, ,$(subst .,,$(word 3,$(shell convert --version)))))
 
 ifneq ("$(QUANTUMDEPTH)","Q16")
     VERSIONS+= -version=$(subst Q,Quantum,$(QUANTUMDEPTH))
