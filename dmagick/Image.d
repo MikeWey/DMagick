@@ -25,6 +25,35 @@ import dmagick.Utils;
 //Import all translated c headers.
 import dmagick.c.MagickCore;
 
+public alias dmagick.c.geometry.AffineMatrix AffineMatrix;
+public alias dmagick.c.image.AlphaChannelType AlphaChannelType;
+public alias dmagick.c.magickType.ChannelType ChannelType;
+public alias dmagick.c.image.ChromaticityInfo ChromaticityInfo;
+public alias dmagick.c.magickType.ClassType ClassType;
+public alias dmagick.c.colorspace.ColorspaceType ColorspaceType;
+public alias dmagick.c.composite.CompositeOperator CompositeOperator;
+public alias dmagick.c.compress.CompressionType CompressionType;
+public alias dmagick.c.layer.DisposeType DisposeType;
+public alias dmagick.c.distort.DistortImageMethod DistortImageMethod;
+public alias dmagick.c.quantum.EndianType EndianType;
+public alias dmagick.c.resample.FilterTypes FilterTypes;
+public alias dmagick.c.geometry.GravityType GravityType;
+public alias dmagick.c.image.ImageType ImageType;
+public alias dmagick.c.image.InterlaceType InterlaceType;
+public alias dmagick.c.pixel.InterpolatePixelMethod InterpolatePixelMethod;
+public alias dmagick.c.statistic.MagickEvaluateOperator MagickEvaluateOperator;
+public alias dmagick.c.statistic.MagickFunction MagickFunction;
+public alias dmagick.c.fx.NoiseType NoiseType;
+public alias dmagick.c.image.OrientationType OrientationType;
+public alias dmagick.c.effect.PreviewType PreviewType;
+public alias dmagick.c.magickType.Quantum Quantum;
+public alias dmagick.c.profile.RenderingIntent RenderingIntent;
+public alias dmagick.c.image.ResolutionType ResolutionType;
+public alias dmagick.c.distort.SparseColorMethod SparseColorMethod;
+public alias dmagick.c.effect.StatisticType StatisticType;
+public alias dmagick.c.constitute.StorageType StorageType;
+public alias dmagick.c.cacheView.VirtualPixelMethod VirtualPixelMethod;
+
 alias ptrdiff_t ssize_t;
 
 /**
@@ -4197,5 +4226,4 @@ version (Windows)
 			MagickCoreTerminus();
 	}
 }
-
 

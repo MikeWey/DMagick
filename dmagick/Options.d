@@ -33,6 +33,16 @@ import dmagick.c.quantize;
 import dmagick.c.quantum;
 import dmagick.c.type;
 
+//These symbols are publicly imported by dmagick.Image.
+private alias dmagick.c.geometry.AffineMatrix AffineMatrix;
+private alias dmagick.c.colorspace.ColorspaceType ColorspaceType;
+private alias dmagick.c.compress.CompressionType CompressionType;
+private alias dmagick.c.quantum.EndianType EndianType;
+private alias dmagick.c.image.ImageType ImageType;
+private alias dmagick.c.image.InterlaceType InterlaceType;
+private alias dmagick.c.image.ResolutionType ResolutionType;
+private alias dmagick.c.cacheView.VirtualPixelMethod VirtualPixelMethod;
+
 /**
  * A class that wraps ImageInfo, DrawInfo and QuantizeInfo
  */

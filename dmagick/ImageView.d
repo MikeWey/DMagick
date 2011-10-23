@@ -25,6 +25,9 @@ import dmagick.c.magickType;
 import dmagick.c.memory;
 import dmagick.c.pixel;
 
+//These symbols are publicly imported by dmagick.Image.
+private alias dmagick.c.magickType.Quantum Quantum;
+
 alias ptrdiff_t ssize_t;
 
 /**

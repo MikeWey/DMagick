@@ -14,9 +14,6 @@ import dmagick.DrawingContext;
 import dmagick.Geometry;
 import dmagick.Image;
 
-//TODO: Easier way to import symbols from the headers used by DMagick.
-import dmagick.c.geometry;
-
 void main()
 {
 	int percentage = 95;
