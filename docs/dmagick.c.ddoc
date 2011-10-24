@@ -2,3 +2,6 @@ CSS = ../style.css
 
 NAVLINK  = $(LINK2 ../$0.html, dmagick.$0)
 CNAVLINK = $(LINK2 $0.html,    dmagick.c.$0)
+
+XREF = $(LINK2 ../$0.html#$1, dmagick.$0.$1)
+CXREF = $(LINK2 $0.html#$1, dmagick.c.$0.$1)

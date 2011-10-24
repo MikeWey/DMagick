@@ -25,33 +25,63 @@ import dmagick.Utils;
 //Import all translated c headers.
 import dmagick.c.MagickCore;
 
+/// See_Also: $(CXREF geometry, _AffineMatrix)
 public alias dmagick.c.geometry.AffineMatrix AffineMatrix;
+/// See_Also: $(CXREF image, _AlphaChannelType)
 public alias dmagick.c.image.AlphaChannelType AlphaChannelType;
+/// See_Also: $(CXREF magickType, _ChannelType)
 public alias dmagick.c.magickType.ChannelType ChannelType;
+/// See_Also: $(CXREF image, _ChromaticityInfo)
 public alias dmagick.c.image.ChromaticityInfo ChromaticityInfo;
+/// See_Also: $(CXREF magickType, _ClassType)
 public alias dmagick.c.magickType.ClassType ClassType;
+/// See_Also: $(CXREF colorspace, _ColorspaceType)
 public alias dmagick.c.colorspace.ColorspaceType ColorspaceType;
+/// See_Also: $(CXREF composite, _CompositeOperator)
 public alias dmagick.c.composite.CompositeOperator CompositeOperator;
+/// See_Also: $(CXREF compress, _CompressionType)
 public alias dmagick.c.compress.CompressionType CompressionType;
+/// See_Also: $(CXREF layer, _DisposeType)
 public alias dmagick.c.layer.DisposeType DisposeType;
+/// See_Also: $(CXREF distort, _DistortImageMethod)
 public alias dmagick.c.distort.DistortImageMethod DistortImageMethod;
+/// See_Also: $(CXREF quantum, _EndianType)
 public alias dmagick.c.quantum.EndianType EndianType;
+/// See_Also: $(CXREF resample, _FilterTypes)
 public alias dmagick.c.resample.FilterTypes FilterTypes;
+/// See_Also: $(CXREF geometry, _GravityType)
 public alias dmagick.c.geometry.GravityType GravityType;
+/// See_Also: $(CXREF image, _ImageType)
 public alias dmagick.c.image.ImageType ImageType;
+/// See_Also: $(CXREF image, _InterlaceType)
 public alias dmagick.c.image.InterlaceType InterlaceType;
+/// See_Also: $(CXREF pixel, _InterpolatePixelMethod)
 public alias dmagick.c.pixel.InterpolatePixelMethod InterpolatePixelMethod;
+/// See_Also: $(CXREF statistic, _MagickEvaluateOperator)
 public alias dmagick.c.statistic.MagickEvaluateOperator MagickEvaluateOperator;
+/// See_Also: $(CXREF statistic, _MagickFunction)
 public alias dmagick.c.statistic.MagickFunction MagickFunction;
+/// See_Also: $(CXREF fx, _NoiseType)
 public alias dmagick.c.fx.NoiseType NoiseType;
+/// See_Also: $(CXREF image, _OrientationType)
 public alias dmagick.c.image.OrientationType OrientationType;
+/// See_Also: $(CXREF effect, _PreviewType)
 public alias dmagick.c.effect.PreviewType PreviewType;
+/// See_Also: $(CXREF magickType, _Quantum)
 public alias dmagick.c.magickType.Quantum Quantum;
+/// See_Also: $(CXREF profile, _RenderingIntent)
 public alias dmagick.c.profile.RenderingIntent RenderingIntent;
+/// See_Also: $(CXREF image, _ResolutionType)
 public alias dmagick.c.image.ResolutionType ResolutionType;
+/// See_Also: $(CXREF distort, _SparseColorMethod)
 public alias dmagick.c.distort.SparseColorMethod SparseColorMethod;
+/// See_Also: $(CXREF effect, _StatisticType)
 public alias dmagick.c.effect.StatisticType StatisticType;
+/// See_Also: $(CXREF constitute, _StorageType)
 public alias dmagick.c.constitute.StorageType StorageType;
+/// See_Also: $(CXREF draw, _TypeMetric)
+public alias dmagick.c.draw.TypeMetric TypeMetric;
+/// See_Also: $(CXREF cacheView, _VirtualPixelMethod)
 public alias dmagick.c.cacheView.VirtualPixelMethod VirtualPixelMethod;
 
 alias ptrdiff_t ssize_t;

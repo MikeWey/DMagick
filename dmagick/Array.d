@@ -31,6 +31,7 @@ import dmagick.c.montage;
 import dmagick.c.statistic;
 import dmagick.c.quantize;
 
+/// See_Also: $(CXREF layer, _ImageLayerMethod)
 public alias dmagick.c.layer.ImageLayerMethod ImageLayerMethod;
 
 alias ptrdiff_t ssize_t;

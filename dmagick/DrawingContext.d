@@ -24,14 +24,23 @@ import dmagick.c.draw;
 import dmagick.c.geometry;
 import dmagick.c.type;
 
+/// See_Also: $(CXREF draw, _AlignType)
 private alias dmagick.c.draw.AlignType AlignType;
+/// See_Also: $(CXREF draw, _ClipPathUnits)
 private alias dmagick.c.draw.ClipPathUnits ClipPathUnits;
+/// See_Also: $(CXREF draw, _DecorationType)
 private alias dmagick.c.draw.DecorationType DecorationType;
+/// See_Also: $(CXREF draw, _FillRule)
 private alias dmagick.c.draw.FillRule FillRule;
+/// See_Also: $(CXREF draw, _LineCap)
 private alias dmagick.c.draw.LineCap LineCap;
+/// See_Also: $(CXREF draw, _LineJoin)
 private alias dmagick.c.draw.LineJoin LineJoin;
+/// See_Also: $(CXREF draw, _PaintMethod)
 private alias dmagick.c.draw.PaintMethod PaintMethod;
+/// See_Also: $(CXREF type, _StretchType)
 private alias dmagick.c.type.StretchType StretchType;
+/// See_Also: $(CXREF type, _StyleType)
 private alias dmagick.c.type.StyleType StyleType;
 
 alias ptrdiff_t ssize_t;

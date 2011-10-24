@@ -142,6 +142,9 @@ CSS = style.css
 NAVLINK  = $(LINK2 $0.html,   dmagick.$0)
 CNAVLINK = $(LINK2 c/$0.html, dmagick.c.$0)
 
+XREF = $(LINK2 $0.html#$1, dmagick.$0.$1)
+CXREF = $(LINK2 c/$1.html#$2, dmagick.c.$1.$2)
+
 COPYRIGHT = $(YEAR)
 
 DDOC_SUMMARY     = $(P $0)

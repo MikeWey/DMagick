@@ -33,7 +33,8 @@ import dmagick.c.quantize;
 import dmagick.c.quantum;
 import dmagick.c.type;
 
-private alias dmagick.c.quantize.DitherMethod DitherMethod;
+/// See_Also: $(CXREF quantize, _DitherMethod)
+public alias dmagick.c.quantize.DitherMethod DitherMethod;
 
 //These symbols are publicly imported by dmagick.Image.
 private alias dmagick.c.geometry.AffineMatrix AffineMatrix;
