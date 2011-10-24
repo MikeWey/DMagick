@@ -142,7 +142,7 @@ CSS = style.css
 NAVLINK  = $(LINK2 $0.html,   dmagick.$0)
 CNAVLINK = $(LINK2 c/$0.html, dmagick.c.$0)
 
-XREF = $(LINK2 $0.html#$1, dmagick.$0.$1)
+XREF = $(LINK2 $1.html#$2, dmagick.$1.$2)
 CXREF = $(LINK2 c/$1.html#$2, dmagick.c.$1.$2)
 
 COPYRIGHT = $(YEAR)
@@ -192,3 +192,5 @@ ROW     = <tr>$(TD $1, $+)</tr>
 
 LIST = $(UL $(LI $1, $+))
 LI   = <li>$1</li>$(LI $+)
+
+COMMA = $0

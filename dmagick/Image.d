@@ -1545,22 +1545,22 @@ class Image
 	 *     function = The MagickFunction to use.
 	 *     params   = 
 	 *         An array of values to be used by the function.
-	 *         $(UL $(LI $(B PolynomialFunction)
+	 *         $(LIST $(COMMA $(B PolynomialFunction:)
 	 *             The Polynomial function takes an arbitrary number of
 	 *             parameters, these being the coefficients of a polynomial,
 	 *             in decreasing order of degree. That is, entering
 	 *             [aₙ, aₙ₋₁, ... a₁, a₀] will invoke a polynomial function
 	 *             given by: aₙ uⁿ + aₙ₋₁ uⁿ⁻¹ + ··· a₁ u + a₀, where where
-	 *             u is pixel's original normalized channel value.)
-	 *         $(LI $(B SinusoidFunction)
+	 *             u is pixel's original normalized channel value.),
+	 *         $(COMMA $(B SinusoidFunction:)
 	 *             These values are given as one to four parameters, as
 	 *             follows, [freq, phase, amp, bias] if omitted the default
-	 *             values will be used: [1.0, 0.0, 0.5, 0.5].)
-	 *         $(LI $(B ArcsinFunction)
+	 *             values will be used: [1.0, 0.0, 0.5, 0.5].),
+	 *         $(COMMA $(B ArcsinFunction:)
 	 *             These values are given as one to four parameters, as
 	 *             follows, [width, center, range, bias] if omitted the
-	 *             default values will be used: [1.0, 0.5, 1.0, 0.5].)
-	 *         $(LI $(B ArctanFunction)
+	 *             default values will be used: [1.0, 0.5, 1.0, 0.5].),
+	 *         $(COMMA $(B ArctanFunction:)
 	 *             These values are given as one to four parameters, as
 	 *             follows, [slope, center, range, bias] if omitted the
 	 *             default values will be used: [1.0, 0.5, 1.0, 0.5].))
@@ -1682,10 +1682,10 @@ class Image
 	 *     channel   = The channels to aply the CLUT to.
 	 * 
 	 * See_Also:
-	 *     clut which provides color value replacement of the individual
-	 *     color channels, usally involving a simplier gray-scale image.
-	 *     E.g: gray-scale to color replacement, or modification by a
-	 *     histogram mapping.
+	 *     $(XREF Image, clut) which provides color value replacement of
+	 *     the individual color channels, usally involving a simplier
+	 *     gray-scale image. E.g: gray-scale to color replacement, or
+	 *     modification by a histogram mapping.
 	 */
 	void haldClut(Image haldImage, ChannelType channel = ChannelType.DefaultChannels)
 	{
@@ -2843,7 +2843,7 @@ class Image
 	 * each pixel compared to threshold. The result is a high-contrast,
 	 * two color image.
 	 * 
-	 * See_Also: bilevel.
+	 * See_Also: $(XREF Image, bilevel).
 	 */
 	//TODO: deprecated ?
 	void threshold(Quantum value)
