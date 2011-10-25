@@ -44,31 +44,42 @@ extern(C)
 		AllValues = 0x7fffffff
 	}
 
+	/**
+	 * Specify positioning of an object (e.g. text, image) within a
+	 * bounding region (e.g. an image). Gravity provides a convenient way to
+	 * locate objects irrespective of the size of the bounding region, in
+	 * other words, you don't need to provide absolute coordinates in order
+	 * to position an object.
+	 * A common default for gravity is NorthWestGravity.
+	 */
 	enum GravityType
 	{
-		UndefinedGravity,
-		ForgetGravity    = 0,
-		NorthWestGravity = 1,
-		NorthGravity     = 2,
-		NorthEastGravity = 3,
-		WestGravity      = 4,
-		CenterGravity    = 5,
-		EastGravity      = 6,
-		SouthWestGravity = 7,
-		SouthGravity     = 8,
-		SouthEastGravity = 9,
-		StaticGravity    = 10
+		UndefinedGravity,      ///
+		ForgetGravity    = 0,  /// Don't use gravity.
+		NorthWestGravity = 1,  /// Position object at top-left of region.
+		NorthGravity     = 2,  /// Position object at top-center of region.
+		NorthEastGravity = 3,  /// Position object at top-right of region.
+		WestGravity      = 4,  /// Position object at left-center of region.
+		CenterGravity    = 5,  /// Position object at center of region.
+		EastGravity      = 6,  /// Position object at right-center of region.
+		SouthWestGravity = 7,  /// Position object at left-bottom of region.
+		SouthGravity     = 8,  /// Position object at bottom-center of region.
+		SouthEastGravity = 9,  /// Position object at bottom-right of region.
+		StaticGravity    = 10  ///
 	}
 
+	/**
+	 * An AffineMatrix object describes a coordinate transformation.
+	 */
 	struct AffineMatrix
 	{
 		double
-			sx,
-			rx,
-			ry,
-			sy,
-			tx,
-			ty;
+			sx,  /// The amount of scaling on the x-axis.
+			rx,  /// The amount of rotation on the x-axis, in radians.
+			ry,  /// The amount of rotation on the y-axis, in radians.
+			sy,  /// The amount of scaling on the y-axis.
+			tx,  /// The amount of translation on the x-axis, in pixels.
+			ty;  /// The amount of translation on the x-axis, in pixels.
 	}
 
 	struct GeometryInfo

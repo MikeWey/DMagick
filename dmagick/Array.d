@@ -268,9 +268,12 @@ Image[] morph(Image[] images, size_t frames)
 }
 
 /**
- * compares each image the GIF disposed forms of the previous image in the
- * sequence.  From this it attempts to select the smallest cropped image to
- * replace each frame, while preserving the results of the GIF animation.
+ * For each image compares the GIF disposed forms of the previous image in
+ * the sequence. From this it attempts to select the smallest cropped image
+ * to replace each frame, while preserving the results of the GIF animation.
+ * 
+ * See_Also: $(LINK2 http://www.imagemagick.org/Usage/anim_opt/,
+ *     Examples of ImageMagick Usage)
  */
 Image[] optimizeLayers(Image[] images)
 {
