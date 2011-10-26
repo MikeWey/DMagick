@@ -7,12 +7,15 @@ import dmagick.c.magickVersion;
 
 extern(C)
 {
+	/**
+	 * Determines the dithering method to use.
+	 */
 	enum DitherMethod
 	{
-		UndefinedDitherMethod,
-		NoDitherMethod,
-		RiemersmaDitherMethod,
-		FloydSteinbergDitherMethod
+		UndefinedDitherMethod,      ///
+		NoDitherMethod,             /// ditto
+		RiemersmaDitherMethod,      /// ditto
+		FloydSteinbergDitherMethod  /// ditto
 	}
 
 	struct QuantizeInfo

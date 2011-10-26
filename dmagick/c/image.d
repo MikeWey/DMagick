@@ -27,18 +27,83 @@ alias ptrdiff_t ssize_t;
 
 extern(C)
 {
+	/**
+	 * Used to set a flag on an image indicating whether or not to use
+	 * existing alpha channel data, to create an alpha channel, or to
+	 * perform other operations on the alpha channel.
+	 */
 	enum AlphaChannelType
 	{
+		/** */
 		UndefinedAlphaChannel,
+
+		/**
+		 * Enable the image's transparency channel. Note normally
+		 * SetAlphaChannel should be used instead of this, unless you
+		 * specifically need to preserve existing (but specifically turned
+		 * Off) transparency channel.
+		 */
 		ActivateAlphaChannel,
+
+		/**
+		 * Set any fully-transparent pixel to the background color, while
+		 * leaving it fully-transparent. This can make some image file
+		 * formats, such as PNG, smaller as the RGB values of transparent
+		 * pixels are more uniform, and thus can compress better.
+		 */
 		BackgroundAlphaChannel,
+
+		/**
+		 * Turns On the alpha/matte channel, then copies the gray-scale
+		 * intensity of the image, into the alpha channel, converting a
+		 * gray-scale mask into a transparent shaped mask ready to be
+		 * colored appropriately. The color channels are not modified.
+		 */
 		CopyAlphaChannel,
+
+		/**
+		 * Disables the image's transparency channel. Does not delete or
+		 * change the existing data, just turns off the use of that data.
+		 */
 		DeactivateAlphaChannel,
+
+		/**
+		 * Copies the alpha channel values into all the color channels and
+		 * turns 'Off' the the image's transparency, so as to generate a
+		 * gray-scale mask of the image's shape. The alpha channel data is
+		 * left intact just deactivated. This is the inverse of
+		 * CopyAlphaChannel.
+		 */
 		ExtractAlphaChannel,
+
+		/**
+		 * Enables the alpha/matte channel and forces it to be fully opaque.
+		 */
 		OpaqueAlphaChannel,
+
+		/** */
 		ResetAlphaChannel,
+
+		/**
+		 * Activates the alpha/matte channel. If it was previously turned
+		 * off then it also resets the channel to opaque. If the image
+		 * already had the alpha channel turned on, it will have no effect.
+		 */
 		SetAlphaChannel,
+
+		/**
+		 * As per CopyAlphaChannel but also colors the resulting shape mask
+		 * with the current background color. That is the RGB color channels
+		 * is replaced, with appropriate alpha shape.
+		 */
 		ShapeAlphaChannel,
+
+		/**
+		 * Activates the alpha/matte channel and forces it to be fully
+		 * transparent. This effectively creates a fully transparent image
+		 * the same size as the original and with all its original RGB data
+		 * still intact, but fully transparent.
+		 */
 		TransparentAlphaChannel
 	}
 
