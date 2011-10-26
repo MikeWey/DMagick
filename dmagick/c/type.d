@@ -7,28 +7,36 @@ import dmagick.c.magickType;
 
 extern(C)
 {
+	/**
+	 * This setting suggests a type of stretch that ImageMagick should try
+	 * to apply to the currently selected font family.
+	 */
 	enum StretchType
 	{
-		UndefinedStretch,
-		NormalStretch,
-		UltraCondensedStretch,
-		ExtraCondensedStretch,
-		CondensedStretch,
-		SemiCondensedStretch,
-		SemiExpandedStretch,
-		ExpandedStretch,
-		ExtraExpandedStretch,
-		UltraExpandedStretch,
-		AnyStretch
+		UndefinedStretch,       ///
+		NormalStretch,          /// ditto
+		UltraCondensedStretch,  /// ditto
+		ExtraCondensedStretch,  /// ditto
+		CondensedStretch,       /// ditto
+		SemiCondensedStretch,   /// ditto
+		SemiExpandedStretch,    /// ditto
+		ExpandedStretch,        /// ditto
+		ExtraExpandedStretch,   /// ditto
+		UltraExpandedStretch,   /// ditto
+		AnyStretch              /// ditto
 	}
 
+	/**
+	 * This setting suggests a font style that ImageMagick should try to
+	 * apply to the currently selected font family.
+	 */
 	enum StyleType
 	{
-		UndefinedStyle,
-		NormalStyle,
-		ItalicStyle,
-		ObliqueStyle,
-		AnyStyle
+		UndefinedStyle,  ///
+		NormalStyle,     /// ditto
+		ItalicStyle,     /// ditto
+		ObliqueStyle,    /// ditto
+		AnyStyle         /// ditto
 	}
 
 	struct TypeInfo

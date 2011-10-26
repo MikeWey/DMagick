@@ -10,38 +10,68 @@ import dmagick.c.type;
 
 extern(C)
 {
+	/**
+	 * Specify text alignment.
+	 */
 	enum AlignType
 	{
-		UndefinedAlign,
-		LeftAlign,
-		CenterAlign,
-		RightAlign
+		UndefinedAlign, /// No alignment specified. Equivalent to LeftAlign.
+		LeftAlign,      /// Align the leftmost part of the text to the starting point.
+		CenterAlign,    /// Center the text around the starting point.
+		RightAlign      /// Align the rightmost part of the text to the starting point.
 	}
 
+	/**
+	 * Defines the coordinate system for the contents of a clip path.
+	 */
 	enum ClipPathUnits
 	{
+		/** */
 		UndefinedPathUnits,
+
+		/**
+		 * The contents of the clipPath represent values in the current
+		 * user coordinate system.
+		 */
 		UserSpace,
+
+		/**
+		 * The contents of the clipPath represent values in the current
+		 * user coordinate system in place at the time when the clipPath
+		 * element is referenced.
+		 */
 		UserSpaceOnUse,
+
+		/**
+		 * The user coordinate system for the contents of the clipPath
+		 * element is established using the bounding box of the element to
+		 * which the clipping path is applied.
+		 */
 		ObjectBoundingBox
 	}
 
+	/**
+	 * Specify the text decoration.
+	 */
 	enum DecorationType
 	{
-		UndefinedDecoration,
-		NoDecoration,
-		UnderlineDecoration,
-		OverlineDecoration,
-		LineThroughDecoration
+		UndefinedDecoration,   ///
+		NoDecoration,          /// Don't decorate the text.
+		UnderlineDecoration,   /// Underline the text.
+		OverlineDecoration,    /// Overline the text.
+		LineThroughDecoration  /// Draw a horizontal line through the middle of the text.
 	}
 
 	static if (MagickLibVersion >= 0x662)
 	{
+		/**
+		 * Defines the text direction.
+		 */
 		enum DirectionType
 		{
-			UndefinedDirection,
-			RightToLeftDirection,
-			LeftToRightDirection
+			UndefinedDirection,    ///
+			RightToLeftDirection,  /// ditto
+			LeftToRightDirection   /// ditto
 		}
 	}
 	else
@@ -54,11 +84,34 @@ extern(C)
 		}
 	}
 
+	/**
+	 * FillRule indicates the algorithm which is to be used to determine
+	 * what parts of the canvas are included inside the shape.
+	 */
 	enum FillRule
 	{
+		/** */
 		UndefinedRule,
 
+		/**
+		 * This rule determines the "insideness" of a point on the canvas by
+		 * drawing a ray from that point to infinity in any direction and
+		 * counting the number of path segments from the given shape that
+		 * the ray crosses. If this number is odd, the point is inside; if
+		 * even, the point is outside.
+		 */
 		EvenOddRule,
+
+		/**
+		 * This rule determines the "insideness" of a point on the canvas by
+		 * drawing a ray from that point to infinity in any direction and
+		 * then examining the places where a segment of the shape crosses
+		 * the ray. Starting with a count of zero, add one each time a path
+		 * segment crosses the ray from left to right and subtract one each
+		 * time a path segment crosses the ray from right to left. After
+		 * counting the crossings, if the result is zero then the point is
+		 * outside the path. Otherwise, it is inside.
+		 */
 		NonZeroRule
 	}
 
@@ -69,29 +122,71 @@ extern(C)
 		RadialGradient
 	}
 
+	/**
+	 * Specifies the shape to be used at the end of open subpaths when they
+	 * are stroked.
+	 * 
+	 * See_Also: $(LINK2 http://www.w3.org/TR/SVG/painting.html#StrokeLinecapProperty,
+	 *     the 'stroke-linecap' property) in the Scalable Vector Graphics (SVG)
+	 *     1.1 Specification.
+	 */
 	enum LineCap
 	{
-		UndefinedCap,
-		ButtCap,
-		RoundCap,
-		SquareCap
+		UndefinedCap, ///
+		ButtCap,      /// ditto
+		RoundCap,     /// ditto
+		SquareCap     /// ditto
 	}
 
+	/**
+	 * Specifies the shape to be used at the corners of paths or basic
+	 * shapes when they are stroked.
+	 * 
+	 * See_Also: $(LINK2 http://www.w3.org/TR/SVG/painting.html#StrokeLinejoinProperty,
+	 *     the 'stroke-linejoin' property) in the Scalable Vector Graphics (SVG)
+	 *     1.1 Specification.
+	 */
 	enum LineJoin
 	{
-		UndefinedJoin,
-		MiterJoin,
-		RoundJoin,
-		BevelJoin
+		UndefinedJoin, ///
+		MiterJoin,     /// ditto
+		RoundJoin,     /// ditto
+		BevelJoin      /// ditto
 	}
 
+	/**
+	 * Specify how pixel colors are to be replaced in the image.
+	 */
 	enum PaintMethod
 	{
+		/** */
 		UndefinedMethod,
+
+		/**
+		 * Replace pixel color at point.
+		 */
 		PointMethod,
+
+		/**
+		 * Replace color for all image pixels matching color at point.
+		 */
 		ReplaceMethod,
+
+		/**
+		 * Replace color for pixels surrounding point until encountering
+		 * pixel that fails to match color at point.
+		 */
 		FloodfillMethod,
+
+		/**
+		 * Replace color for pixels surrounding point until encountering
+		 * pixels matching border color.
+		 */
 		FillToBorderMethod,
+
+		/**
+		 * Replace colors for all pixels in image with fill color.
+		 */
 		ResetMethod
 	}
 
