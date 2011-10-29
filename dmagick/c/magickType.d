@@ -65,58 +65,103 @@ extern (C)
 	enum MaxTextExtent = 4096;
 	enum OpaqueOpacity = 0;
 
-	mixin(
+	version(D_Ddoc)
 	{
-		string channels = "enum ChannelType
+		/**
+		 * Specify an image channel. A channel is a color component of a
+		 * pixel. In the RGB colorspace the channels are red, green, and
+		 * blue. There may also be an alpha (transparency/opacity) channel.
+		 * In the CMYK colorspace the channels area cyan, magenta, yellow,
+		 * and black. In the HSL colorspace the channels are hue, saturation,
+		 * and lightness. In the Gray colorspace the only channel is gray.
+		 */
+		enum ChannelType
 		{
 			UndefinedChannel,
-			RedChannel        = 0x0001,
-			GrayChannel       = 0x0001,
-			CyanChannel       = 0x0001,
-			GreenChannel      = 0x0002,
-			MagentaChannel    = 0x0002,
-			BlueChannel       = 0x0004,
-			YellowChannel     = 0x0004,
-			AlphaChannel      = 0x0008,
-			OpacityChannel    = 0x0008,
-			MatteChannel      = 0x0008,  // deprecated
-			BlackChannel      = 0x0020,
-			IndexChannel      = 0x0020,
-			CompositeChannels = 0x002F,";
+			RedChannel     = 0x0001,    ///
+			GrayChannel    = 0x0001,    ///
+			CyanChannel    = 0x0001,    ///
+			GreenChannel   = 0x0002,    ///
+			MagentaChannel = 0x0002,    ///
+			BlueChannel    = 0x0004,    ///
+			YellowChannel  = 0x0004,    ///
+			AlphaChannel   = 0x0008,    /// Same as OpacityChannel
+			OpacityChannel = 0x0008,    ///
+			MatteChannel   = 0x0008,    /// deprecated
+			BlackChannel   = 0x0020,    ///
+			IndexChannel   = 0x0020,    ///
+			CompositeChannels = 0x002F, ///
+			AllChannels    = 0x7ffffff, ///
 
-			static if ( MagickLibVersion < 0x670 )
-			{
-				channels ~= "AllChannels = 0x002F,";
-			}
-			else static if ( MagickLibVersion == 0x670 )
-			{
-				channels ~= "AllChannels       =   ~0UL,";
-			}
-			else static if ( MagickLibVersion == 0x671 )
-			{
-				channels ~= "AllChannels       =    ~0L,";
-			}
-			else
-			{
-				channels ~= "AllChannels       = 0x7FFFFFF,";
-			}
+			TrueAlphaChannel = 0x0040, /// extract actual alpha channel from opacity
+			RGBChannels      = 0x0080, /// set alpha from  grayscale mask in RGB
+			GrayChannels     = 0x0080, ///
+			SyncChannels     = 0x0100, /// channels should be modified equally
 
-			channels ~= "
-			TrueAlphaChannel = 0x0040, // extract actual alpha channel from opacity
-			RGBChannels      = 0x0080, // set alpha from  grayscale mask in RGB
-			GrayChannels     = 0x0080,
-			SyncChannels     = 0x0100, // channels should be modified equally
-			DefaultChannels  = ( (AllChannels | SyncChannels) &~ OpacityChannel)
-		}";
+			/**
+			 * Same as AllChannels, excluding OpacityChannel
+			 */
+			DefaultChannels  = ((AllChannels | SyncChannels) &~ OpacityChannel)
+		}
+	}
+	else
+	{
+		mixin(
+		{
+			string channels = "enum ChannelType
+			{
+				UndefinedChannel,
+				RedChannel        = 0x0001,
+				GrayChannel       = 0x0001,
+				CyanChannel       = 0x0001,
+				GreenChannel      = 0x0002,
+				MagentaChannel    = 0x0002,
+				BlueChannel       = 0x0004,
+				YellowChannel     = 0x0004,
+				AlphaChannel      = 0x0008,
+				OpacityChannel    = 0x0008,
+				MatteChannel      = 0x0008,  // deprecated
+				BlackChannel      = 0x0020,
+				IndexChannel      = 0x0020,
+				CompositeChannels = 0x002F,";
 
-		return channels;
-	}());
+				static if ( MagickLibVersion < 0x670 )
+				{
+					channels ~= "AllChannels = 0x002F,";
+				}
+				else static if ( MagickLibVersion == 0x670 )
+				{
+					channels ~= "AllChannels       =   ~0UL,";
+				}
+				else static if ( MagickLibVersion == 0x671 )
+				{
+					channels ~= "AllChannels       =    ~0L,";
+				}
+				else
+				{
+					channels ~= "AllChannels       = 0x7FFFFFF,";
+				}
 
+				channels ~= "
+				TrueAlphaChannel = 0x0040, // extract actual alpha channel from opacity
+				RGBChannels      = 0x0080, // set alpha from  grayscale mask in RGB
+				GrayChannels     = 0x0080,
+				SyncChannels     = 0x0100, // channels should be modified equally
+				DefaultChannels  = ( (AllChannels | SyncChannels) &~ OpacityChannel)
+			}";
+
+			return channels;
+		}());
+	}
+
+	/**
+	 * Specify the image storage class.
+	 */
 	enum ClassType
 	{
-		UndefinedClass,
-		DirectClass,
-		PseudoClass
+		UndefinedClass, /// No storage class has been specified.
+		DirectClass,    /// Image is composed of pixels which represent literal color values.
+		PseudoClass     /// Image is composed of pixels which specify an index in a color palette.
 	}
 
 	struct BlobInfo {}

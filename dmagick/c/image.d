@@ -107,60 +107,122 @@ extern(C)
 		TransparentAlphaChannel
 	}
 
+	/**
+	 * Indicate the type classification of the image.
+	 */
 	enum ImageType
 	{
-		UndefinedType,
-		BilevelType,
-		GrayscaleType,
-		GrayscaleMatteType,
-		PaletteType,
-		PaletteMatteType,
-		TrueColorType,
-		TrueColorMatteType,
-		ColorSeparationType,
-		ColorSeparationMatteType,
-		OptimizeType,
-		PaletteBilevelMatteType
+		UndefinedType,       /// No type has been specified.
+		BilevelType,         /// Monochrome image.
+		GrayscaleType,       /// Grayscale image.
+		GrayscaleMatteType,  /// Grayscale image with opacity.
+		PaletteType,         /// Indexed color (palette) image.
+		PaletteMatteType,    /// Indexed color (palette) image with opacity.
+		TrueColorType,       /// Truecolor image.
+		TrueColorMatteType,  /// Truecolor image with opacity.
+		ColorSeparationType, /// Cyan/Yellow/Magenta/Black (CYMK) image.
+		ColorSeparationMatteType, /// Cyan/Yellow/Magenta/Black (CYMK) image with opacity.
+		OptimizeType,        ///
+		PaletteBilevelMatteType   ///
 	}
 
+	/**
+	 * Specify the ordering of the red, green, and blue pixel information in
+	 * the image. Interlacing is usually used to make image information
+	 * available to the user faster by taking advantage of the space vs
+	 * time tradeoff. For example, interlacing allows images on the Web to
+	 * be recognizable sooner and satellite images to accumulate/render with
+	 * image resolution increasing over time. Use LineInterlace or
+	 * PlaneInterlace to create an interlaced GIF or progressive JPEG image.
+	 */
 	enum InterlaceType
 	{
+		/**
+		 * No interlace type has been specified.
+		 */
 		UndefinedInterlace,
+
+		/**
+		 * Don't interlace image (RGBRGBRGBRGBRGBRGB...).
+		 */
 		NoInterlace,
+
+		/**
+		 * Use scanline interlacing (RRR...GGG...BBB...RRR...GGG...BBB...).
+		 */
 		LineInterlace,
+
+		/**
+		 * Use plane interlacing (RRRRRR...GGGGGG...BBBBBB...).
+		 */
 		PlaneInterlace,
+
+		/**
+		 * Similar to plane interlacing except that the different planes are
+		 * saved to individual files (e.g. image.R, image.G, and image.B)
+		 */
 		PartitionInterlace,
+
+		/** */
 		GIFInterlace,
+
+		/** */
 		JPEGInterlace,
+
+		/** */
 		PNGInterlace
 	}
 
+	/**
+	 * Specify the orientation of the image pixels.
+	 */
 	enum OrientationType
 	{
+		/**
+		 * See_Also: $(LINK http://jpegclub.org/exif_orientation.html )
+		 */
 		UndefinedOrientation,
-		TopLeftOrientation,
-		TopRightOrientation,
-		BottomRightOrientation,
-		BottomLeftOrientation,
-		LeftTopOrientation,
-		RightTopOrientation,
-		RightBottomOrientation,
-		LeftBottomOrientation
+		TopLeftOrientation,      /// ditto
+		TopRightOrientation,     /// ditto
+		BottomRightOrientation,  /// ditto
+		BottomLeftOrientation,   /// ditto
+		LeftTopOrientation,      /// ditto
+		RightTopOrientation,     /// ditto
+		RightBottomOrientation,  /// ditto
+		LeftBottomOrientation    /// ditto
 	}
 
+	/**
+	 * By default, ImageMagick defines resolutions in pixels per inch.
+	 * ResolutionType provides a means to adjust this.
+	 */
 	enum ResolutionType
 	{
+		/**
+		 * No resolution has been specified.
+		 */
 		UndefinedResolution,
+
+		/**
+		 * Density specifications are specified in units
+		 * of pixels per inch (English units).
+		 */
 		PixelsPerInchResolution,
+
+		/**
+		 * Density specifications are specified in units
+		 * of pixels per centimeter (metric units).
+		 */
 		PixelsPerCentimeterResolution
 	}
 
+	/** */
 	struct PrimaryInfo
 	{
 		double
-			x,
-			y,
-			z;
+			x, /// X ordinate.
+			y, /// Y ordinate.
+			z; /// Z ordinate. This attribute is always ignored.
 	}
 
 	struct SegmentInfo
@@ -181,13 +243,16 @@ extern(C)
 		ImageTransmitType
 	}
 
+	/**
+	 * A Chromaticity object represents chromaticity values.
+	 */
 	struct ChromaticityInfo
 	{
 		PrimaryInfo
-			red_primary,
-			green_primary,
-			blue_primary,
-			white_point;
+			red_primary,   /// Red primary point (e.g. red_primary.x=0.64, red_primary.y=0.33)
+			green_primary, /// Green primary point (e.g. green_primary.x=0.3, green_primary.y=0.6)
+			blue_primary,  /// Blue primary point (e.g. blue_primary.x=0.15, blue_primary.y=0.06)
+			white_point;   /// White point (e.g. white_point.x=0.3127, white_point.y=0.329)
 	}
 
 	struct Image
