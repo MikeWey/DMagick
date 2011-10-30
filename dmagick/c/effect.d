@@ -8,38 +8,41 @@ import dmagick.c.morphology;
 
 extern(C)
 {
+	/**
+	 * Image preview type.
+	 */
 	enum PreviewType
 	{
-		UndefinedPreview,
-		RotatePreview,
-		ShearPreview,
-		RollPreview,
-		HuePreview,
-		SaturationPreview,
-		BrightnessPreview,
-		GammaPreview,
-		SpiffPreview,
-		DullPreview,
-		GrayscalePreview,
-		QuantizePreview,
-		DespecklePreview,
-		ReduceNoisePreview,
-		AddNoisePreview,
-		SharpenPreview,
-		BlurPreview,
-		ThresholdPreview,
-		EdgeDetectPreview,
-		SpreadPreview,
-		SolarizePreview,
-		ShadePreview,
-		RaisePreview,
-		SegmentPreview,
-		SwirlPreview,
-		ImplodePreview,
-		WavePreview,
-		OilPaintPreview,
-		CharcoalDrawingPreview,
-		JPEGPreview
+		UndefinedPreview,       ///
+		RotatePreview,          /// ditto
+		ShearPreview,           /// ditto
+		RollPreview,            /// ditto
+		HuePreview,             /// ditto
+		SaturationPreview,      /// ditto
+		BrightnessPreview,      /// ditto
+		GammaPreview,           /// ditto
+		SpiffPreview,           /// ditto
+		DullPreview,            /// ditto
+		GrayscalePreview,       /// ditto
+		QuantizePreview,        /// ditto
+		DespecklePreview,       /// ditto
+		ReduceNoisePreview,     /// ditto
+		AddNoisePreview,        /// ditto
+		SharpenPreview,         /// ditto
+		BlurPreview,            /// ditto
+		ThresholdPreview,       /// ditto
+		EdgeDetectPreview,      /// ditto
+		SpreadPreview,          /// ditto
+		SolarizePreview,        /// ditto
+		ShadePreview,           /// ditto
+		RaisePreview,           /// ditto
+		SegmentPreview,         /// ditto
+		SwirlPreview,           /// ditto
+		ImplodePreview,         /// ditto
+		WavePreview,            /// ditto
+		OilPaintPreview,        /// ditto
+		CharcoalDrawingPreview, /// ditto
+		JPEGPreview             /// ditto
 	}
 
 	mixin(

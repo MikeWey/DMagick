@@ -12,16 +12,19 @@ alias ptrdiff_t ssize_t;
 
 extern(C)
 {
+	/**
+	 * Select the type of noise to be added to the image.
+	 */
 	enum NoiseType
 	{
-		UndefinedNoise,
-		UniformNoise,
-		GaussianNoise,
-		MultiplicativeGaussianNoise,
-		ImpulseNoise,
-		LaplacianNoise,
-		PoissonNoise,
-		RandomNoise
+		UndefinedNoise,              ///
+		UniformNoise,                /// ditto
+		GaussianNoise,               /// ditto
+		MultiplicativeGaussianNoise, /// ditto
+		ImpulseNoise,                /// ditto
+		LaplacianNoise,              /// ditto
+		PoissonNoise,                /// ditto
+		RandomNoise                  /// ditto
 	}
 
 	Image* AddNoiseImage(const(Image)*, const NoiseType, ExceptionInfo*);

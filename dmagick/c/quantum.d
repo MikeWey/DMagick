@@ -7,11 +7,14 @@ import dmagick.c.magickType;
 
 extern(C)
 {
+	/**
+	 * The endianess of the image when reading the image file.
+	 */
 	enum EndianType
 	{
-		UndefinedEndian,
-		LSBEndian,
-		MSBEndian
+		UndefinedEndian, /// Not defined (default).
+		LSBEndian,       /// Little Endian.
+		MSBEndian        /// Big Endian.
 	}
 
 	enum QuantumAlphaType

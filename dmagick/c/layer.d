@@ -8,12 +8,36 @@ alias ptrdiff_t ssize_t;
 
 extern(C)
 {
+	/**
+	 * The dispose method used for GIF animations.
+	 * 
+	 * See_Also: $(LINK2 http://www.imagemagick.org/Usage/anim_basics/#dispose,
+	 *     Frame Disposal Methods) in the Examples of ImageMagick Usage.
+	 */
 	enum DisposeType
 	{
+		/** */
 		UnrecognizedDispose,
+
+		/**
+		 * No disposal specified.
+		 */
 		UndefinedDispose = 0,
+		
+		/**
+		 * Do not dispose between frames.
+		 */
 		NoneDispose = 1,
+		
+		/**
+		 * Overwrite the image area with the background color.
+		 */
 		BackgroundDispose = 2,
+		
+		/**
+		 * Overwrite the image area with what was there prior
+		 * to rendering the image.
+		 */
 		PreviousDispose = 3
 	}
 

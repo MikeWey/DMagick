@@ -22,36 +22,50 @@ extern(C)
 {
 	version ( MagickCore_666_and_up )
 	{
+		/**
+		 * Used to adjust the filter algorithm used when resizing images.
+		 * Different filters experience varying degrees of success with
+		 * various images and can take significantly different amounts of
+		 * processing time. ImageMagick uses the LanczosFilter by default
+		 * since this filter has been shown to provide the best results for
+		 * most images in a reasonable amount of time. Other filter types
+		 * (e.g. TriangleFilter) may execute much faster but may show
+		 * artifacts when the image is re-sized or around diagonal lines.
+		 * The only way to be sure is to test the filter with sample images.
+		 * 
+		 * See_Also: $(LINK2 http://www.imagemagick.org/Usage/resize/,
+		 *     Resize Filters) in the Examples of ImageMagick Usage.
+		 */
 		enum FilterTypes
 		{
-			UndefinedFilter,
-			PointFilter,
-			BoxFilter,
-			TriangleFilter,
-			HermiteFilter,
-			HanningFilter,
-			HammingFilter,
-			BlackmanFilter,
-			GaussianFilter,
-			QuadraticFilter,
-			CubicFilter,
-			CatromFilter,
-			MitchellFilter,
-			JincFilter,
-			SincFilter,
-			SincFastFilter,
-			KaiserFilter,
-			WelshFilter,
-			ParzenFilter,
-			BohmanFilter,
-			BartlettFilter,
-			LagrangeFilter,
-			LanczosFilter,
-			LanczosSharpFilter,
-			Lanczos2Filter,
-			Lanczos2SharpFilter,
-			RobidouxFilter,
-			SentinelFilter,  /* a count of all the filters, not a real filter */
+			UndefinedFilter,     ///
+			PointFilter,         /// ditto
+			BoxFilter,           /// ditto
+			TriangleFilter,      /// ditto
+			HermiteFilter,       /// ditto
+			HanningFilter,       /// ditto
+			HammingFilter,       /// ditto
+			BlackmanFilter,      /// ditto
+			GaussianFilter,      /// ditto
+			QuadraticFilter,     /// ditto
+			CubicFilter,         /// ditto
+			CatromFilter,        /// ditto
+			MitchellFilter,      /// ditto
+			JincFilter,          /// ditto
+			SincFilter,          /// ditto
+			SincFastFilter,      /// ditto
+			KaiserFilter,        /// ditto
+			WelshFilter,         /// ditto
+			ParzenFilter,        /// ditto
+			BohmanFilter,        /// ditto
+			BartlettFilter,      /// ditto
+			LagrangeFilter,      /// ditto
+			LanczosFilter,       /// ditto
+			LanczosSharpFilter,  /// ditto
+			Lanczos2Filter,      /// ditto
+			Lanczos2SharpFilter, /// ditto
+			RobidouxFilter,      /// ditto
+			SentinelFilter,      // a count of all the filters, not a real filter
 
 			BesselFilter         = JincFilter,
 			Lanczos2DFilter      = Lanczos2Filter,

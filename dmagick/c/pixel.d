@@ -12,17 +12,20 @@ alias ptrdiff_t ssize_t;
 
 extern(C)
 {
+	/**
+	 * The pixel color interpolation method.
+	 */
 	enum InterpolatePixelMethod
 	{
-		UndefinedInterpolatePixel,
-		AverageInterpolatePixel,
-		BicubicInterpolatePixel,
-		BilinearInterpolatePixel,
-		FilterInterpolatePixel,
-		IntegerInterpolatePixel,
-		MeshInterpolatePixel,
-		NearestNeighborInterpolatePixel,
-		SplineInterpolatePixel
+		UndefinedInterpolatePixel,       ///
+		AverageInterpolatePixel,         /// The average color of the surrounding four pixels.
+		BicubicInterpolatePixel,         /// Fitted bicubic-spines of surrounding 16 pixels.
+		BilinearInterpolatePixel,        /// A double linear interpolation of pixels (the default).
+		FilterInterpolatePixel,          /// Use resize filter settings.
+		IntegerInterpolatePixel,         /// The color of the top-left pixel (floor function).
+		MeshInterpolatePixel,            /// Divide area into two flat triangular interpolations.
+		NearestNeighborInterpolatePixel, /// The nearest pixel to the lookup point (rounded function).
+		SplineInterpolatePixel           /// Direct spline curves (colors are blurred).
 	}
 
 
