@@ -6,16 +6,19 @@ import dmagick.c.magickType;
 
 extern(C)
 {
+	/**
+	 * The size of a pixel component.
+	 */
 	enum StorageType
 	{
-		UndefinedPixel,
-		CharPixel,
-		DoublePixel,
-		FloatPixel,
-		IntegerPixel,
-		LongPixel,
-		QuantumPixel,
-		ShortPixel
+		UndefinedPixel, ///
+		CharPixel,      /// ditto
+		DoublePixel,    /// ditto
+		FloatPixel,     /// ditto
+		IntegerPixel,   /// ditto
+		LongPixel,      /// ditto
+		QuantumPixel,   /// ditto
+		ShortPixel      /// ditto
 	}
 
 	Image* ConstituteImage(const size_t, const size_t, const(char)*, const StorageType, const(void)*, ExceptionInfo*);

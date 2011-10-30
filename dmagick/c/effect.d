@@ -45,35 +45,56 @@ extern(C)
 		JPEGPreview             /// ditto
 	}
 
-	mixin(
+	version(D_Ddoc)
 	{
-		string types = "enum StatisticType
+		/**
+		 * The statistic method to apply.
+		 */
+		enum StatisticType
 		{
-			UndefinedStatistic,";
-
-			static if ( MagickLibVersion >= 0x670 )
+			UndefinedStatistic, /// 
+			GradientStatistic,  /// Maximum difference in area.
+			MaximumStatistic,   /// Maximum value per channel in neighborhood.
+			MeanStatistic,      /// Average value per channel in neighborhood.
+			MedianStatistic,    /// Median value per channel in neighborhood.
+			MinimumStatistic,   /// Minimum value per channel in neighborhood.
+			ModeStatistic,      /// Mode (most frequent) value per channel in neighborhood.
+			NonpeakStatistic,   /// Value just before or after the median value per channel in neighborhood.
+			StandardDeviationStatistic  /// 
+		}
+	}
+	else
+	{
+		mixin(
+		{
+			string types = "enum StatisticType
 			{
-				types ~= "GradientStatistic,";
-			}
+				UndefinedStatistic,";
 
-			types ~= "
-			MaximumStatistic,
-			MeanStatistic,
-			MedianStatistic,
-			MinimumStatistic,
-			ModeStatistic,
-			NonpeakStatistic,";
+				static if ( MagickLibVersion >= 0x670 )
+				{
+					types ~= "GradientStatistic,";
+				}
 
-			static if ( MagickLibVersion >= 0x670 )
-			{
-				types ~= "StandardDeviationStatistic,";
-			}
+				types ~= "
+				MaximumStatistic,
+				MeanStatistic,
+				MedianStatistic,
+				MinimumStatistic,
+				ModeStatistic,
+				NonpeakStatistic,";
 
-			types ~= "
-		}";
+				static if ( MagickLibVersion >= 0x670 )
+				{
+					types ~= "StandardDeviationStatistic,";
+				}
 
-		return types;
-	}());
+				types ~= "
+			}";
+
+			return types;
+		}());
+	}
 
 	Image* AdaptiveBlurImage(const(Image)*, const double, const double, ExceptionInfo*);
 	Image* AdaptiveBlurImageChannel(const(Image)*, const ChannelType, const double, const double, ExceptionInfo*);

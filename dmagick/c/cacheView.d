@@ -11,25 +11,93 @@ alias ptrdiff_t ssize_t;
 
 extern(C)
 {
+	/**
+	 * Specify contents of virtual pixels.
+	 */
 	enum VirtualPixelMethod
 	{
+		/** */
 		UndefinedVirtualPixelMethod,
+
+		/**
+		 * The area surrounding the image is the background color.
+		 */
 		BackgroundVirtualPixelMethod,
+		
+		/** */
 		ConstantVirtualPixelMethod,
+		
+		/**
+		 * Non-random 32x32 dithered pattern.
+		 */
 		DitherVirtualPixelMethod,
+		
+		/**
+		 * Extend the edge pixel toward infinity.
+		 */
 		EdgeVirtualPixelMethod,
+		
+		/**
+		 * Mirror tile the image.
+		 */
 		MirrorVirtualPixelMethod,
+		
+		/**
+		 * Choose a random pixel from the image.
+		 */
 		RandomVirtualPixelMethod,
+		
+		/**
+		 * Tile the image.
+		 */
 		TileVirtualPixelMethod,
+		
+		/**
+		 * The area surrounding the image is transparent blackness.
+		 */
 		TransparentVirtualPixelMethod,
+		
+		/** */
 		MaskVirtualPixelMethod,
+		
+		/**
+		 * The area surrounding the image is black.
+		 */
 		BlackVirtualPixelMethod,
+		
+		/**
+		 * The area surrounding the image is gray.
+		 */
 		GrayVirtualPixelMethod,
+		
+		/**
+		 * The area surrounding the image is white.
+		 */
 		WhiteVirtualPixelMethod,
+		
+		/**
+		 * Horizontally tile the image, background color above/below.
+		 */
 		HorizontalTileVirtualPixelMethod,
+		
+		/**
+		 * Vertically tile the image, sides are background color.
+		 */
 		VerticalTileVirtualPixelMethod,
+		
+		/**
+		 * Horizontally tile the image and replicate the side edge pixels.
+		 */
 		HorizontalTileEdgeVirtualPixelMethod,
+		
+		/**
+		 * Vertically tile the image and replicate the side edge pixels.
+		 */
 		VerticalTileEdgeVirtualPixelMethod,
+		
+		/**
+		 * Alternate squares with image and background color.
+		 */
 		CheckerTileVirtualPixelMethod
 	}
 
