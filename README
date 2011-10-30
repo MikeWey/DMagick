@@ -1,0 +1,66 @@
+DMagick is a ImageMagick binding for the D programing language.
+
+Requirements:
+=============
+
+    Linux (Posix?):
+    ---------------
+    - A recent D2 compiler >= 2.054
+    - ImageMagick 6.6.0 or grater.
+    - GNUMake
+
+    Windows:
+    --------
+    - A recent D2 compiler >= 2.054
+    - ImageMagick 6.6.0 or grater. (6.6.3 and above for 64 bits)
+      It's Recomended to use the latest version.
+    - implip from the Digital Mars basic utilities package.
+      http://ftp.digitalmars.com/bup.zip
+    - Digital Mars make (distributed with dmd).
+
+Building:
+=========
+
+    Linux (Posix?):
+    ---------------
+    To build DMagick just call "make" and "make install" to install
+    Dmagick. The documentation can be build with "make docs".
+
+    Windows:
+    --------
+    To Build DMagick use the make distributed with dmd:
+        make -f windows.mak
+    This should build DMagick (DMagick.lib) and generate the Import
+    import library (MagickCore.lib) needed to link with the dll.
+
+    If another version then the latest is used the used version needs
+    to be set in the DFLAGS variable of the make file.
+        make -f windows.mak DFLAGS="-version=MagickCore_$$$ -version=Quantum$$"
+    Where the $$$ after MagickCore_ represent the major.minor.maintenance
+    version of ImageMagick without the dots.
+    For Quantum the $$ stands for eighter 8, 16, 32, or 64 whitch
+    correspondes to the quantum depth used by ImageMagick 16 is the default.
+
+Building Applications using DMagick:
+====================================
+
+    Linux (Posix?):
+    ---------------
+    It's advised to use pkg-config when building applications using
+    DMagick as distrobutions usualy don't include the latest version
+    of ImageMagick.
+        dmd myapp.d `pkg-config --cflags --libs`
+
+    Windows:
+    --------
+    When using the latest version of ImageMagick only the libs need to
+    be passed to the compiler.
+        dmd myapp.d -LDMagick.lib -LMagickCore.lib
+
+When not using pkg-config or when not using the latest vewrsion on Windows
+the ImageMagick version needs to be passed to the compiler using
+"-version=MagickCore_$$$" and "-version=Quantum$$". Where the $$$ after
+MagickCore_ represent the major.minor.maintenance version of ImageMagick
+without the dots.
+For Quantum the $$ stands for eighter 8, 16, 32, or 64 whitch
+correspondes to the quantum depth used by ImageMagick 16 is the default.

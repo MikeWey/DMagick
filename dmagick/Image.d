@@ -4181,7 +4181,7 @@ class Image
 	{
 		return imageRef.y_resolution;
 	}
-
+	
 	//Image properties - set via SetImageProperties
 	//Should we implement these as actual properties?
 	//attribute
