@@ -55,7 +55,7 @@ Building Applications using DMagick:
     --------
     When using the latest version of ImageMagick only the libs need to
     be passed to the compiler.
-        dmd myapp.d -LDMagick.lib -LMagickCore.lib
+        dmd myapp.d -L DMagick.lib MagickCore.lib
 
 When not using pkg-config or when not using the latest vewrsion on Windows
 the ImageMagick version needs to be passed to the compiler using
