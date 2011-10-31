@@ -7,7 +7,7 @@ DDOC =
 		<link rel="stylesheet" type="text/css" href="$(CSS)">
 	</head>
 	<body>
-		<div id="header"><!-- LOGO --></div>
+		<div id="header"><img src="$(LOGO)" alt="DMagick"></div>
 		<div id="navigation">$(NAVIGATION)</div>
 
 		<div id="content">
@@ -138,6 +138,7 @@ $(LIST
 )
 
 CSS = style.css
+LOGO = logo.png
 
 NAVLINK  = $(LINK2 $0.html,   dmagick.$0)
 CNAVLINK = $(LINK2 c/$0.html, dmagick.c.$0)

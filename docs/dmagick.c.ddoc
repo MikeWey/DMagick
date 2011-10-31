@@ -1,4 +1,5 @@
 CSS = ../style.css
+LOGO = ../logo.png
 
 NAVLINK  = $(LINK2 ../$0.html, dmagick.$0)
 CNAVLINK = $(LINK2 $0.html,    dmagick.c.$0)
