@@ -4270,20 +4270,3 @@ class Image
 		assert( storage == StorageType.IntegerPixel );
 	}
 }
-
-/*
- * Initialize ImageMagick, only needed on Windows.
- */
-version (Windows)
-{
-	shared static this()
-	{
-			MagickCoreGenesis(toStringz(Runtime.args[0]) , false);
-	}
-
-	shared static ~this()
-	{
-			MagickCoreTerminus();
-	}
-}
-
