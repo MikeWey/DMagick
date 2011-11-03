@@ -233,7 +233,7 @@ class Image
 	 *     $(B blob size) if present.
 	 * )
 	 */
-	string toString()
+	override string toString()
 	{
 		string result;
 
@@ -253,7 +253,7 @@ class Image
 		if ( imageRef.page.width > 0 || imageRef.page.height > 0 
 			|| imageRef.page.x != 0 || imageRef.page.y != 0 )
 		{
-			result ~= std.string.format("%sx%s%+ld%+ld ",
+			result ~= std.string.format("%sx%s%+s%+s ",
 				imageRef.page.width, imageRef.page.height,
 				imageRef.page.x,     imageRef.page.y);
 		}
@@ -263,7 +263,7 @@ class Image
 		else
 			result ~= "PseudoClass ";
 
-		result = std.string.format("%s-bit", GetImageQuantumDepth(imageRef, true));
+		result = std.string.format("%s-bit ", GetImageQuantumDepth(imageRef, true));
 
 		//Size of the image.
 		MagickSizeType size = GetBlobSize(imageRef);
@@ -1330,14 +1330,44 @@ class Image
 	T[] exportPixels(T)(Geometry area, string map = "RGBA") const
 	{
 		StorageType storage = getStorageType!(T);
-		void[] pixels = new T[area.width*area.height];
+		void[] pixels = new T[(area.width * area.height) * map.length];
 
-		ExportImagePixels(imageRef,
-			area.xOffset, area.yOffset,
-			area.width,   area.height,
-			toStringz(map), storage, pixels.ptr, DMagickExceptionInfo());
+		ExportImagePixels(
+			imageRef,
+			area.xOffset,
+			area.yOffset,
+			area.width,
+			area.height,
+			toStringz(map),
+			storage,
+			pixels.ptr,
+			DMagickExceptionInfo());
 
 		return pixels;
+	}
+
+	/*
+	 * Ditto, but takes an existing pixel buffer. Does a runtime check
+	 * on the length of the buffer, if the buffer length is insufficient
+	 * it throws an ImageException.
+	 */
+	void exportPixels(T)(Geometry area, T[] pixels, string map = "RGBA") const
+	{
+		if ( pixels.length <=  area.width * area.height) * map.count )
+			throw new ImageException(format("Pixel buffer needs more storage for %s channels.", map));
+
+		StorageType storage = getStorageType!(T);
+
+		ExportImagePixels(
+			imageRef,
+			area.xOffset, 
+			area.yOffset,
+			area.width,   
+			area.height,
+			toStringz(map), 
+			storage, 
+			pixels.ptr, 
+			DMagickExceptionInfo());
 	}
 
 	/**
