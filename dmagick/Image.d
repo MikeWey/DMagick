@@ -1343,7 +1343,7 @@ class Image
 			pixels.ptr,
 			DMagickExceptionInfo());
 
-		return pixels;
+		return cast(typeof(return))pixels;
 	}
 
 	/*
@@ -1353,7 +1353,7 @@ class Image
 	 */
 	void exportPixels(T)(Geometry area, T[] pixels, string map = "RGBA") const
 	{
-		if ( pixels.length <=  area.width * area.height) * map.count )
+		if ( pixels.length <=  (area.width * area.height) * map.count )
 			throw new ImageException(format("Pixel buffer needs more storage for %s channels.", map));
 
 		StorageType storage = getStorageType!(T);
