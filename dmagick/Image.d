@@ -1353,8 +1353,8 @@ class Image
 	 */
 	void exportPixels(T)(Geometry area, T[] pixels, string map = "RGBA") const
 	{
-		if ( pixels.length <=  (area.width * area.height) * map.count )
-			throw new ImageException(format("Pixel buffer needs more storage for %s channels.", map));
+		if ( pixels.length <  (area.width * area.height) * map.count )
+			throw new ImageException(std.string.format("Pixel buffer needs more storage for %s channels.", map));
 
 		StorageType storage = getStorageType!(T);
 
