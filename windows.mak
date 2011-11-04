@@ -528,7 +528,7 @@ unittest: stubmain.d $(SOURCE) $(MAGICKCORELIBNAME)
 	unittest
 
 $(MAGICKCORELIBNAME):
-	@echo @FOR /F "delims=;" %%i IN ('where %1') DO @copy "%%i" > copydll.bat
+	@echo @for %%i in (%1) do @if NOT "%%~$$PATH:i"=="" @copy "%%~$$PATH:i" > copydll.bat
 	copydll $(MAGICKCOREDLLNAME)
 	implib /s $@ $(MAGICKCOREDLLNAME)
 	@del copydll.bat
