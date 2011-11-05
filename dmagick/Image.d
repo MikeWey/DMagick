@@ -1329,7 +1329,6 @@ class Image
 	 */
 	T[] exportPixels(T)(Geometry area, string map = "RGBA") const
 	{
-		StorageType storage = getStorageType!(T);
 		T[] pixels = new T[(area.width * area.height) * map.length];
 
 		exportPixels(area, pixels, map);
