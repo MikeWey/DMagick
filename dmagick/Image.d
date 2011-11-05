@@ -1330,30 +1330,21 @@ class Image
 	T[] exportPixels(T)(Geometry area, string map = "RGBA") const
 	{
 		StorageType storage = getStorageType!(T);
-		void[] pixels = new T[(area.width * area.height) * map.length];
+		T[] pixels = new T[(area.width * area.height) * map.length];
 
-		ExportImagePixels(
-			imageRef,
-			area.xOffset,
-			area.yOffset,
-			area.width,
-			area.height,
-			toStringz(map),
-			storage,
-			pixels.ptr,
-			DMagickExceptionInfo());
+		exportPixels(area, pixels, map);
 
-		return cast(typeof(return))pixels;
+		return pixels;
 	}
 
-	/*
+	/**
 	 * Ditto, but takes an existing pixel buffer. Does a runtime check
 	 * on the length of the buffer, if the buffer length is insufficient
 	 * it throws an ImageException.
 	 */
 	void exportPixels(T)(Geometry area, T[] pixels, string map = "RGBA") const
 	{
-		if ( pixels.length <  (area.width * area.height) * map.count )
+		if ( pixels.length < (area.width * area.height) * map.length )
 			throw new ImageException(std.string.format("Pixel buffer needs more storage for %s channels.", map));
 
 		StorageType storage = getStorageType!(T);
@@ -1368,6 +1359,14 @@ class Image
 			storage, 
 			pixels.ptr, 
 			DMagickExceptionInfo());
+	}
+
+	unittest
+	{
+		Image image = new Image(Geometry(100, 100), new Color("red"));
+		byte[] bytes = image.exportPixels!(byte)(Geometry(10,10,10,10));
+
+		assert(bytes.length == 10 * 10 * 4);
 	}
 
 	/**
