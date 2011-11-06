@@ -2,7 +2,7 @@
 SHELL=/bin/sh
 prefix=/usr/local
 
-DMAGICK_VERSION=0.1.0
+DMAGICK_VERSION=0.1.1
 
 OS=$(shell uname || uname -s)
 ARCH=$(shell arch || uname -m)
