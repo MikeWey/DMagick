@@ -1337,9 +1337,9 @@ class Image
 	}
 
 	/**
-	 * Ditto, but takes an existing pixel buffer. Does a runtime check
-	 * on the length of the buffer, if the buffer length is insufficient
-	 * it throws an ImageException.
+	 * Ditto, but takes an existing pixel buffer.
+	 *
+	 * Throws: An ImageException if the buffer length is insufficient.
 	 */
 	void exportPixels(T)(Geometry area, T[] pixels, string map = "RGBA") const
 	{
@@ -4007,6 +4007,52 @@ class Image
 	}
 
 	/**
+	 * Sets the value of the image property. An image may have any number
+	 * of properties. ImageMagick predefines some properties, including
+	 * attribute, label, caption, comment, signature, and in some cases EXIF.
+	 */
+	void opDispatch(string property)(string value)
+	{
+		SetImageProperty(imageRef, toStringz(property), toStringz(value));
+
+		return;
+	}
+
+	/**
+	 * Returns the value of the image property.
+	 */
+	auto opDispatch(string property)()
+	{
+		// Workaround for dmd bug 620.
+		struct Property
+		{
+			ImageRef imageRef;
+
+			void opAssign(string value)
+			{
+				SetImageProperty(imageRef, toStringz(property), toStringz(value));
+			}
+
+			string value()
+			{
+				return to!(string)(GetImageProperty(imageRef, toStringz(property)));
+			}
+
+			alias value this;
+		}
+
+		return Property(imageRef);
+	}
+
+	unittest
+	{
+		Image image = new Image();
+
+		image.comment = "unittest";
+		assert(image.comment == "unittest");
+	}
+
+	/**
 	 * Image orientation.  Supported by some file formats
 	 * such as DPX and TIFF. Useful for turning the right way up.
 	 */
@@ -4209,17 +4255,6 @@ class Image
 	{
 		return imageRef.y_resolution;
 	}
-	
-	//Image properties - set via SetImageProperties
-	//Should we implement these as actual properties?
-	//attribute
-	//comment
-	//caption
-	//label
-	//signature
-
-	//Other unimplemented porperties
-	//pixelColor
 
 	private void setMagickPixelPacket(MagickPixelPacket* magick, Color color)
 	{
