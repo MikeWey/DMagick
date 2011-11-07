@@ -472,13 +472,13 @@ class DrawingContext
 	 */
 	void fontWeight(size_t weight)
 	{
-		operations ~= format("font-weight %s", weight);		
+		operations ~= format(" font-weight %s", weight);		
 	}
 
 	///ditto
 	void fontWeight(FontWeight weight)
 	{
-		operations ~= format("font-weight %s", weight);
+		operations ~= format(" font-weight %s", weight);
 	}
 
 	/**
