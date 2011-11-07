@@ -331,7 +331,18 @@ class DrawingContext
 	 */
 	void encoding(FontEncoding encoding)
 	{
-		operations ~= format(" encoding %s", encoding);
+		switch ( encoding )
+		{
+			case FontEncoding.Latin1:
+				operations ~= " encoding Latin-1";
+				break;
+			case FontEncoding.Latin2:
+				operations ~= " encoding Latin-2";
+				break;
+			default:
+				operations ~= format(" encoding %s", to!(string)(encoding));
+				break;
+		}
 	}
 
 	unittest
@@ -472,13 +483,16 @@ class DrawingContext
 	 */
 	void fontWeight(size_t weight)
 	{
-		operations ~= format(" font-weight %s", weight);		
+		operations ~= format(" font-weight %s", weight);
 	}
 
 	///ditto
 	void fontWeight(FontWeight weight)
 	{
-		operations ~= format(" font-weight %s", weight);
+		if ( weight == FontWeight.Any )
+			operations ~= " font-weight all";
+		else
+			operations ~= format(" font-weight %s", weight);
 	}
 
 	/**
@@ -1111,35 +1125,35 @@ struct Gradient
  * This enumeration lists specific character repertories (i.e., charsets),
  * and not text encoding methods (e.g., UTF-8, UTF-16, etc.).
  */
-enum FontEncoding : string
+enum FontEncoding
 {
-	AdobeCustom   = "AdobeCustom",    ///
-	AdobeExpert   = "AdobeExpert",    ///ditto
-	AdobeStandard = "AdobeStandard",  ///ditto
-	AppleRoman    = "AppleRoman",     ///ditto
-	BIG5     = "BIG5",                ///ditto
-	GB2312   = "GB2312",              ///ditto
-	Johab    = "Johab",               ///ditto
-	Latin1   = "Latin-1",             ///ditto
-	Latin2   = "Latin-2",             ///ditto
-	None     = "None",                ///ditto
-	SJIScode = "SJIScode",            ///ditto
-	Symbol   = "Symbol",              ///ditto
-	Unicode  = "Unicode",             ///ditto
-	Wansung  = "Wansung",             ///ditto
+	AdobeCustom,    ///
+	AdobeExpert,    ///ditto
+	AdobeStandard,  ///ditto
+	AppleRoman,     ///ditto
+	BIG5,           ///ditto
+	GB2312,         ///ditto
+	Johab,          ///ditto
+	Latin1,         ///ditto
+	Latin2,         ///ditto
+	None,           ///ditto
+	SJIScode,       ///ditto
+	Symbol,         ///ditto
+	Unicode,        ///ditto
+	Wansung,        ///ditto
 }
 
 /**
  * The font weight can be specified as one of 100, 200, 300, 400, 500,
  * 600, 700, 800, or 900, or one of the following constants.
  */
-enum FontWeight : string
+enum FontWeight
 {
-        Any     = "all",     /// No weight specified.
-        Normal  = "normal",  /// Normal weight, equivalent to 400.
-        Bold    = "bold",    /// Bold. equivalent to 700. 
-        Bolder  = "bolder",  /// Increases weight by 100.
-        Lighter = "lighter", /// Decreases weight by 100.
+        Any,     /// No weight specified.
+        Normal,  /// Normal weight, equivalent to 400.
+        Bold,    /// Bold. equivalent to 700. 
+        Bolder,  /// Increases weight by 100.
+        Lighter, /// Decreases weight by 100.
 }
 
 /**
