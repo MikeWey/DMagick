@@ -434,6 +434,12 @@ class Image
 		GravityType gravity = GravityType.NorthWestGravity,
 		double degrees = 0.0)
 	{
+		if ( boundingArea == Geometry.init )
+		{
+			boundingArea.width = columns;
+			boundingArea.height = rows;
+		}
+
 		DrawInfo* drawInfo = options.drawInfo;
 		AffineMatrix oldAffine = options.affine;
 
