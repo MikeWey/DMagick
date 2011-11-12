@@ -6,10 +6,13 @@
 
 module dmagick.Image;
 
+import std.algorithm : min;
+import std.array;
 import std.conv;
 import std.math;
 import std.string;
 import std.typecons : Tuple;
+import std.uni;
 import core.memory;
 import core.runtime;
 import core.time;
@@ -420,13 +423,25 @@ class Image
 	 *--------------------
 	 * Params:
 	 *     text    = The text.
-	 *     boundingArea = 
-	 *              The location/bounding area for the text,
-	 *               if the height and width are 0 the height and
-	 *               with of the image are used to calculate
-	 *               the bounding area.
+	 *     xOffset = The x coordinate.
+	 *     yOffset = The y coordinate.
 	 *     gravity = Placement gravity.
 	 *     degrees = The angle of the Text.
+	 */
+	void annotate(
+		string text,
+		size_t xOffset,
+		size_t yOffset,
+		GravityType gravity = GravityType.NorthWestGravity,
+		double degrees = 0.0)
+	{
+		annotate(text, Geometry(size_t.max, size_t.max, xOffset, yOffset), gravity, degrees);
+	}
+
+	/**
+	 * Ditto, but word wraps the text so it stays withing the
+	 * boundingArea. if the height and width are 0 the height and
+	 * with of the image are used to calculate the bounding area.
 	 */
 	void annotate(
 		string text,
@@ -434,11 +449,14 @@ class Image
 		GravityType gravity = GravityType.NorthWestGravity,
 		double degrees = 0.0)
 	{
-		if ( boundingArea == Geometry.init )
-		{
+		if ( boundingArea.width == 0 )
 			boundingArea.width = columns;
+
+		if ( boundingArea.height == 0 )
 			boundingArea.height = rows;
-		}
+
+		if ( boundingArea.width > 0 )
+			text = wordWrap(text, boundingArea);
 
 		DrawInfo* drawInfo = options.drawInfo;
 		AffineMatrix oldAffine = options.affine;
@@ -4268,6 +4286,53 @@ class Image
 		magick.green   = color.greenQuantum;
 		magick.blue    = color.blueQuantum;
 		magick.opacity = color.opacityQuantum;
+	}
+
+	private string wordWrap(string text, Geometry boundingBox)
+	{
+		size_t pos;
+		string[] lines;
+
+		while ( !text.empty )
+		{
+			for ( size_t i; i < text.length; i++ )
+			{
+				if ( isWhite(text[i]) || i == text.length-1 )
+				{
+					TypeMetric metric = getTypeMetrics(text[0..i]);
+
+					if ( metric.width >  boundingBox.width )
+					{
+						if ( pos == 0 )
+							pos = i;
+
+						break;
+					}
+
+					pos = i;
+
+					if ( text[i] == '\n' )
+						break;
+
+					if ( i == text.length-1 )
+						pos++;
+				}
+			}
+
+			lines ~= text[0 .. pos].strip();
+			text = text[min(pos+1, text.length) .. $];
+			pos = 0;
+		}
+
+		return join(lines, "\n");	
+	}
+
+	unittest
+	{
+		Image img = new Image(Geometry(200, 200), new Color());
+		string wraped = img.wordWrap("Lorem ipsum dolor sit amet.", Geometry(100, 200));
+
+		assert(wraped == "Lorem ipsum\ndolor sit amet.");
 	}
 
 	private template getStorageType(T)
