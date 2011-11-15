@@ -49,7 +49,7 @@ Building Applications using DMagick:
     It's advised to use pkg-config when building applications using
     DMagick as distrobutions usualy don't include the latest version
     of ImageMagick.
-        dmd myapp.d `pkg-config --cflags --libs`
+        dmd myapp.d `pkg-config --cflags --libs DMagick`
 
     Windows:
     --------
