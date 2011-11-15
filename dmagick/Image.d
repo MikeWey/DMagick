@@ -4293,6 +4293,9 @@ class Image
 		size_t pos;
 		string[] lines;
 
+		double lineHeight = getTypeMetrics([text[0]]).height;
+		size_t maxLines = cast(size_t)(boundingBox.height / lineHeight);
+
 		while ( !text.empty )
 		{
 			for ( size_t i; i < text.length; i++ )
@@ -4322,6 +4325,9 @@ class Image
 			lines ~= text[0 .. pos].strip();
 			text = text[min(pos+1, text.length) .. $];
 			pos = 0;
+
+			if ( lines.length == maxLines )
+				break;
 		}
 
 		return join(lines, "\n");	
