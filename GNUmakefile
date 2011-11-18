@@ -98,11 +98,11 @@ docs: $(DOCS_DMAGICK)
 
 #######################################################################
 
-docs/%.html : dmagick/%.d
-	$(DC) $(DCFLAGS) docs/dmagick.ddoc $< $(DDOCFLAGS) 
-
 docs/c/%.html : dmagick/c/%.d
 	$(DC) $(DCFLAGS) docs/dmagick.ddoc docs/dmagick.c.ddoc $< $(DDOCFLAGS) 
+
+docs/%.html : dmagick/%.d
+	$(DC) $(DCFLAGS) docs/dmagick.ddoc $< $(DDOCFLAGS) 
 
 #######################################################################
 
