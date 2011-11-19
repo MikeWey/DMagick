@@ -66,8 +66,15 @@ Image average(Image[] images)
 	linkImages(images);
 	scope(exit) unlinkImages(images);
 
-	MagickCoreImage* image =
-		EvaluateImages(images[0].imageRef, MagickEvaluateOperator.MeanEvaluateOperator, DMagickExceptionInfo());
+	static if ( is(typeof(EvaluateImages)) )
+	{
+		MagickCoreImage* image =
+			EvaluateImages(images[0].imageRef, MagickEvaluateOperator.MeanEvaluateOperator, DMagickExceptionInfo());
+	}
+	else
+	{
+		MagickCoreImage* image = AverageImages(images[0].imageRef, DMagickExceptionInfo());
+	}
 
 	return new Image(image);
 }

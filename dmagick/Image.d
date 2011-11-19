@@ -809,23 +809,40 @@ class Image
 		if ( matrix.length > 6 || matrix[0].length > 6 )
 			throw new DMagickException("Matrix must be 6x6 or smaller.");
 
-		KernelInfo* kernelInfo = AcquireKernelInfo("1");
-		scope(exit) DestroyKernelInfo(kernelInfo);
-
-		kernelInfo.width = matrix[0].length;
-		kernelInfo.height = matrix.length;
-		kernelInfo.values = cast(double*)AcquireQuantumMemory(kernelInfo.width*kernelInfo.height, double.sizeof);
-		scope(exit) kernelInfo.values = cast(double*)RelinquishMagickMemory(kernelInfo.values);
-
-		foreach ( i, row; matrix )
+		static if ( is(typeof(ColorMatrixImage)) )
 		{
-			size_t offset = i * row.length;
+			KernelInfo* kernelInfo = AcquireKernelInfo("1");
+			scope(exit) DestroyKernelInfo(kernelInfo);
 
-			kernelInfo.values[offset .. offset+row.length] = row;
+			kernelInfo.width = matrix[0].length;
+			kernelInfo.height = matrix.length;
+			kernelInfo.values = cast(double*)AcquireQuantumMemory(kernelInfo.width*kernelInfo.height, double.sizeof);
+			scope(exit) kernelInfo.values = cast(double*)RelinquishMagickMemory(kernelInfo.values);
+
+			foreach ( i, row; matrix )
+			{
+				size_t offset = i * row.length;
+
+				kernelInfo.values[offset .. offset+row.length] = row;
+			}
+
+			MagickCoreImage* image =
+				ColorMatrixImage(imageRef, kernelInfo, DMagickExceptionInfo());
 		}
+		else
+		{
+			double[] values;
 
-		MagickCoreImage* image =
-			ColorMatrixImage(imageRef, kernelInfo, DMagickExceptionInfo());
+			foreach ( i, row; matrix )
+			{
+				size_t offset = i * row.length;
+
+				values[offset .. offset+row.length] = row;
+			}
+
+			MagickCoreImage* image =
+				RecolorImage(imageRef, matrix.length, values.ptr, DMagickExceptionInfo());
+		}
 
 		imageRef = ImageRef(image);
 	}
