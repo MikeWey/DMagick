@@ -4310,6 +4310,9 @@ class Image
 		size_t pos;
 		string[] lines;
 
+		if ( text.empty )
+			return text;
+
 		double lineHeight = getTypeMetrics([text[0]]).height;
 		size_t maxLines = cast(size_t)(boundingBox.height / lineHeight);
 
