@@ -23,7 +23,8 @@ ifeq ("$(DC)","gdc")
     DCFLAGS=-O2
     LINKERFLAG=-Xlinker 
     UNITTESTFLAG=-funittest
-    DDOCFLAGS=-fdoc-file=$@
+    DDOCFLAGS=-fsyntax-only -c -fdoc -fdoc-file=$@
+    DDOCINC=-fdoc-inc=
     output=-o $@
 else
     DCFLAGS=-O
@@ -99,10 +100,10 @@ docs: $(DOCS_DMAGICK)
 #######################################################################
 
 docs/c/%.html : dmagick/c/%.d
-	$(DC) $(DCFLAGS) docs/dmagick.ddoc docs/dmagick.c.ddoc $< $(DDOCFLAGS) 
+	$(DC) $(DCFLAGS) $(DDOCINC)docs/dmagick.ddoc $(DDOCINC)docs/dmagick.c.ddoc $< $(DDOCFLAGS) 
 
 docs/%.html : dmagick/%.d
-	$(DC) $(DCFLAGS) docs/dmagick.ddoc $< $(DDOCFLAGS) 
+	$(DC) $(DCFLAGS) $(DDOCINC)docs/dmagick.ddoc $< $(DDOCFLAGS) 
 
 #######################################################################
 
