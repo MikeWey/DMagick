@@ -3919,7 +3919,7 @@ class Image
 	///ditto
 	string magick() const
 	{
-		if ( imageRef.magick !is null )
+		if ( imageRef.magick[0] !is '\0' )
 		{
 			return imageRef.magick[0 .. strlen(imageRef.magick.ptr)].idup;
 		}
