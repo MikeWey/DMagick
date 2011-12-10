@@ -33,6 +33,7 @@ extern(C)
 			UserEvent = 0x09000,
 			WandEvent = 0x10000,
 			X11Event = 0x20000,
+			AccelerateEvent = 0x40000,
 			AllEvents = 0x7fffffff
 		}
 	}

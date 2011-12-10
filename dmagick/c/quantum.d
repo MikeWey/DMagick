@@ -99,6 +99,11 @@ extern(C)
 	MagickBooleanType SetQuantumFormat(const(Image)*, QuantumInfo*, const QuantumFormatType);
 	MagickBooleanType SetQuantumPad(const(Image)*, QuantumInfo*, const size_t);
 
+	static if ( MagickLibVersion >= 0x674 )
+	{
+		QuantumFormatType GetQuantumFormat(const(QuantumInfo)*);
+	}
+
 	QuantumInfo* AcquireQuantumInfo(const(ImageInfo)*, Image*);
 	QuantumInfo* DestroyQuantumInfo(QuantumInfo*);
 

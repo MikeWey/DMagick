@@ -6,8 +6,17 @@ import dmagick.c.image;
 
 extern(C)
 {
-	Image* AffineTransformImage(const(Image)*, const(AffineMatrix)*, ExceptionInfo*);
 	Image* DeskewImage(const(Image)*, const double, ExceptionInfo*);
-	Image* RotateImage(const(Image)*, const double, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x674 )
+	{
+		Image* IntegralRotateImage(const(Image)*, size_t, ExceptionInfo*);
+	}
+
 	Image* ShearImage(const(Image)*, const double, const double, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x674 )
+	{
+		Image* ShearRotateImage(const(Image)*, const double, ExceptionInfo*);
+	}
 }

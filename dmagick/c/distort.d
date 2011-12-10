@@ -322,6 +322,7 @@ extern(C)
 		InverseColorInterpolate
 	}
 
+	Image* AffineTransformImage(const(Image)*, const(AffineMatrix)*, ExceptionInfo*);
 	Image* DistortImage(const(Image)*, const DistortImageMethod, const size_t, const(double)*, MagickBooleanType, ExceptionInfo* exception);
 
 	static if ( MagickLibVersion >= 0x670 )
@@ -329,5 +330,6 @@ extern(C)
 		Image* DistortResizeImage(const(Image)*, const size_t, const size_t, ExceptionInfo*);
 	}
 
+	Image* RotateImage(const(Image)*, const double, ExceptionInfo*);
 	Image* SparseColorImage(const(Image)*, const ChannelType, const SparseColorMethod, const size_t, const(double)*, ExceptionInfo*);
 }

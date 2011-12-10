@@ -27,6 +27,11 @@ extern(C)
 	Image* CompareImages(Image*, const(Image)*, const MetricType, double*, ExceptionInfo*);
 	Image* SimilarityImage(Image*, const(Image)*, RectangleInfo*, double*, ExceptionInfo*);
 
+	static if ( MagickLibVersion >= 0x674 )
+	{
+		Image* SimilarityMetricImage(Image*, const(Image)*, const MetricType, RectangleInfo*, double*, ExceptionInfo*);
+	}
+
 	MagickBooleanType GetImageChannelDistortion(Image*, const(Image)*, const ChannelType, const MetricType, double*, ExceptionInfo*);
 	MagickBooleanType GetImageDistortion(Image*, const(Image)*, const MetricType, double*, ExceptionInfo*);
 	MagickBooleanType IsImagesEqual(Image*, const(Image)*);

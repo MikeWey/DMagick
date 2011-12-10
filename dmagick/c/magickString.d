@@ -41,6 +41,11 @@ extern(C)
 
 	const(char)* GetStringInfoPath(const(StringInfo)*);
 
+	static if ( MagickLibVersion >= 0x674 )
+	{
+		double InterpretSiPrefixValue(const(char)*, char**);
+	}
+
 	int	CompareStringInfo(const(StringInfo)*, const(StringInfo)*);
 	int	LocaleCompare(const(char)*, const(char)*);
 	int	LocaleNCompare(const(char)*, const(char)*, const size_t);
