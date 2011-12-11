@@ -1,6 +1,7 @@
 module dmagick.c.distort;
 
 import dmagick.c.exception;
+import dmagick.c.geometry;
 import dmagick.c.image;
 import dmagick.c.magickType;
 import dmagick.c.magickVersion;
