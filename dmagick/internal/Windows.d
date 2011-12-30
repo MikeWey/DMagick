@@ -12,28 +12,28 @@ import dmagick.Image;
 import dmagick.Exception;
 import dmagick.Geometry;
 
-Window[HWND] windows;
-
 class Window
 {
 	Image image;
 	size_t height;
 	size_t width;
-	
+
 	WNDCLASS  wndclass;
 	HINSTANCE hInstance;
 	HWND      hwnd;
 	MSG       msg;
 
+	static Window[HWND] windows;
+
 	this(Image image)
 	{
 		this.image = image;
-		
+
 		height = image.rows;
-		width = image.columns;
-		
+		width  = image.columns;
+
 		hInstance = cast(HINSTANCE) GetModuleHandleA(null);
-		
+
 		wndclass.style         = CS_HREDRAW | CS_VREDRAW;
 		wndclass.lpfnWndProc   = &WndProc;
 		wndclass.cbClsExtra    = 0;
@@ -49,15 +49,15 @@ class Window
 			throw new DMagickException("This program requires Windows NT!");
 
 		RECT rect = RECT(0,0, width,height);
-		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
-		
-		hwnd = CreateWindowA("DMagick", "DMagick", WS_OVERLAPPEDWINDOW,
+		AdjustWindowRect(&rect, WS_CAPTION | WS_SYSMENU, false);
+
+		hwnd = CreateWindowA("DMagick", "DMagick", WS_CAPTION | WS_SYSMENU,
 			CW_USEDEFAULT, CW_USEDEFAULT, rect.right-rect.left, rect.bottom-rect.top,
 			null, null, hInstance, null);
 
 		windows[hwnd] = this;
 	}
-	
+
 	void display()
 	{
 		ShowWindow(hwnd, SW_SHOWNORMAL);
@@ -69,57 +69,26 @@ class Window
 			DispatchMessageA(&msg);
 		}
 	}
-	
+
 	extern(Windows) static LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		static int cxClient, cyClient, cxSource, cySource;
-		int x, y;
 		HDC hdc;
 		PAINTSTRUCT ps;
 
-		static HDC     hdcMem;
-		static HBITMAP hbmMem;
-		static HANDLE  hOld;
-		RECT rect;
-		
 		switch (message)
 		{
-			case WM_SIZE:
-				cxClient = LOWORD(lParam);
-				cyClient = HIWORD(lParam);
-				return 0;
-
 			case WM_ERASEBKGND:  // don't redraw bg
 				return 1;
-			
+
 			case WM_PAINT:
-			{
 				// Get DC for window
 				hdc = BeginPaint(hwnd, &ps);
 
-				// Create an off-screen DC for double-buffering
-				hdcMem = CreateCompatibleDC(hdc);
-				hbmMem = CreateCompatibleBitmap(hdc, cxClient, cyClient);
-				hOld = SelectObject(hdcMem, hbmMem);
-			
-				// Draw into hdcMem
-				GetClientRect(hwnd, &rect);
-				FillRect(hdcMem, &rect, GetStockObject(BLACK_BRUSH));
-				
-				windows[hwnd].DrawAlphaBlend(hwnd, hdcMem);
-				
-				// Transfer the off-screen DC to the screen
-				BitBlt(hdc, 0, 0, cxClient, cyClient, hdcMem, 0, 0, SRCCOPY);
-
-				// Free-up the off-screen DC
-				SelectObject(hdcMem, hOld);
-				DeleteObject(hbmMem);
-				DeleteDC (hdcMem);
+				windows[hwnd].DrawAlphaBlend(hwnd, hdc);
 
 				EndPaint(hwnd, &ps);
 				return 0;
-			}
-			
+
 			case WM_DESTROY:
 				windows[hwnd] = null;
 				PostQuitMessage(0);
@@ -130,7 +99,7 @@ class Window
 
 		return DefWindowProcA(hwnd, message, wParam, lParam);
 	}
-	
+
 	void DrawAlphaBlend(HWND hWnd, HDC hdcwnd)
 	{
 		HDC hdc;                              // handle of the DC we will create
@@ -139,7 +108,7 @@ class Window
 		VOID*  pvBits;                        // pointer to DIB section
 		ULONG  ulWindowWidth, ulWindowHeight; // window width/height
 		RECT   rt;                            // used for getting window dimensions
-		
+
 		// get window dimensions
 		GetClientRect(hWnd, &rt);
 
@@ -153,7 +122,7 @@ class Window
 
 		// create a DC for our bitmap -- the source DC for GdiAlphaBlend
 		hdc = CreateCompatibleDC(hdcwnd);
-		
+
 		// setup bitmap info
 		bmi.bmiHeader.biSize        = BITMAPINFOHEADER.sizeof;
 		bmi.bmiHeader.biWidth       = width;
@@ -167,12 +136,11 @@ class Window
 		hbitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &pvBits, null, 0x0);
 		SelectObject(hdc, hbitmap);
 
-		auto area = Geometry(width, height, 0, 0);
 		enum channels = "BGRA";  // win32 uses BGR(A)
+		Geometry area = Geometry(width, height);
 		byte[] arr = (cast(byte*)pvBits)[0 .. (area.width * area.height) * channels.length];
 		image.exportPixels(area, arr, channels);
 
-		//TODO: Rezize image.
 		BitBlt(hdcwnd, 0, 0, width, height, hdc, 0, 0, SRCCOPY);
 
 		DeleteObject(hbitmap);
@@ -184,23 +152,9 @@ pragma(lib, "gdi32.lib");
 
 const AC_SRC_OVER  = 0x00;
 const AC_SRC_ALPHA = 0x01;
-const GWLP_USERDATA = -21;
 
 enum DWORD BI_RGB = 0;
 enum UINT DIB_RGB_COLORS = 0;
-
-struct BLENDFUNCTION
-{
-	BYTE BlendOp;
-	BYTE BlendFlags;
-	BYTE SourceConstantAlpha;
-	BYTE AlphaFormat;
-}
-
-struct AlphaBlendType
-{
-	static normal = BLENDFUNCTION(AC_SRC_OVER, 0, 255, AC_SRC_ALPHA);
-}
 
 extern(Windows) BOOL BitBlt(HDC, int, int, int, int, HDC, int, int, DWORD);
 extern(Windows) HBITMAP CreateCompatibleBitmap(HDC, int, int);

@@ -64,7 +64,7 @@ void main()
 	dc.fill(cylinderTop);
 	dc.roundRectangle(progressXmax - (2 * wc), progressYmin, progressXmax, progressYmax, wc, hc);
 
-	dc.font("Arial");
+	dc.fontFamily("Sans");
 	dc.fontSize(fontsize);
 	dc.stroke(textShadow);
 	dc.fill(textColor);
