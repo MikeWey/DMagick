@@ -25,6 +25,8 @@ import dmagick.ImageView;
 import dmagick.Options;
 import dmagick.Utils;
 
+version(Windows) import dmagick.internal.Windows;
+
 //Import all translated c headers.
 import dmagick.c.MagickCore;
 
@@ -1180,37 +1182,8 @@ class Image
 	{
 		version(Windows)
 		{
-			WNDCLASS  wndclass;
-			HINSTANCE hInstance = cast(HINSTANCE) GetModuleHandle(null);
-			HWND      hwnd;
-			MSG       msg;
-
-			wndclass.style         = CS_HREDRAW | CS_VREDRAW;
-			wndclass.lpfnWndProc   = &WndProc;
-			wndclass.cbClsExtra    = 0;
-			wndclass.cbWndExtra    = 0;
-			wndclass.hInstance     = hInstance;
-			wndclass.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
-			wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-			wndclass.hbrBackground = null;
-			wndclass.lpszMenuName  = "DMagick"w;
-			wndclass.lpszClassName = "DMagick"w;
-
-			if (!RegisterClass(&wndclass))
-				throw new DMagickException("This program requires Windows NT!");
-
-			hwnd = CreateWindow(cn, toStringz(title), WS_OVERLAPPEDWINDOW,
-				CW_USEDEFAULT, CW_USEDEFAULT, width, height,
-				null, null, hInstance, null);
-
-			ShowWindow(hwnd, SW_SHOWNORMAL);
-			UpdateWindow(hwnd);
-
-			while (GetMessage(&msg, NULL, 0, 0))
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+			Window win = new Window(this);
+			win.display();
 		}
 		else
 		{
