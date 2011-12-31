@@ -31,6 +31,8 @@ import dmagick.c.montage;
 import dmagick.c.statistic;
 import dmagick.c.quantize;
 
+version(Windows) import dmagick.internal.Windows;
+
 /// See_Also: $(CXREF layer, _ImageLayerMethod)
 public alias dmagick.c.layer.ImageLayerMethod ImageLayerMethod;
 
@@ -165,12 +167,20 @@ void compositeLayers(
  */
 void display(Image[] images)
 {
-	linkImages(images);
-	scope(exit) unlinkImages(images);
+	version(Windows)
+	{
+		Window win = new Window(images);
+		win.display();
+	}
+	else
+	{
+		linkImages(images);
+		scope(exit) unlinkImages(images);
 
-	DisplayImages(images[0].options.imageInfo, images[0].imageRef);
+		DisplayImages(images[0].options.imageInfo, images[0].imageRef);
 
-	DMagickException.throwException(&(images[0].imageRef.exception));
+		DMagickException.throwException(&(images[0].imageRef.exception));
+	}
 }
 
 /**

@@ -15,6 +15,8 @@ import dmagick.Geometry;
 class Window
 {
 	Image image;
+	Image[] imageList;
+	size_t index;
 	size_t height;
 	size_t width;
 
@@ -42,7 +44,7 @@ class Window
 		wndclass.hIcon         = LoadIconA(null, IDI_APPLICATION);
 		wndclass.hCursor       = LoadCursorA(null, IDC_ARROW);
 		wndclass.hbrBackground = null;
-		wndclass.lpszMenuName  = "DMagick";
+		wndclass.lpszMenuName  = null;
 		wndclass.lpszClassName = "DMagick";
 
 		if (!RegisterClassA(&wndclass))
@@ -57,12 +59,26 @@ class Window
 
 		windows[hwnd] = this;
 	}
+	
+	this(Image[] images)
+	{
+		this(images[0]);
+	
+		imageList = images;
+		index = 0;
+	}
 
 	void display()
 	{
 		ShowWindow(hwnd, SW_SHOWNORMAL);
 		UpdateWindow(hwnd);
-
+		
+		if ( imageList !is null )
+		{
+			UINT delay = cast(UINT)image.animationDelay.total!"msecs"();
+			SetTimer(hwnd, 0, delay, null);
+		}
+		
 		while (GetMessageA(&msg, null, 0, 0))
 		{
 			TranslateMessage(&msg);
@@ -72,21 +88,17 @@ class Window
 
 	extern(Windows) static LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		HDC hdc;
-		PAINTSTRUCT ps;
-
 		switch (message)
 		{
 			case WM_ERASEBKGND:  // don't redraw bg
 				return 1;
 
 			case WM_PAINT:
-				// Get DC for window
-				hdc = BeginPaint(hwnd, &ps);
+				windows[hwnd].draw();
+				return 0;
 
-				windows[hwnd].DrawAlphaBlend(hwnd, hdc);
-
-				EndPaint(hwnd, &ps);
+			case WM_TIMER:
+				windows[hwnd].nextFrame();
 				return 0;
 
 			case WM_DESTROY:
@@ -100,17 +112,19 @@ class Window
 		return DefWindowProcA(hwnd, message, wParam, lParam);
 	}
 
-	void DrawAlphaBlend(HWND hWnd, HDC hdcwnd)
+	void draw()
 	{
 		HDC hdc;                              // handle of the DC we will create
+		HDC hdcwnd;                           // DC for the window
 		HBITMAP hbitmap;                      // bitmap handle
 		BITMAPINFO bmi;                       // bitmap header
+		PAINTSTRUCT ps;
 		VOID*  pvBits;                        // pointer to DIB section
 		ULONG  ulWindowWidth, ulWindowHeight; // window width/height
 		RECT   rt;                            // used for getting window dimensions
 
 		// get window dimensions
-		GetClientRect(hWnd, &rt);
+		GetClientRect(hwnd, &rt);
 
 		// calculate window width/height
 		ulWindowWidth  = rt.right - rt.left;
@@ -119,8 +133,11 @@ class Window
 		// make sure we have at least some window size
 		if (ulWindowWidth < 1 || ulWindowHeight < 1)
 			return;
+			
+		// Get DC for window
+		hdcwnd = BeginPaint(hwnd, &ps);
 
-		// create a DC for our bitmap -- the source DC for GdiAlphaBlend
+		// create a DC for our bitmap -- the source DC for BitBlt
 		hdc = CreateCompatibleDC(hdcwnd);
 
 		// setup bitmap info
@@ -145,6 +162,23 @@ class Window
 
 		DeleteObject(hbitmap);
 		DeleteDC(hdc);
+		EndPaint(hwnd, &ps);
+	}
+
+	/**
+	 * Setup the next frame, and invalidate the window so its repainted.
+	 */
+	void nextFrame()
+	{
+		if (++index == imageList.length)
+			index = 0;
+			
+		image = imageList[index];
+
+		UINT delay = cast(UINT)image.animationDelay.total!"msecs"();
+		SetTimer(hwnd, 0, delay, null);
+		
+		InvalidateRect(hwnd,null,false);
 	}
 }
 
@@ -159,3 +193,4 @@ enum UINT DIB_RGB_COLORS = 0;
 extern(Windows) BOOL BitBlt(HDC, int, int, int, int, HDC, int, int, DWORD);
 extern(Windows) HBITMAP CreateCompatibleBitmap(HDC, int, int);
 extern(Windows) HBITMAP CreateDIBSection(HDC, const(BITMAPINFO)*, UINT, void**, HANDLE, DWORD);
+extern(Windows) UINT_PTR SetTimer(HWND, UINT_PTR, UINT, TIMERPROC);
