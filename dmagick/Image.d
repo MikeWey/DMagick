@@ -3256,7 +3256,7 @@ class Image
 		imageRef.delay = cast(size_t)(delay.total!"msecs"() * imageRef.ticks_per_second) / 1000;
 	}
 	///ditto
-	Duration annimationDelay() const
+	Duration animationDelay() const
 	{
 		return dur!"msecs"((imageRef.delay * 1000) / imageRef.ticks_per_second);
 	}
