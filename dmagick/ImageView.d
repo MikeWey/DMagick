@@ -99,7 +99,7 @@ class ImageView
 	 * The height or the width of the view, depending on in which slice
 	 * it's used.
 	 * 
-	 * Bugs: dmd bug 3474: opDollar isn't implemented.
+	 * Bugs: dmd bug 7097: opDollar doesn't work with slicing.
 	 */
 	size_t opDollar() const
 	{
@@ -195,7 +195,7 @@ class Rows : ImageView
 	 * The height or the width of the view, depending on in which slice
 	 * it's used.
 	 * 
-	 * Bugs: dmd bug 3474: opDollar isn't implemented.
+	 * Bugs: dmd bug 7097: opDollar doesn't work with slicing.
 	 */
 	override size_t opDollar() const
 	{
@@ -298,7 +298,7 @@ struct Pixels
 	/**
 	 * The number of pixels in this row / column.
 	 * 
-	 * Bugs: dmd bug 3474: opDollar isn't implemented.
+	 * Bugs: dmd bug 7097: opDollar doesn't work with slicing.
 	 */
 	@property size_t length() const
 	{
