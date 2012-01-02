@@ -108,7 +108,9 @@ SOURCE= \
 	dmagick\c\type.d \
 	dmagick\c\utility.d \
 	dmagick\c\xmlTree.d \
-	dmagick\c\xwindow.d
+	dmagick\c\xwindow.d \
+	\
+	dmagick\internal\Windows.d \
 	
 ################## DOCS ####################################
 
