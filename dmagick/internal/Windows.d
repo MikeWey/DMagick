@@ -20,13 +20,17 @@ class Window
 	size_t height;
 	size_t width;
 
-	WNDCLASS  wndclass;
-	HINSTANCE hInstance;
-	HWND      hwnd;
-	MSG       msg;
+	WNDCLASS   wndclass;
+	HINSTANCE  hInstance;
+	BITMAPINFO bmi;          // bitmap header
+	HWND       hwnd;
+	MSG        msg;
 
 	static Window[HWND] windows;
 
+	/**
+	 * Create an window foe displaying an image.
+	 */
 	this(Image image)
 	{
 		this.image = image;
@@ -48,7 +52,7 @@ class Window
 		wndclass.lpszClassName = "DMagick";
 
 		if (!RegisterClassA(&wndclass))
-			throw new DMagickException("This program requires Windows NT!");
+			throw new DMagickException("Displaying images requires Windows NT!");
 
 		RECT rect = RECT(0,0, width,height);
 		AdjustWindowRect(&rect, WS_CAPTION | WS_SYSMENU, false);
@@ -57,28 +61,48 @@ class Window
 			CW_USEDEFAULT, CW_USEDEFAULT, rect.right-rect.left, rect.bottom-rect.top,
 			null, null, hInstance, null);
 
+		// setup bitmap info
+		bmi.bmiHeader.biSize        = BITMAPINFOHEADER.sizeof;
+		bmi.bmiHeader.biWidth       = width;
+		bmi.bmiHeader.biHeight      = -height;  // must be inverted so Y axis is at top
+		bmi.bmiHeader.biPlanes      = 1;
+		bmi.bmiHeader.biBitCount    = 32;      // four 8-bit components
+		bmi.bmiHeader.biCompression = BI_RGB;
+		bmi.bmiHeader.biSizeImage   = width * height * 4;
+
 		windows[hwnd] = this;
 	}
-	
+
+	/**
+	 * Create an window foe displaying an animation
+	  * or a collection of images.
+	 */
 	this(Image[] images)
 	{
 		this(images[0]);
-	
+
 		imageList = images;
 		index = 0;
 	}
 
+	/**
+	 * Open the window and display the image.
+	 */
 	void display()
 	{
 		ShowWindow(hwnd, SW_SHOWNORMAL);
 		UpdateWindow(hwnd);
-		
+
 		if ( imageList !is null )
 		{
 			UINT delay = cast(UINT)image.animationDelay.total!"msecs"();
+			
+			if ( delay == 0 )
+				delay = 1000;
+			
 			SetTimer(hwnd, 0, delay, null);
 		}
-		
+
 		while (GetMessageA(&msg, null, 0, 0))
 		{
 			TranslateMessage(&msg);
@@ -112,12 +136,14 @@ class Window
 		return DefWindowProcA(hwnd, message, wParam, lParam);
 	}
 
+	/**
+	 * Draw the image on the window.
+	 */
 	void draw()
 	{
 		HDC hdc;                              // handle of the DC we will create
 		HDC hdcwnd;                           // DC for the window
 		HBITMAP hbitmap;                      // bitmap handle
-		BITMAPINFO bmi;                       // bitmap header
 		PAINTSTRUCT ps;
 		VOID*  pvBits;                        // pointer to DIB section
 		ULONG  ulWindowWidth, ulWindowHeight; // window width/height
@@ -133,21 +159,12 @@ class Window
 		// make sure we have at least some window size
 		if (ulWindowWidth < 1 || ulWindowHeight < 1)
 			return;
-			
+
 		// Get DC for window
 		hdcwnd = BeginPaint(hwnd, &ps);
 
 		// create a DC for our bitmap -- the source DC for BitBlt
 		hdc = CreateCompatibleDC(hdcwnd);
-
-		// setup bitmap info
-		bmi.bmiHeader.biSize        = BITMAPINFOHEADER.sizeof;
-		bmi.bmiHeader.biWidth       = width;
-		bmi.bmiHeader.biHeight      = -height;  // must be inverted so Y axis is at top
-		bmi.bmiHeader.biPlanes      = 1;
-		bmi.bmiHeader.biBitCount    = 32;      // four 8-bit components
-		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biSizeImage   = width * height * 4;
 
 		// create our DIB section and select the bitmap into the dc
 		hbitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &pvBits, null, 0x0);
@@ -172,12 +189,15 @@ class Window
 	{
 		if (++index == imageList.length)
 			index = 0;
-			
+
 		image = imageList[index];
 
 		UINT delay = cast(UINT)image.animationDelay.total!"msecs"();
-		SetTimer(hwnd, 0, delay, null);
 		
+		if ( delay == 0 )
+			delay = 1000;
+				
+		SetTimer(hwnd, 0, delay, null);
 		InvalidateRect(hwnd,null,false);
 	}
 }
