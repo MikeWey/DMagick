@@ -81,7 +81,7 @@ public alias dmagick.c.image.ResolutionType ResolutionType;
 /// See_Also: $(CXREF distort, _SparseColorMethod)
 public alias dmagick.c.distort.SparseColorMethod SparseColorMethod;
 /// See_Also: $(CXREF effect, _StatisticType)
-public alias dmagick.c.effect.StatisticType StatisticType;
+public alias dmagick.c.statistic.StatisticType StatisticType;
 /// See_Also: $(CXREF constitute, _StorageType)
 public alias dmagick.c.constitute.StorageType StorageType;
 /// See_Also: $(CXREF draw, _TypeMetric)

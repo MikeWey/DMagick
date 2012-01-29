@@ -45,57 +45,6 @@ extern(C)
 		JPEGPreview             /// ditto
 	}
 
-	version(D_Ddoc)
-	{
-		/**
-		 * The statistic method to apply.
-		 */
-		enum StatisticType
-		{
-			UndefinedStatistic, /// 
-			GradientStatistic,  /// Maximum difference in area.
-			MaximumStatistic,   /// Maximum value per channel in neighborhood.
-			MeanStatistic,      /// Average value per channel in neighborhood.
-			MedianStatistic,    /// Median value per channel in neighborhood.
-			MinimumStatistic,   /// Minimum value per channel in neighborhood.
-			ModeStatistic,      /// Mode (most frequent) value per channel in neighborhood.
-			NonpeakStatistic,   /// Value just before or after the median value per channel in neighborhood.
-			StandardDeviationStatistic  /// 
-		}
-	}
-	else
-	{
-		mixin(
-		{
-			string types = "enum StatisticType
-			{
-				UndefinedStatistic,";
-
-				static if ( MagickLibVersion >= 0x670 )
-				{
-					types ~= "GradientStatistic,";
-				}
-
-				types ~= "
-				MaximumStatistic,
-				MeanStatistic,
-				MedianStatistic,
-				MinimumStatistic,
-				ModeStatistic,
-				NonpeakStatistic,";
-
-				static if ( MagickLibVersion >= 0x670 )
-				{
-					types ~= "StandardDeviationStatistic,";
-				}
-
-				types ~= "
-			}";
-
-			return types;
-		}());
-	}
-
 	Image* AdaptiveBlurImage(const(Image)*, const double, const double, ExceptionInfo*);
 	Image* AdaptiveBlurImageChannel(const(Image)*, const ChannelType, const double, const double, ExceptionInfo*);
 	Image* AdaptiveSharpenImage(const(Image)*, const double, const double, ExceptionInfo*);
@@ -139,13 +88,6 @@ extern(C)
 	Image* SharpenImage(const(Image)*, const double, const double, ExceptionInfo*);
 	Image* SharpenImageChannel(const(Image)*, const ChannelType ,const double, const double, ExceptionInfo*);
 	Image* SpreadImage(const(Image)*, const double, ExceptionInfo*);
-
-	static if ( MagickLibVersion >= 0x669 )
-	{
-		Image* StatisticImage(const(Image)*, const StatisticType, const size_t, const size_t, ExceptionInfo*);
-		Image* StatisticImageChannel(const(Image)*, const ChannelType, const StatisticType, const size_t, const size_t, ExceptionInfo*);
-	}
-
 	Image* UnsharpMaskImage(const(Image)*, const double, const double, const double, const double, ExceptionInfo*);
 	Image* UnsharpMaskImageChannel(const(Image)*, const ChannelType, const double, const double, const double, const double, ExceptionInfo*);
 }

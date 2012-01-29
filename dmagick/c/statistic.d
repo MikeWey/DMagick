@@ -92,6 +92,57 @@ extern(C)
 		ArctanFunction      /// ditto
 	}
 
+	version(D_Ddoc)
+	{
+		/**
+		 * The statistic method to apply.
+		 */
+		enum StatisticType
+		{
+			UndefinedStatistic, /// 
+			GradientStatistic,  /// Maximum difference in area.
+			MaximumStatistic,   /// Maximum value per channel in neighborhood.
+			MeanStatistic,      /// Average value per channel in neighborhood.
+			MedianStatistic,    /// Median value per channel in neighborhood.
+			MinimumStatistic,   /// Minimum value per channel in neighborhood.
+			ModeStatistic,      /// Mode (most frequent) value per channel in neighborhood.
+			NonpeakStatistic,   /// Value just before or after the median value per channel in neighborhood.
+			StandardDeviationStatistic  /// 
+		}
+	}
+	else
+	{
+		mixin(
+		{
+			string types = "enum StatisticType
+			{
+				UndefinedStatistic,";
+
+				static if ( MagickLibVersion >= 0x670 )
+				{
+					types ~= "GradientStatistic,";
+				}
+
+				types ~= "
+				MaximumStatistic,
+				MeanStatistic,
+				MedianStatistic,
+				MinimumStatistic,
+				ModeStatistic,
+				NonpeakStatistic,";
+
+				static if ( MagickLibVersion >= 0x670 )
+				{
+					types ~= "StandardDeviationStatistic,";
+				}
+
+				types ~= "
+			}";
+
+			return types;
+		}());
+	}
+
 	ChannelStatistics* GetImageChannelStatistics(const(Image)*, ExceptionInfo*);
 
 	static if ( MagickLibVersion < 0x661 )
@@ -102,6 +153,12 @@ extern(C)
 	static if ( MagickLibVersion >= 0x661 )
 	{
 		Image* EvaluateImages(const(Image)*, const MagickEvaluateOperator, ExceptionInfo*);
+	}
+
+	static if ( MagickLibVersion >= 0x669 )
+	{
+		Image* StatisticImage(const(Image)*, const StatisticType, const size_t, const size_t, ExceptionInfo*);
+		Image* StatisticImageChannel(const(Image)*, const ChannelType, const StatisticType, const size_t, const size_t, ExceptionInfo*);
 	}
 
 	MagickBooleanType EvaluateImage(Image*, const MagickEvaluateOperator, const double, ExceptionInfo*);
