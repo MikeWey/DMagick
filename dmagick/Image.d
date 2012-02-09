@@ -2188,7 +2188,7 @@ class Image
 	void process(string name, string[] arguments)
 	{
 		MagickCoreImage* image = imageRef;
-		const(char)*[] args = new char*[arguments.length];
+		const(char)*[] args = new const(char)*[arguments.length];
 
 		foreach( i, arg; arguments )
 			args[i] = toStringz(arg);
