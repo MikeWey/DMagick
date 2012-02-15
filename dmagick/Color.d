@@ -133,6 +133,15 @@ class Color
 			assert(color.toString() == "#0000000000000000FFFFFFFF");
 	}
 
+	/*
+	 * Needed when comparing colors with dmd 2.058.
+	 */
+	Object opCast(T)()
+		if ( is(T == Object) )
+	{
+		return this;
+	}
+
 	/**
 	 * Support casting between different colors.
 	 * You can also use std.conv.to

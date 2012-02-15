@@ -34,10 +34,6 @@ else
     output=-of$@
 endif
 
-ifeq ("$(OS)","Linux")
-    LDFLAGS+=$(LINKERFLAG)-ldl
-endif
-
 ifeq ("$(ARCH)", "x86_64") 
     DCFLAGS+=-m64
     LDFLAGS+=-m64
@@ -89,7 +85,7 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 	echo "void main(){}" > $@
 
 unittest: /tmp/stubmain.d $(SOURCES_DMAGICK)
-	$(DC) $(DCFLAGS) $(UNITTESTFLAG) $(LINKERFLAG)-lMagickCore $^ $(output)
+	$(DC) $(DCFLAGS) $(UNITTESTFLAG) $(LINKERFLAG)-lMagickCore $(LDFLAGS) $^ $(output)
 	./$@
 
 #######################################################################
