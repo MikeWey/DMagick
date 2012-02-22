@@ -5,13 +5,13 @@ Requirements:
 
     Linux (Posix?):
     ---------------
-    - A recent D2 compiler >= 2.054
+    - A recent D2 compiler >= 2.058
     - ImageMagick 6.6.0 or grater.
     - GNUMake
 
     Windows:
     --------
-    - A recent D2 compiler >= 2.054
+    - A recent D2 compiler >= 2.058
     - ImageMagick 6.6.0 or grater. (6.6.3 and above for 64 bits)
       It's Recomended to use the latest version.
     - implip from the Digital Mars basic utilities package.

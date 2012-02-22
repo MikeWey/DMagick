@@ -4074,25 +4074,7 @@ class Image
 	 */
 	auto opDispatch(string property)()
 	{
-		// Workaround for dmd bug 620.
-		struct Property
-		{
-			ImageRef imageRef;
-
-			void opAssign(string value)
-			{
-				SetImageProperty(imageRef, toStringz(property), toStringz(value));
-			}
-
-			string value()
-			{
-				return to!(string)(GetImageProperty(imageRef, toStringz(property)));
-			}
-
-			alias value this;
-		}
-
-		return Property(imageRef);
+		return to!(string)(GetImageProperty(imageRef, toStringz(property)));
 	}
 
 	unittest
