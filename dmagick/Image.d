@@ -4063,6 +4063,7 @@ class Image
 	 * attribute, label, caption, comment, signature, and in some cases EXIF.
 	 */
 	void opDispatch(string property)(string value)
+		 if ( property != "popFront" )
 	{
 		SetImageProperty(imageRef, toStringz(property), toStringz(value));
 
@@ -4073,6 +4074,7 @@ class Image
 	 * Returns the value of the image property.
 	 */
 	auto opDispatch(string property)()
+		 if ( property != "popFront" )
 	{
 		return to!(string)(GetImageProperty(imageRef, toStringz(property)));
 	}
