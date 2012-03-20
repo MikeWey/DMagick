@@ -104,7 +104,17 @@ extern(C)
 		 * the same size as the original and with all its original RGB data
 		 * still intact, but fully transparent.
 		 */
-		TransparentAlphaChannel
+		TransparentAlphaChannel,
+
+		/**
+		 * Flatten image pixels over the background pixels.
+		 * 
+		 * Since: ImageMagick 6.7.6.
+		 */
+		FlattenAlphaChannel,
+
+		/** ditto */
+		RemoveAlphaChannel
 	}
 
 	/**

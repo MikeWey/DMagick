@@ -155,7 +155,8 @@ extern(C)
 			ThickenMorphology,           /* Add matching pixels from image */
 
 			/* Experimental Morphology methods */
-			VoronoiMorphology
+			VoronoiMorphology,           /* distance matte channel copy nearest color */
+			IterativeDistanceMorphology  /* Add Kernel Value, take Minimum */
 		}";
 
 		return method;

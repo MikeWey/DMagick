@@ -75,7 +75,8 @@ extern(C)
 		MeanEvaluateOperator,        /// Add the value and divide by 2.
 		AbsEvaluateOperator,         /// Add value to pixels and return absolute value.
 		ExponentialEvaluateOperator, /// base-e exponential function.
-		MedianEvaluateOperator       /// Choose the median value from an image sequence.
+		MedianEvaluateOperator,      /// Choose the median value from an image sequence.
+		SumEvaluateOperator          /// Add value to pixels.
 	}
 
 	/**
