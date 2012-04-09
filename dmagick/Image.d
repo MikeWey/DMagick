@@ -2968,6 +2968,10 @@ class Image
 		if ( depth != 0 )
 			this.depth = depth;
 
+		string originalFilename = filename;
+		filename = this.magick ~ ":";
+		scope(exit) filename = originalFilename;
+
 		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, exceptionInfo);
 
 		DMagickException.throwException(exceptionInfo);
@@ -2976,6 +2980,12 @@ class Image
 		RelinquishMagickMemory(blob);
 
 		return dBlob;	
+	}
+
+	unittest
+	{
+		Image example = new Image(Geometry(100, 100), new Color("green"));
+		example.toBlob("jpg");
 	}
 
 	/**
@@ -3718,7 +3728,7 @@ class Image
 	///ditto
 	string filename() const
 	{
-		return to!(string)(imageRef.filename);
+		return imageRef.magick[0 .. strlen(imageRef.magick.ptr)].idup;
 	}
 
 	/**
