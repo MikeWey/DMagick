@@ -157,13 +157,15 @@ class ImageView
 	 * Support the usage of foreach to loop over the rows in the view.
 	 * The foreach is executed in parallel.
 	 */
-	int opApply(int delegate(Pixels) dg)
+	int opApply(int delegate(ref Pixels) dg)
 	{
 		shared(int) progress;
 
 		foreach ( row; taskPool.parallel(iota(extent.y, extent.y + extent.height)) )
 		{
-			int result = dg(Pixels(image, extent.x, row, extent.width, 1));
+			Pixels pixels = Pixels(image, extent.x, row, extent.width, 1);
+
+			int result = dg(pixels);
 
 			if ( result )
 				return result;

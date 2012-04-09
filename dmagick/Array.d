@@ -595,26 +595,20 @@ void[] toBlob(Image[] images, string magick = null, size_t depth = 0, bool adjoi
 {
 	size_t length;
 
-	AcquireMemoryHandler oldMalloc;
-	ResizeMemoryHandler  oldRealloc;
-	DestroyMemoryHandler oldFree;
-
 	if ( magick !is null )
 		images[0].magick = magick;
 	if ( depth != 0 )
 		images[0].depth = depth;
-
-	//Use the D GC to accolate the blob.
-	GetMagickMemoryMethods(&oldMalloc, &oldRealloc, &oldFree);
-	SetMagickMemoryMethods(&Image.malloc, &Image.realloc, &Image.free);
-	scope(exit) SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
 
 	linkImages(images);
 	scope(exit) unlinkImages(images);
 
 	void* blob = ImagesToBlob(images[0].options.imageInfo, images[0].imageRef, &length, DMagickExceptionInfo());
 
-	return blob[0 .. length];	
+	void[] dBlob = blob[0 .. length].dup;
+	RelinquishMagickMemory(blob);
+
+	return dBlob;	
 }
 
 /**

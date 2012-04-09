@@ -2961,42 +2961,21 @@ class Image
 	void[] toBlob(string magick = null, size_t depth = 0)
 	{
 		size_t length;
-
-		AcquireMemoryHandler oldMalloc;
-		ResizeMemoryHandler  oldRealloc;
-		DestroyMemoryHandler oldFree;
+		ExceptionInfo* exceptionInfo = AcquireExceptionInfo();
 
 		if ( magick !is null )
 			this.magick = magick;
 		if ( depth != 0 )
 			this.depth = depth;
 
-		//Use the D GC to accolate the blob.
-		GetMagickMemoryMethods(&oldMalloc, &oldRealloc, &oldFree);
-		SetMagickMemoryMethods(&Image.malloc, &Image.realloc, &Image.free);
-		scope(exit) SetMagickMemoryMethods(oldMalloc, oldRealloc, oldFree);
+		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, exceptionInfo);
 
-		void* blob = ImageToBlob(options.imageInfo, imageRef, &length, DMagickExceptionInfo());
+		DMagickException.throwException(exceptionInfo);
 
-		return blob[0 .. length];	
-	}
+		void[] dBlob = blob[0 .. length].dup;
+		RelinquishMagickMemory(blob);
 
-	private extern(C)
-	{
-		static void* malloc(size_t sz)
-		{
-			return GC.malloc(sz, GC.BlkAttr.NO_SCAN);
-		}
-
-		static void* realloc(void* p, size_t sz)
-		{
-			return GC.realloc(p, sz, GC.BlkAttr.NO_SCAN);
-		}
-
-		static void free(void* p)
-		{
-			GC.free(p);
-		}
+		return dBlob;	
 	}
 
 	/**
