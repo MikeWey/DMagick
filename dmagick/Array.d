@@ -600,6 +600,10 @@ void[] toBlob(Image[] images, string magick = null, size_t depth = 0, bool adjoi
 	if ( depth != 0 )
 		images[0].depth = depth;
 
+	string originalFilename = images[0].filename;
+	images[0].filename = images[0].magick ~ ":";
+	scope(exit) images[0].filename = originalFilename;
+
 	linkImages(images);
 	scope(exit) unlinkImages(images);
 
