@@ -163,7 +163,7 @@ class ImageView
 
 		foreach ( row; taskPool.parallel(iota(extent.y, extent.y + extent.height)) )
 		{
-			int result = dg(Pixels(image, extent.x, row, extent.width, 1););
+			int result = dg(Pixels(image, extent.x, row, extent.width, 1));
 
 			if ( result )
 				return result;
