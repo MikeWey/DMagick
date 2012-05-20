@@ -39,7 +39,6 @@ extern(C)
 	MagickBooleanType ExpandFilenames(int*, char***);
 	MagickBooleanType GetPathAttributes(const(char)*, void*);
 	MagickBooleanType GetExecutionPath(char*, const size_t);
-	MagickBooleanType IsMagickTrue(const(char)*);
 	MagickBooleanType IsPathAccessible(const(char)*);
 
 	size_t MultilineCensus(const(char)*);

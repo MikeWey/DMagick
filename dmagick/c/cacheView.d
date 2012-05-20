@@ -103,7 +103,18 @@ extern(C)
 
 	struct CacheView {}
 
+	static if ( MagickLibVersion >= 0x677 )
+	{
+		CacheView* AcquireAuthenticCacheView(const(Image)*, ExceptionInfo*);
+	}
+
 	CacheView* AcquireCacheView(const(Image)*);
+
+	static if ( MagickLibVersion >= 0x677 )
+	{
+		CacheView* AcquireVirtualCacheView(const(Image)*, ExceptionInfo*);
+	}
+
 	CacheView* CloneCacheView(const(CacheView)*);
 	CacheView* DestroyCacheView(CacheView*);
 

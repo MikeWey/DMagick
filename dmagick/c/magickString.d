@@ -45,12 +45,23 @@ extern(C)
 	{
 		double InterpretSiPrefixValue(const(char)*, char**);
 	}
+	static if ( MagickLibVersion >= 0x677 )
+	{
+		double* StringToArrayOfDoubles(const(char)*, ssize_t*, ExceptionInfo*);
+	}
 
 	int	CompareStringInfo(const(StringInfo)*, const(StringInfo)*);
 	int	LocaleCompare(const(char)*, const(char)*);
 	int	LocaleNCompare(const(char)*, const(char)*, const size_t);
 
 	MagickBooleanType ConcatenateString(char**, const(char)*);
+
+	static if ( MagickLibVersion >= 0x677 )
+	{
+		MagickBooleanType IsStringTrue(const(char)*);
+		MagickBooleanType IsStringNotFalse(const(char)*);
+	}
+
 	MagickBooleanType SubstituteString(char**, const(char)*, const(char)*);
 
 	size_t ConcatenateMagickString(char*, const(char)*, const size_t);

@@ -11,6 +11,7 @@ extern(C)
 
 	MagickBooleanType GlobExpression(const(char)*, const(char)*, const MagickBooleanType);
 	MagickBooleanType IsGlob(const(char)*);
+	MagickBooleanType IsMagickTrue(const(char)*);
 
 	TokenInfo* AcquireTokenInfo();
 	TokenInfo* DestroyTokenInfo(TokenInfo*);

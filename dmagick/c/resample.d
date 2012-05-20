@@ -65,6 +65,8 @@ extern(C)
 			Lanczos2Filter,      /// ditto
 			Lanczos2SharpFilter, /// ditto
 			RobidouxFilter,      /// ditto
+			RobidouxSharpFilter, /// ditto
+			CosineFilter,        /// ditto
 			SentinelFilter,      // a count of all the filters, not a real filter
 
 			BesselFilter         = JincFilter,
@@ -102,6 +104,8 @@ extern(C)
 			Lanczos2DFilter,
 			Lanczos2DSharpFilter,
 			RobidouxFilter,
+			RobidouxSharpFilter,
+			CosineFilter,
 			SentinelFilter,  /* a count of all the filters, not a real filter */
 
 			BesselFilter         = JincFilter

@@ -10,6 +10,20 @@ alias ptrdiff_t ssize_t;
 
 extern(C)
 {
+	enum CacheType
+	{
+		UndefinedCache,
+		MemoryCache,
+		MapCache,
+		DiskCache,
+		PingCache
+	}
+
+	static if ( MagickLibVersion >= 0x677 )
+	{
+		CacheType GetImagePixelCacheType(const(Image)*);
+	}
+
 	const(IndexPacket)* GetVirtualIndexQueue(const(Image)*);
 
 	const(PixelPacket)* GetVirtualPixels(const(Image)*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);

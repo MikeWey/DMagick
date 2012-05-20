@@ -394,8 +394,8 @@ extern(C)
 
 		char[MaxTextExtent]
 			filename,        /* images input filename */
-			magick_filename,
-			magick;
+			magick_filename, /* ditto with coders, and read_mods */
+			magick;          /* Coder used to decode image */
 
 		size_t
 			magick_columns,
