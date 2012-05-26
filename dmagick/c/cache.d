@@ -4,6 +4,7 @@ import dmagick.c.image;
 import dmagick.c.pixel;
 import dmagick.c.exception;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.cacheView;
 
 alias ptrdiff_t ssize_t;

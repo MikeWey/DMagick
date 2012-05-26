@@ -4,6 +4,7 @@ import core.stdc.config;
 
 import dmagick.c.magickString;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
