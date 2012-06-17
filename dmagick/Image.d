@@ -4383,3 +4383,19 @@ class Image
 		assert( storage == StorageType.IntegerPixel );
 	}
 }
+
+/*
+ * Initialize ImageMagick, causes an access violation on Windows.
+ */
+version (Posix)
+{
+	shared static this()
+	{
+			MagickCoreGenesis(toStringz(Runtime.args[0]) , false);
+	}
+
+	shared static ~this()
+	{
+			MagickCoreTerminus();
+	}
+}
