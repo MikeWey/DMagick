@@ -8,6 +8,12 @@ import dmagick.c.resample;
 extern(C)
 {
 	Image* AdaptiveResizeImage(const(Image)*, const size_t, const size_t, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x678 )
+	{
+		Image* InterpolativeResizeImage(const(Image)*, const size_t, const size_t, const InterpolatePixelMethod, ExceptionInfo*);
+	}
+
 	Image* LiquidRescaleImage(const(Image)*, const size_t, const size_t, const double, const double, ExceptionInfo*);
 	Image* MagnifyImage(const(Image)*, ExceptionInfo*);
 	Image* MinifyImage(const(Image)*, ExceptionInfo*);

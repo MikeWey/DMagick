@@ -33,6 +33,7 @@ SOURCE= \
 	dmagick\c\blob.d \
 	dmagick\c\cache.d \
 	dmagick\c\cacheView.d \
+	dmagick\c\channel.d \
 	dmagick\c\cipher.d \
 	dmagick\c\client.d \
 	dmagick\c\coder.d \

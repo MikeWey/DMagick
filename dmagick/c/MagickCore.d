@@ -8,6 +8,7 @@ public import dmagick.c.attribute;
 public import dmagick.c.blob;
 public import dmagick.c.cache;
 public import dmagick.c.cacheView;
+public import dmagick.c.channel;
 public import dmagick.c.cipher;
 public import dmagick.c.client;
 public import dmagick.c.coder;

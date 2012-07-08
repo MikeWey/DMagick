@@ -14,6 +14,7 @@ extern(C)
 	MagickBooleanType IsOpaqueImage(const(Image)*, ExceptionInfo*);
 	MagickBooleanType SetImageChannelDepth(Image*, const ChannelType, const size_t);
 	MagickBooleanType SetImageDepth(Image*, const size_t);
+	MagickBooleanType SetImageType(Image*, const ImageType);
 
 	RectangleInfo GetImageBoundingBox(const(Image)*, ExceptionInfo* exception);
 

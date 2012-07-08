@@ -67,6 +67,7 @@ extern(C)
 			RobidouxFilter,      /// ditto
 			RobidouxSharpFilter, /// ditto
 			CosineFilter,        /// ditto
+			SplineFilter,        /// ditto
 			SentinelFilter,      // a count of all the filters, not a real filter
 
 			BesselFilter         = JincFilter,

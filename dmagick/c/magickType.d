@@ -20,8 +20,12 @@ extern (C)
 		enum QuantumRange = Quantum.max;
 		enum MAGICKCORE_QUANTUM_DEPTH = 8;
 		enum MaxColormapSize = 256;
-		enum MagickEpsilon = 1.0e-6;
-		enum MagickHuge    = 1.0e6;
+
+		static if ( MagickLibVersion < 0x678 )
+		{
+			enum MagickEpsilon = 1.0e-6;
+			enum MagickHuge    = 1.0e6;
+		}
 	}
 	else version(Quantum32)
 	{
@@ -39,8 +43,12 @@ extern (C)
 		enum QuantumRange = Quantum.max;
 		enum MAGICKCORE_QUANTUM_DEPTH = 32;
 		enum MaxColormapSize = 65536;
-		enum MagickEpsilon = 1.0e-10;
-		enum MagickHuge    = 1.0e12;
+
+		static if ( MagickLibVersion < 0x678 )
+		{
+			enum MagickEpsilon = 1.0e-10;
+			enum MagickHuge    = 1.0e12;
+		}
 	}
 	else version(Quantum64)
 	{
@@ -60,8 +68,12 @@ extern (C)
 		enum QuantumRange = 18446744073709551615.0;
 		enum MAGICKCORE_QUANTUM_DEPTH = 64;
 		enum MaxColormapSize = 65536;
-		enum MagickEpsilon = 1.0e-10;
-		enum MagickHuge = 1.0e12;
+
+		static if ( MagickLibVersion < 0x678 )
+		{
+			enum MagickEpsilon = 1.0e-10;
+			enum MagickHuge = 1.0e12;
+		}
 	}
 	else
 	{
@@ -79,8 +91,18 @@ extern (C)
 		enum QuantumRange = Quantum.max;
 		enum MAGICKCORE_QUANTUM_DEPTH = 16;
 		enum MaxColormapSize = 65536;
-		enum MagickEpsilon = 1.0e-10;
-		enum MagickHuge    = 1.0e12;
+
+		static if ( MagickLibVersion < 0x678 )
+		{
+			enum MagickEpsilon = 1.0e-10;
+			enum MagickHuge    = 1.0e12;
+		}
+	}
+
+	static if ( MagickLibVersion >= 0x678 )
+	{
+		enum MagickRealType MagickEpsilon = 2.220446e-16;
+		enum MagickRealType MagickHuge    = 1.0/MagickEpsilon;
 	}
 
 	alias uint  MagickStatusType;

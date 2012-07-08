@@ -622,13 +622,11 @@ extern(C)
 	Image* AcquireImage(const(ImageInfo)*);
 	Image* AppendImages(const(Image)*, const MagickBooleanType, ExceptionInfo*);
 	Image* CloneImage(const(Image)*, const size_t, const size_t, const MagickBooleanType, ExceptionInfo*);
-	Image* CombineImages(const(Image)*, const ChannelType, ExceptionInfo*);
 	Image* DestroyImage(Image*);
 	Image* GetImageClipMask(const(Image)*, ExceptionInfo*);
 	Image* GetImageMask(const(Image)*, ExceptionInfo*);
 	Image* NewMagickImage(const(ImageInfo)*, const size_t, const size_t, const(MagickPixelPacket)*);
 	Image* ReferenceImage(Image*);
-	Image* SeparateImages(const(Image)*, const ChannelType, ExceptionInfo*);
 
 	static if ( MagickLibVersion >= 0x668 )
 	{
@@ -646,7 +644,6 @@ extern(C)
 
 	MagickBooleanType ClipImage(Image*);
 	MagickBooleanType ClipImagePath(Image*, const(char)*, const MagickBooleanType);
-	MagickBooleanType GetImageAlphaChannel(const(Image)*);
 	MagickBooleanType IsTaintImage(const(Image)*);
 	MagickBooleanType IsMagickConflict(const(char)*);
 	MagickBooleanType IsHighDynamicRangeImage(const(Image)*, ExceptionInfo*);
@@ -654,8 +651,6 @@ extern(C)
 	MagickBooleanType ListMagickInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType ModifyImage(Image**, ExceptionInfo*);
 	MagickBooleanType ResetImagePage(Image*, const(char)*);
-	MagickBooleanType SeparateImageChannel(Image*, const ChannelType);
-	MagickBooleanType SetImageAlphaChannel(Image*, const AlphaChannelType);
 	MagickBooleanType SetImageBackgroundColor(Image*);
 	MagickBooleanType SetImageClipMask(Image*, const(Image)*);
 
@@ -676,7 +671,6 @@ extern(C)
 	}
 
 	MagickBooleanType SetImageStorageClass(Image*, const ClassType);
-	MagickBooleanType SetImageType(Image*, const ImageType);
 	MagickBooleanType StripImage(Image*);
 	MagickBooleanType SyncImage(Image*);
 	MagickBooleanType SyncImageSettings(const(ImageInfo)*, Image*);

@@ -25,7 +25,12 @@ extern(C)
 		IntegerInterpolatePixel,         /// The color of the top-left pixel (floor function).
 		MeshInterpolatePixel,            /// Divide area into two flat triangular interpolations.
 		NearestNeighborInterpolatePixel, /// The nearest pixel to the lookup point (rounded function).
-		SplineInterpolatePixel           /// Direct spline curves (colors are blurred).
+		SplineInterpolatePixel,          /// Direct spline curves (colors are blurred).
+		Average9InterpolatePixel,        /// Average 9 nearest neighbours.
+		Average16InterpolatePixel,       /// Average 16 nearest neighbours.
+		BlendInterpolatePixel,           /// blend of nearest 1, 2 or 4 pixels.
+		BackgroundInterpolatePixel,      /// just return background color.
+		CatromInterpolatePixel           /// Catmull-Rom interpolation.
 	}
 
 
@@ -132,6 +137,11 @@ extern(C)
 	static if ( MagickLibVersion >= 0x669 )
 	{
 		MagickBooleanType InterpolateMagickPixelPacket(const Image*, const CacheView*, const InterpolatePixelMethod, const double, const double, MagickPixelPacket*, ExceptionInfo*);
+	}
+
+	static if ( MagickLibVersion >= 0x678 )
+	{
+		MagickPixelPacket* CloneMagickPixelPacket(const(MagickPixelPacket)*);
 	}
 
 	void GetMagickPixelPacket(const(Image)*, MagickPixelPacket*);
