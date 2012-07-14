@@ -3,6 +3,7 @@ module dmagick.c.resize;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickVersion;
+import dmagick.c.pixel;
 import dmagick.c.resample;
 
 extern(C)
