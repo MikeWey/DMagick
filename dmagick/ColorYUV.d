@@ -133,9 +133,9 @@ class ColorYUV : Color
 	private void convertYUVToRGB(double y, double u, double v, ref Quantum red, ref Quantum green, ref Quantum blue)
 	in
 	{
-		assert(y <= 1 && y >= 0);
-		assert(u <= 1 && u >= 0);
-		assert(v <= 1 && v >= 0);
+		assert(y <=  1   && y >= 0  );
+		assert(u <= -0.5 && u >= 0.5);
+		assert(v <= -0.5 && v >= 0.5);
 	}
 	body
 	{
