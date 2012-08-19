@@ -427,9 +427,9 @@ extern(C)
 			signature;
 
 		Image*
-			previous,        /* Image sequence list links */
-			list,
-			next;
+			previous,        /* Image list links */
+			list,            /* Undo/Redo image processing list (for display) */
+			next;            /* Image list links */
 
 		InterpolatePixelMethod
 			interpolate;     /* Interpolation of color for between pixel lookups */

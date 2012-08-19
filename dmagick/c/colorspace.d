@@ -143,7 +143,19 @@ extern(C)
 		 * system used by printers and photographers for the rendering of
 		 * colors with ink or emulsion, normally on a white surface.
 		 */
-		CMYColorspace
+		CMYColorspace,
+
+		/**
+		 * CIE 1976 (L*, u*, v*) color space.
+		 */
+		LuvColorspace,
+
+		/**
+		 * HCL is a color space that tries to combine the advantages of
+		 * perceptual uniformity of Luv, and the simplicity of specification
+		 * of HSV and HSL.
+		 */
+		HCLColorspace
 	}
 
 	MagickBooleanType RGBTransformImage(Image*, const ColorspaceType);

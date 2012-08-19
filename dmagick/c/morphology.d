@@ -107,8 +107,13 @@ extern(C)
 			info ~= "ChebyshevKernel,    /* Distance Measuring Kernels */
 			         ManhattanKernel,
 			         EuclideanKernel,
-			         UserDefinedKernel   /* User Specified Kernel Array */
-		}";
+			         UserDefinedKernel,   /* User Specified Kernel Array */";
+
+			static if ( MagickLibVersion >= 0x679 )
+			{
+				info ~= "BinomialKernel";
+			}		
+		info ~= "}";
 
 		return info;
 	}());
