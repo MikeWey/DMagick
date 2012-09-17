@@ -110,29 +110,33 @@ class Window
 		}
 	}
 
-	extern(Windows) static LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+	extern(Windows) nothrow static LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		switch (message)
+		try
 		{
-			case WM_ERASEBKGND:  // don't redraw bg
-				return 1;
+			switch (message)
+			{
+				case WM_ERASEBKGND:  // don't redraw bg
+					return 1;
 
-			case WM_PAINT:
-				windows[hwnd].draw();
-				return 0;
+				case WM_PAINT:
+					windows[hwnd].draw();
+					return 0;
 
-			case WM_TIMER:
-				windows[hwnd].nextFrame();
-				return 0;
+				case WM_TIMER:
+					windows[hwnd].nextFrame();
+					return 0;
 
-			case WM_DESTROY:
-				windows[hwnd] = null;
-				PostQuitMessage(0);
-				return 0;
+				case WM_DESTROY:
+					windows[hwnd] = null;
+					PostQuitMessage(0);
+					return 0;
 
-			default:
+				default:
+			}
 		}
-
+		catch(Exception e){}
+		
 		return DefWindowProcA(hwnd, message, wParam, lParam);
 	}
 
