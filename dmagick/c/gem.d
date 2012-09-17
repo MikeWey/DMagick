@@ -2,6 +2,7 @@ module dmagick.c.gem;
 
 import dmagick.c.geometry;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.fx;
 import dmagick.c.random;
 
