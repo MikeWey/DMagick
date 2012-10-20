@@ -128,7 +128,19 @@ extern(C)
 			green,
 			red,
 			opacity;
+	}
 
+	static if ( MagickLibVersion >= 0x680 )
+	{
+		struct QuantumPixelPacket
+		{
+			Quantum
+				red,
+				green,
+				blue,
+				opacity,
+				index;
+		}
 	}
 
 	MagickBooleanType ExportImagePixels(const(Image)*, const ssize_t, const ssize_t, const size_t, const size_t, const(char)*, const StorageType, void*, ExceptionInfo*);

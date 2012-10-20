@@ -62,4 +62,9 @@ extern(C)
 
 	MagickBooleanType PlasmaImage(Image*, const(SegmentInfo)*, size_t, size_t);
 	MagickBooleanType SolarizeImage(Image*, const double);
+
+	static if (MagickLibVersion >= 0x680)
+	{
+		MagickBooleanType SolarizeImageChannel(Image*, const ChannelType, const double, ExceptionInfo*);
+	}
 }

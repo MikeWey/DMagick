@@ -155,7 +155,17 @@ extern(C)
 		 * perceptual uniformity of Luv, and the simplicity of specification
 		 * of HSV and HSL.
 		 */
-		HCLColorspace
+		HCLColorspace,
+
+		/** ditto */
+		LCHColorspace,
+
+		/**
+		 * LMS is a color space represented by the response of the three types
+		 * of cones of the human eye, named after their responsivity
+		 * (sensitivity) at long, medium and short wavelengths.
+		 */
+		LMSColorspace
 	}
 
 	MagickBooleanType RGBTransformImage(Image*, const ColorspaceType);

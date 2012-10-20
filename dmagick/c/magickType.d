@@ -10,8 +10,13 @@ extern (C)
 		 * Quantum is an alias for the smallest integer that can hold
 		 * a pixel channel.
 		 */
-		alias ubyte  Quantum;
-		alias double MagickRealType;
+		alias ubyte     Quantum;
+		alias ptrdiff_t SignedQuantum;
+
+		static if ( MagickLibVersion >= 0x680 )
+			alias float  MagickRealType;
+		else
+			alias double MagickRealType;
 
 		/**
 		 * The largest value that fits in a Quantum, This is the same
@@ -34,6 +39,7 @@ extern (C)
 		 * a pixel channel.
 		 */
 		alias uint   Quantum;
+		alias double SignedQuantum;
 		alias double MagickRealType;
 
 		/**
@@ -57,6 +63,7 @@ extern (C)
 		 * a pixel channel.
 		 */
 		alias double Quantum;
+		alias double SignedQuantum;
 		//real seems to be the same size as long double for
 		//dmc and dmd on windows and for dmd and gcc on linux. 
 		alias real MagickRealType;
@@ -81,8 +88,13 @@ extern (C)
 		 * Quantum is an alias for the smallest integer that can hold
 		 * a pixel channel.
 		 */
-		alias ushort Quantum;
-		alias double MagickRealType;
+		alias ushort    Quantum;
+		alias ptrdiff_t SignedQuantum;
+
+		static if ( MagickLibVersion >= 0x680 )
+			alias float  MagickRealType;
+		else
+			alias double MagickRealType;
 
 		/**
 		 * The largest value that fits in a Quantum, This is the same
@@ -104,10 +116,15 @@ extern (C)
 		enum MagickRealType MagickEpsilon = 2.220446e-16;
 		enum MagickRealType MagickHuge    = 1.0/MagickEpsilon;
 	}
-	else static if ( MagickLibVersion >= 0x679 )
+	else static if ( MagickLibVersion == 0x679 )
 	{
 		enum MagickRealType MagickEpsilon = 1.0e-16;
 		enum MagickRealType MagickHuge    = 1.0/MagickEpsilon;
+	}
+	else static if ( MagickLibVersion >= 0x680 )
+	{
+		enum MagickRealType MagickEpsilon = 1.0e-16;
+		enum MagickRealType MagickHuge    = 3.4e+38;
 	}
 
 	alias uint  MagickStatusType;
@@ -122,6 +139,7 @@ extern (C)
 	/// The Quantum depth ImageMagick / DMagick is compiled with.
 	alias MAGICKCORE_QUANTUM_DEPTH MagickQuantumDepth;
 
+	enum  QuantumScale  = (1.0/ cast(double)QuantumRange);
 	alias QuantumRange    TransparentOpacity; /// Fully transparent Quantum.
 	enum  OpaqueOpacity = 0;                  /// Fully opaque Quantum.
 
