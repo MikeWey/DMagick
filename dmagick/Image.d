@@ -242,7 +242,7 @@ class Image
 	{
 		string result;
 
-		result ~= to!(string)(imageRef.filename);
+		result = filename;
 
 		//Scene number.
 		ssize_t index = GetImageIndexInList(imageRef);
@@ -268,7 +268,7 @@ class Image
 		else
 			result ~= "PseudoClass ";
 
-		result = std.string.format("%s-bit ", GetImageQuantumDepth(imageRef, true));
+		result ~= std.string.format("%s-bit ", GetImageQuantumDepth(imageRef, true));
 
 		//Size of the image.
 		MagickSizeType size = GetBlobSize(imageRef);
@@ -3728,7 +3728,7 @@ class Image
 	///ditto
 	string filename() const
 	{
-		return imageRef.magick[0 .. strlen(imageRef.magick.ptr)].idup;
+		return imageRef.filename[0 .. strlen(imageRef.filename.ptr)].idup;
 	}
 
 	/**
