@@ -2755,6 +2755,30 @@ class Image
 	}
 
 	/**
+	 * Applies a special effect to the image similar to the effect achieved
+	 * in a photo darkroom by selectively exposing areas of photo sensitive
+	 * paper to light.
+	 * 
+	 * Params:
+	 *     threshold = The extent of the solarization.
+	 *     channel   = The channels to adjust. Anything other than
+	 *                 ChannelType.DefaultChannels requires ImageMagick 6.8.0
+	 *                 ot higher.
+	 */
+	void solarize(Quantum threshold, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		static if ( is(typeof(SolarizeImageChannel)) )
+		{
+			SolarizeImageChannel(imageRef, channel, threshold, DMagickExceptionInfo());
+		}
+		else
+		{
+			SolarizeImage(imageRef, threshold);
+			DMagickException.throwException(&(imageRef.exception));
+		}
+	}
+
+	/**
 	 * Fills the image with the specified color or colors, starting at
 	 * the x,y coordinates associated with the color and using the specified
 	 * interpolation method.
