@@ -1043,10 +1043,10 @@ class DrawingContext
  * 
  * One thing to remember it that the gradient is always drawn from the
  * top left corner of the image. And is repeated if it's smaller then the
- * image height or width. This mean that the gradien you see in the object
+ * image height or width. This mean that the gradient you see in the object
  * you are filling does not determine the stating point of the gradient
- * but is filled the part of the gradient that whould be there when starting
- * at the top left corneer of the image.
+ * but is filled the part of the gradient that would be there when starting
+ * at the top left corner of the image.
  */
 struct Gradient
 {
