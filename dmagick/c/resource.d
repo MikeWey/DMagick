@@ -4,6 +4,7 @@ import core.stdc.stdio;
 
 import dmagick.c.exception;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -23,6 +24,12 @@ extern(C)
 	int AcquireUniqueFileResource(char*);
 
 	MagickBooleanType AcquireMagickResource(const ResourceType, const MagickSizeType);
+
+	static if ( MagickLibVersion >= 0x681 )
+	{
+		MagickBooleanType GetPathTemplate(char*);
+	}
+
 	MagickBooleanType ListMagickResourceInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType RelinquishUniqueFileResource(const(char)*);
 	MagickBooleanType ResourceComponentGenesis();

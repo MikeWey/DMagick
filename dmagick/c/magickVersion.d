@@ -1,6 +1,7 @@
 module dmagick.c.magickVersion;
 
 import core.stdc.config;
+import core.stdc.stdio;
 
 extern(C)
 {
@@ -144,12 +145,19 @@ extern(C)
 		///ditto
 		enum MagickLibVersionText = "6.7.9";
 	}
-	else
+	else version(MagickCore_680)
 	{
 		/// Defines the version of ImageMagick where these headers are based on.
 		enum MagickLibVersion = 0x680;
 		///ditto
 		enum MagickLibVersionText = "6.8.0";
+	}
+	else
+	{
+		/// Defines the version of ImageMagick where these headers are based on.
+		enum MagickLibVersion = 0x681;
+		///ditto
+		enum MagickLibVersionText = "6.8.1";
 	}
 
 	/*
@@ -164,10 +172,21 @@ extern(C)
 	char* GetMagickHomeURL();
 
 	const(char)* GetMagickCopyright();
+
+	static if ( MagickLibVersion >= 0x681 )
+	{
+		const(char)* GetMagickDelegates();
+	}
+
 	const(char)* GetMagickFeatures();
 	const(char)* GetMagickPackageName();
 	const(char)* GetMagickQuantumDepth(size_t*);
 	const(char)* GetMagickQuantumRange(size_t*);
 	const(char)* GetMagickReleaseDate();
 	const(char)* GetMagickVersion(size_t*);
+
+	static if ( MagickLibVersion >= 0x681 )
+	{
+		void ListMagickVersion(FILE*);
+	}
 }

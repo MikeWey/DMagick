@@ -96,7 +96,18 @@ extern(C)
 		return cast(Quantum)(factor*value);
 	}
 
+	static if ( MagickLibVersion >= 0x681 )
+	{
+		EndianType GetQuantumEndian(const(QuantumInfo)*);
+	}
+
 	MagickBooleanType SetQuantumDepth(const(Image)*, QuantumInfo*, const size_t);
+
+	static if ( MagickLibVersion >= 0x681 )
+	{
+		MagickBooleanType SetQuantumEndian(const(Image)*, QuantumInfo*, const EndianType);
+	}
+
 	MagickBooleanType SetQuantumFormat(const(Image)*, QuantumInfo*, const QuantumFormatType);
 	MagickBooleanType SetQuantumPad(const(Image)*, QuantumInfo*, const size_t);
 

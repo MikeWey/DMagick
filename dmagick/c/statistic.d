@@ -156,6 +156,12 @@ extern(C)
 		Image* EvaluateImages(const(Image)*, const MagickEvaluateOperator, ExceptionInfo*);
 	}
 
+	static if ( MagickLibVersion >= 0x681 )
+	{
+		Image* PolynomialImage(const(Image)*, const size_t, const(double)*, ExceptionInfo*);
+		Image* PolynomialImageChannel(const(Image)*, const ChannelType, const size_t, const(double)*, ExceptionInfo*);
+	}
+
 	static if ( MagickLibVersion >= 0x669 )
 	{
 		Image* StatisticImage(const(Image)*, const StatisticType, const size_t, const size_t, ExceptionInfo*);
