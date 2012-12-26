@@ -106,7 +106,7 @@ class Color
 	/**
 	 * Returns the value as a hex string.
 	 */
-	override string toString()
+	override string toString() const
 	{
 		static if ( MagickQuantumDepth == 8 )
 			string frm = "%02X";
