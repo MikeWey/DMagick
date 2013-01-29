@@ -156,5 +156,11 @@ extern(C)
 		MagickPixelPacket* CloneMagickPixelPacket(const(MagickPixelPacket)*);
 	}
 
+	static if ( MagickLibVersion >= 0x682 )
+	{
+		MagickRealType DecodePixelGamma(const MagickRealType);
+		MagickRealType EncodePixelGamma(const MagickRealType);
+	}
+
 	void GetMagickPixelPacket(const(Image)*, MagickPixelPacket*);
 }

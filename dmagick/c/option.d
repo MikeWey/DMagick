@@ -27,7 +27,14 @@ extern(C)
 			MagickUndefinedOptions = -1,
 			MagickAlignOptions = 0,
 			MagickAlphaOptions,
-			MagickBooleanOptions,
+			MagickBooleanOptions,";
+
+			static if ( MagickLibVersion >= 0x682 )
+			{
+				options ~= "MagickCacheOptions,";
+			}
+
+			options ~= "
 			MagickChannelOptions,
 			MagickClassOptions,
 			MagickClipPathOptions,

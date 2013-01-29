@@ -10,6 +10,11 @@ alias ptrdiff_t ssize_t;
 
 extern(C)
 {
+	static if ( MagickLibVersion >= 0x682 )
+	{
+		Image* AutoOrientImage(const(Image)*, const OrientationType, ExceptionInfo*);
+	}
+
 	Image* ChopImage(const(Image)*, const(RectangleInfo)*, ExceptionInfo*);
 	Image* ConsolidateCMYKImages(const(Image)*, ExceptionInfo*);
 	Image* CropImage(const(Image)*, const(RectangleInfo)*, ExceptionInfo*);

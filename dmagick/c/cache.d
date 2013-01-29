@@ -17,7 +17,8 @@ extern(C)
 		MemoryCache,
 		MapCache,
 		DiskCache,
-		PingCache
+		PingCache,
+		DistributedCache
 	}
 
 	static if ( MagickLibVersion >= 0x677 )
