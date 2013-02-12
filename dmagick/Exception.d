@@ -65,11 +65,11 @@ class DMagickException : Exception
 
 			foreach ( severity; severities )
 			{
+				//TODO: Warnings?
 				exceptions ~=
-					"case ExceptionType."~ severity ~"Warning:
+					"case ExceptionType."~ severity ~"Error:
 						throw new "~ severity ~"Exception(reason, description, file, line);
 						break;
-					 case ExceptionType."~ severity ~"Error:
 					 case ExceptionType."~ severity ~"FatalError:
 						throw new "~ severity ~"Error(reason, description, file, line);
 						break;";
