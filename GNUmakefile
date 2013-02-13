@@ -39,6 +39,8 @@ ifeq ("$(ARCH)", "x86_64")
     LDFLAGS+=-m64
 endif 
 
+MAGICKCORELIB=$(LINKERFLAG)$(lastword $(shell pkg-config --libs MagickCore))
+
 AR=ar
 RANLIB=ranlib
 
@@ -85,7 +87,7 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 	echo "void main(){}" > $@
 
 unittest: /tmp/stubmain.d $(SOURCES_DMAGICK)
-	$(DC) $(DCFLAGS) $(UNITTESTFLAG) $(LINKERFLAG)-lMagickCore $(LDFLAGS) $^ $(output)
+	$(DC) $(DCFLAGS) $(UNITTESTFLAG) $(MAGICKCORELIB) $(LDFLAGS) $^ $(output)
 	./$@
 
 #######################################################################
@@ -109,7 +111,7 @@ DMagick.pc:
 	echo Name: DMagick > $@
 	echo Description: DMagick - A D binding for ImageMagick. >> $@
 	echo Version: $(DMAGICK_VERSION) >> $@
-	echo Libs: $(LINKERFLAG)-L$(prefix)/lib/ $(LINKERFLAG)-lDMagick $(LINKERFLAG)-lMagickCore >> $@
+	echo Libs: $(LINKERFLAG)-L$(prefix)/lib/ $(LINKERFLAG)-lDMagick $(MAGICKCORELIB) >> $@
 	echo Cflags: -I$(prefix)/include/d/ $(VERSIONS) >> $@
 
 #######################################################################
