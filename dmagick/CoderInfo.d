@@ -39,10 +39,19 @@ CoderInfo[] coderInfoList(MatchType readable, MatchType writable, MatchType mult
 		if ( readable == MatchType.False && coder.readable )
 			continue;
 
+		if ( readable == MatchType.True && !coder.readable )
+			continue;
+
 		if ( writable == MatchType.False && coder.writable )
 			continue;
 
+		if ( writable == MatchType.True && !coder.writable )
+			continue;
+
 		if ( multiFrame == MatchType.False && coder.supportsMultiFrame )
+			continue;
+
+		if ( multiFrame == MatchType.True && !coder.supportsMultiFrame )
 			continue;
 
 		list ~= coder;
