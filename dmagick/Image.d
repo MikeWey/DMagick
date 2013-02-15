@@ -512,6 +512,51 @@ class Image
 	}
 
 	/**
+	 * Adjusts an image so that its orientation is suitable for viewing
+	 * (i.e. top-left orientation). Note that only some models of modern
+	 * digital cameras can tag an image with the orientation.
+	 */
+	void autoOrient()
+	{
+		final switch( this.orientation )
+		{
+			case OrientationType.UndefinedOrientation:
+			case OrientationType.TopLeftOrientation:
+				return;
+
+			case OrientationType.TopRightOrientation:
+				flop();
+				break;
+
+			case OrientationType.BottomRightOrientation:
+				rotate(180);
+				break;
+
+			case OrientationType.BottomLeftOrientation:
+				flip();
+				break;
+
+			case OrientationType.LeftTopOrientation:
+				transpose();
+				break;
+
+			case OrientationType.RightTopOrientation:
+				rotate(90);
+				break;
+
+			case OrientationType.RightBottomOrientation:
+				transverse();
+				break;
+
+			case OrientationType.LeftBottomOrientation:
+				rotate(270);
+				break;
+		}
+
+		orientation = OrientationType.TopLeftOrientation;
+	}
+
+	/**
 	 * Changes the value of individual pixels based on the intensity
 	 * of each pixel channel. The result is a high-contrast image.
 	 *
