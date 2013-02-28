@@ -470,6 +470,12 @@ extern(C)
 			size_t
 				channels;
 		}
+
+		static if ( MagickLibVersion >= 0x683 )
+		{
+			time_t
+				timestamp;
+		}
 	}
 
 	struct ImageInfo

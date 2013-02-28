@@ -51,7 +51,7 @@ ifneq ("$(QUANTUMDEPTH)","Q16")
     VERSIONS+= -version=$(subst Q,Quantum,$(QUANTUMDEPTH))
 endif
 
-ifneq ("$(MAGICKVERSION)","682")
+ifneq ("$(MAGICKVERSION)","683")
     VERSIONS+= -version=MagickCore_$(MAGICKVERSION)
 endif
 
