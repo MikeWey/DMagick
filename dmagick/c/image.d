@@ -476,6 +476,12 @@ extern(C)
 			time_t
 				timestamp;
 		}
+
+		static if ( MagickLibVersion >= 0x684 )
+		{
+			PixelIntensityMethod
+				intensity;      /* method to generate an intensity value from a pixel */
+		}
 	}
 
 	struct ImageInfo

@@ -94,7 +94,14 @@ extern(C)
 			MagickModuleOptions,
 			MagickMorphologyOptions,
 			MagickNoiseOptions,
-			MagickOrientationOptions,
+			MagickOrientationOptions,";
+
+			static if ( MagickLibVersion >= 0x684 )
+			{
+				options ~= "MagickPixelIntensityOptions,";
+			}
+
+			options ~= "
 			MagickPolicyOptions,
 			MagickPolicyDomainOptions,
 			MagickPolicyRightsOptions,

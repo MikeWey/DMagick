@@ -74,6 +74,19 @@ extern(C)
 		}
 	}
 
+	enum PixelIntensityMethod
+	{
+		UndefinedPixelIntensityMethod = 0,
+		AveragePixelIntensityMethod,
+		BrightnessPixelIntensityMethod,
+		LightnessPixelIntensityMethod,
+		Rec601LumaPixelIntensityMethod,
+		Rec601LuminancePixelIntensityMethod,
+		Rec709LumaPixelIntensityMethod,
+		Rec709LuminancePixelIntensityMethod,
+		RMSPixelIntensityMethod
+	}
+
 	struct DoublePixelPacket
 	{
 		double
@@ -148,7 +161,7 @@ extern(C)
 
 	static if ( MagickLibVersion >= 0x669 )
 	{
-		MagickBooleanType InterpolateMagickPixelPacket(const Image*, const CacheView*, const InterpolatePixelMethod, const double, const double, MagickPixelPacket*, ExceptionInfo*);
+		MagickBooleanType InterpolateMagickPixelPacket(const(Image)*, const(CacheView)*, const InterpolatePixelMethod, const double, const double, MagickPixelPacket*, ExceptionInfo*);
 	}
 
 	static if ( MagickLibVersion >= 0x678 )
@@ -160,6 +173,11 @@ extern(C)
 	{
 		MagickRealType DecodePixelGamma(const MagickRealType);
 		MagickRealType EncodePixelGamma(const MagickRealType);
+	}
+
+	static if ( MagickLibVersion >= 0x684 )
+	{
+		MagickRealType GetPixelIntensity(const(Image)* image, const(PixelPacket)* restrict);
 	}
 
 	void GetMagickPixelPacket(const(Image)*, MagickPixelPacket*);
