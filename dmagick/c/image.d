@@ -1,6 +1,7 @@
 module dmagick.c.image;
 
 import core.stdc.stdio;
+import core.stdc.time;
 
 import dmagick.c.cacheView;
 import dmagick.c.color;
