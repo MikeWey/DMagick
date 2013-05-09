@@ -46,12 +46,13 @@ RANLIB=ranlib
 
 QUANTUMDEPTH = $(word 5,$(shell convert --version))
 MAGICKVERSION = $(firstword $(subst -, ,$(subst .,,$(word 3,$(shell convert --version)))))
+WRAPEDVERSION = $(subst 0x,,$(subst ;,,$(lastword $(shell grep "enum\ MagickLibVersion\ " dmagick/c/magickVersion.d))))
 
 ifneq ("$(QUANTUMDEPTH)","Q16")
     VERSIONS+= -version=$(subst Q,Quantum,$(QUANTUMDEPTH))
 endif
 
-ifneq ("$(MAGICKVERSION)","684")
+ifneq ("$(MAGICKVERSION)","$(WRAPEDVERSION)")
     VERSIONS+= -version=MagickCore_$(MAGICKVERSION)
 endif
 

@@ -24,6 +24,12 @@ extern(C)
 	void ConvertHSLToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
 	void ConvertHWBToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
 
+	static if ( MagickLibVersion >= 0x685 )
+	{
+		void ConvertLCHabToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
+		void ConvertLCHuvToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
+	}
+
 	static if (MagickLibVersion >= 0x679)
 	{
 		void ConvertRGBToHCL(const Quantum, const Quantum, const Quantum, double*, double*, double*);
@@ -32,4 +38,10 @@ extern(C)
 	void ConvertRGBToHSB(const Quantum, const Quantum, const Quantum, double*, double*, double*);
 	void ConvertRGBToHSL(const Quantum, const Quantum, const Quantum, double*, double*, double*);
 	void ConvertRGBToHWB(const Quantum, const Quantum, const Quantum, double*, double*, double*);
+
+	static if ( MagickLibVersion >= 0x685 )
+	{
+		void ConvertRGBToLCHab(const Quantum, const Quantum, const Quantum, double*, double*, double*);
+		void ConvertRGBToLCHuv(const Quantum, const Quantum, const Quantum, double*, double*, double*);
+	}
 }

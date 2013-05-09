@@ -84,7 +84,8 @@ extern(C)
 		Rec601LuminancePixelIntensityMethod,
 		Rec709LumaPixelIntensityMethod,
 		Rec709LuminancePixelIntensityMethod,
-		RMSPixelIntensityMethod
+		RMSPixelIntensityMethod,
+		MSPixelIntensityMethod
 	}
 
 	struct DoublePixelPacket

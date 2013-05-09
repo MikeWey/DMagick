@@ -165,7 +165,25 @@ extern(C)
 		 * of cones of the human eye, named after their responsivity
 		 * (sensitivity) at long, medium and short wavelengths.
 		 */
-		LMSColorspace
+		LMSColorspace,
+
+		/**
+		 * CIE 1976 cylindrical version of Lab.
+		 */
+		LCHabColorspace,
+
+		/**
+		 * CIE 1976 cylindrical version of Luv
+		 */
+		LCHuvColorspace,
+
+		/**
+		 * scRGB is a wide color gamut RGB (Red Green Blue) color space
+		 * created by Microsoft and HP that uses the same color primaries
+		 * and white/black points as the sRGB color space but allows
+		 * coordinates below zero and greater than one.
+		 */
+		scRGBColorspace
 	}
 
 	MagickBooleanType RGBTransformImage(Image*, const ColorspaceType);

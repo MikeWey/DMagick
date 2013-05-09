@@ -3,6 +3,7 @@ module dmagick.c.enhance;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.pixel;
 
 extern(C)
@@ -23,6 +24,12 @@ extern(C)
 	MagickBooleanType EqualizeImageChannel(Image* image, const ChannelType);
 	MagickBooleanType GammaImage(Image*, const(char)*);
 	MagickBooleanType GammaImageChannel(Image*, const ChannelType, const double);
+
+	static if ( MagickLibVersion >= 0x685 )
+	{
+		MagickBooleanType GrayscaleImage(Image*, const PixelIntensityMethod);
+	}
+
 	MagickBooleanType HaldClutImage(Image*, const(Image)*);
 	MagickBooleanType HaldClutImageChannel(Image*, const ChannelType, const(Image)*);
 	MagickBooleanType LevelImage(Image*, const(char)*);
