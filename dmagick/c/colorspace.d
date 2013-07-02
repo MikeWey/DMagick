@@ -30,7 +30,7 @@ extern(C)
 		UndefinedColorspace,
 
 		/**
-		 * Red-Green-Blue colorspace
+		 * Linear RGB colorspace
 		 */
 		RGBColorspace,
 		
@@ -157,7 +157,7 @@ extern(C)
 		 */
 		HCLColorspace,
 
-		/** ditto */
+		/** Alias for LCHuv. */
 		LCHColorspace,
 
 		/**
@@ -183,7 +183,19 @@ extern(C)
 		 * and white/black points as the sRGB color space but allows
 		 * coordinates below zero and greater than one.
 		 */
-		scRGBColorspace
+		scRGBColorspace,
+
+		/** */
+		HSIColorspace,
+
+		/* Alias for HSB. */
+		HSVColorspace,
+
+		/** */
+		HCLpColorspace,
+
+		/** */
+		YDbDrColorspace
 	}
 
 	MagickBooleanType RGBTransformImage(Image*, const ColorspaceType);

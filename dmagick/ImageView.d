@@ -22,6 +22,7 @@ import dmagick.c.exception;
 import dmagick.c.geometry;
 import dmagick.c.image : MagickCoreImage = Image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.memory;
 import dmagick.c.pixel;
 
@@ -413,6 +414,12 @@ private extern(C)
 		Quantum*
 			cache,
 			pixels;
+
+		static if ( MagickLibVersion >= 0x686 )
+		{
+			MagickBooleanType
+				authentic_pixel_cache;
+		}
 
 		void*
 			metacontent;

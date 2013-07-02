@@ -20,6 +20,13 @@ extern(C)
 		void ConvertHCLToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
 	}
 
+	static if (MagickLibVersion >= 0x686)
+	{
+		void ConvertHCLpToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
+		void ConvertHSIToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
+		void ConvertHSVToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
+	}
+
 	void ConvertHSBToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
 	void ConvertHSLToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
 	void ConvertHWBToRGB(const double, const double, const double, Quantum*, Quantum*, Quantum*);
@@ -33,6 +40,13 @@ extern(C)
 	static if (MagickLibVersion >= 0x679)
 	{
 		void ConvertRGBToHCL(const Quantum, const Quantum, const Quantum, double*, double*, double*);
+	}
+
+	static if (MagickLibVersion >= 0x686)
+	{
+		void ConvertRGBToHCLp( const Quantum, const Quantum, const Quantum, double*, double*, double*);
+		void ConvertRGBToHSI( const Quantum, const Quantum, const Quantum, double*, double*, double*);
+		void ConvertRGBToHSV( const Quantum, const Quantum, const Quantum, double*, double*, double*);
 	}
 
 	void ConvertRGBToHSB(const Quantum, const Quantum, const Quantum, double*, double*, double*);
