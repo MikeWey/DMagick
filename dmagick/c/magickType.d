@@ -10,7 +10,11 @@ extern (C)
 		 * Quantum is an alias for the smallest integer that can hold
 		 * a pixel channel.
 		 */
-		alias ubyte     Quantum;
+		version(MagickCore_HDRI)
+			alias float Quantum;
+		else
+			alias ubyte Quantum;
+
 		alias ptrdiff_t SignedQuantum;
 
 		static if ( MagickLibVersion >= 0x680 )
@@ -22,7 +26,7 @@ extern (C)
 		 * The largest value that fits in a Quantum, This is the same
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
-		enum QuantumRange = Quantum.max;
+		enum QuantumRange = ubyte.max;
 		enum MAGICKCORE_QUANTUM_DEPTH = 8;
 		enum MaxColormapSize = 256;
 
@@ -38,7 +42,11 @@ extern (C)
 		 * Quantum is an alias for the smallest integer that can hold
 		 * a pixel channel.
 		 */
-		alias uint   Quantum;
+		version(MagickCore_HDRI)
+			alias float Quantum;
+		else
+			alias uint  Quantum;
+
 		alias double SignedQuantum;
 		alias double MagickRealType;
 
@@ -46,7 +54,7 @@ extern (C)
 		 * The largest value that fits in a Quantum, This is the same
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
-		enum QuantumRange = Quantum.max;
+		enum QuantumRange = uint.max;
 		enum MAGICKCORE_QUANTUM_DEPTH = 32;
 		enum MaxColormapSize = 65536;
 
@@ -88,7 +96,11 @@ extern (C)
 		 * Quantum is an alias for the smallest integer that can hold
 		 * a pixel channel.
 		 */
-		alias ushort    Quantum;
+		version(MagickCore_HDRI)
+			alias float  Quantum;
+		else
+			alias ushort Quantum;
+
 		alias ptrdiff_t SignedQuantum;
 
 		static if ( MagickLibVersion >= 0x680 )
@@ -100,7 +112,7 @@ extern (C)
 		 * The largest value that fits in a Quantum, This is the same
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
-		enum QuantumRange = Quantum.max;
+		enum QuantumRange = ushort.max;
 		enum MAGICKCORE_QUANTUM_DEPTH = 16;
 		enum MaxColormapSize = 65536;
 

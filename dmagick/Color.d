@@ -7,6 +7,7 @@
 module dmagick.Color;
 
 import std.conv;
+import std.math;
 import std.string;
 
 import dmagick.Exception;
@@ -112,13 +113,15 @@ class Color
 			string frm = "%02X";
 		else static if ( MagickQuantumDepth == 16 )
 			string frm = "%04X";
-		else
+		else static if ( MagickQuantumDepth == 32 )
 			string frm = "%08X";
+		else
+			string frm = "%016X";
 
 		if ( packet.opacity == OpaqueOpacity )
-			return format("#"~frm~frm~frm, packet.red, packet.green, packet.blue);
+			return format("#"~frm~frm~frm, rndtol(packet.red), rndtol(packet.green), rndtol(packet.blue));
 		else
-			return format("#"~frm~frm~frm~frm, packet.red, packet.green, packet.blue, packet.opacity);
+			return format("#"~frm~frm~frm~frm, rndtol(packet.red), rndtol(packet.green), rndtol(packet.blue), rndtol(QuantumRange-packet.opacity));
 	}
 
 	unittest
@@ -129,8 +132,10 @@ class Color
 			assert(color.toString() == "#0000FF");
 		else static if ( MagickQuantumDepth == 16 )
 			assert(color.toString() == "#00000000FFFF");
-		else
+		else static if ( MagickQuantumDepth == 16 )
 			assert(color.toString() == "#0000000000000000FFFFFFFF");
+		else
+			assert(color.toString() == "#00000000000000000000000000000000FFFFFFFFFFFFFFFF");
 	}
 
 	/*

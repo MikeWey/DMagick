@@ -70,23 +70,62 @@ extern(C)
 	alias ClampToQuantum RoundToQuantum;
 	static pure nothrow Quantum ClampToQuantum(const MagickRealType value)
 	{
-		if (value <= 0.0)
-			return(cast(Quantum) 0);
-		if (value >= cast(MagickRealType) QuantumRange)
-			return(cast(Quantum) QuantumRange);
-		return(cast(Quantum) (value+0.5));
+		version(MagickCore_HDRI)
+		{
+			return value;
+		}
+		else
+		{
+			if (value <= 0.0)
+				return(cast(Quantum) 0);
+			if (value >= cast(MagickRealType) QuantumRange)
+				return(cast(Quantum) QuantumRange);
+			return(cast(Quantum) (value+0.5));
+		}
 	}
 
 	static pure nothrow ubyte ScaleQuantumToChar(const Quantum quantum)
 	{
-		static if ( MagickQuantumDepth == 8 )
-			return quantum;
-		else static if ( MagickQuantumDepth == 16 )
-			return cast(ubyte) (((quantum+128UL)-((quantum+128UL) >> 8)) >> 8);
-		else static if ( MagickQuantumDepth == 32 )
-			return cast(ubyte) (quantum+8421504UL/16843009UL );
+		version(MagickCore_HDRI)
+		{
+			if ( quantum <= 0 )
+				return 0;
+			static if ( MagickQuantumDepth == 8 )
+			{
+				if ( quantum >= 255 )
+					return 255;
+				return cast(ubyte)(quantum+0.5);
+			}
+			else static if ( MagickQuantumDepth == 16 )
+			{
+				if ( quantum/257 >= 255)
+					return 255;
+				return cast(ubyte)(quantum/257+0.5);
+			}
+			else static if ( MagickQuantumDepth == 32 )
+			{
+				if ( quantum/16843009 >= 255)
+					return 255;
+				return cast(ubyte)(quantum/16843009+0.5);
+			}
+			else
+			{
+				if ( quantum/72340172838076673 >= 255)
+					return 255;
+				return cast(ubyte)(quantum/72340172838076673+0.5);
+			}
+		}
 		else
-			return cast(ubyte) (quantum/72340172838076673.0+0.5);
+		{
+			static if ( MagickQuantumDepth == 8 )
+				return quantum;
+			else static if ( MagickQuantumDepth == 16 )
+				return cast(ubyte) (((quantum+128UL)-((quantum+128UL) >> 8)) >> 8);
+			else static if ( MagickQuantumDepth == 32 )
+				return cast(ubyte) (quantum+8421504UL/16843009UL );
+			else
+				return cast(ubyte) (quantum/72340172838076673.0+0.5);
+		}
 	}
 
 	static pure nothrow Quantum ScaleCharToQuantum(ubyte value)
