@@ -288,12 +288,12 @@ class Color
 		assert( color.name == "red" );
 	}
 
-	static Quantum scaleDoubleToQuantum(double value)
+	static pure nothrow Quantum scaleDoubleToQuantum(double value)
 	{
 		return cast(Quantum)(value*QuantumRange);
 	}
 
-	static double scaleQuantumToDouble(Quantum value)
+	static pure nothrow double scaleQuantumToDouble(Quantum value)
 	{
 		return (cast(double)value)/QuantumRange;
 	}
