@@ -284,35 +284,35 @@ extern(C)
 	enum SparseColorMethod
 	{
 		/** */
-		UndefinedColorInterpolate =   DistortImageMethod.UndefinedDistortion,
+		UndefinedColorInterpolate =   cast(int)DistortImageMethod.UndefinedDistortion,
 
 		/**
 		 * three point triangle of color given 3 points. Giving only 2 points
 		 * will form a linear gradient between those points. The gradient
 		 * generated extends beyond the triangle created by those 3 points.
 		 */
-		BarycentricColorInterpolate = DistortImageMethod.AffineDistortion,
+		BarycentricColorInterpolate = cast(int)DistortImageMethod.AffineDistortion,
 
 		/**
 		 * Like barycentric but for 4 points. Less than 4 points fall back
 		 * to barycentric.
 		 */
-		BilinearColorInterpolate =    DistortImageMethod.BilinearReverseDistortion,
+		BilinearColorInterpolate =    cast(int)DistortImageMethod.BilinearReverseDistortion,
 
 		/** */
-		PolynomialColorInterpolate =  DistortImageMethod.PolynomialDistortion,
+		PolynomialColorInterpolate =  cast(int)DistortImageMethod.PolynomialDistortion,
 
 		/**
 		 * Colors points biased on the ratio of inverse distance squared.
 		 * Generating spots of color in a sea of the average of colors.
 		 */
-		ShepardsColorInterpolate =    DistortImageMethod.ShepardsDistortion,
+		ShepardsColorInterpolate =    cast(int)DistortImageMethod.ShepardsDistortion,
 
 		/**
 		 * Simply map each pixel to the to nearest color point given.
 		 * The result are polygonal cells of solid color.
 		 */
-		VoronoiColorInterpolate =     DistortImageMethod.SentinelDistortion,
+		VoronoiColorInterpolate =     cast(int)DistortImageMethod.SentinelDistortion,
 
 		/**
 		 * Colors points biased on the ratio of inverse distance.
