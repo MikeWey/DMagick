@@ -3,6 +3,7 @@ module dmagick.c.magick;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -70,11 +71,22 @@ extern(C)
 
 		size_t
 			signature;
+
+		static if ( MagickLibVersion >= 0x687 )
+		{
+			char*
+				mime_type;
+		}
 	}
 
 	char** GetMagickList(const(char)*, size_t*, ExceptionInfo*);
 
 	const(char)* GetMagickDescription(const(MagickInfo)*);
+
+	static if ( MagickLibVersion >= 0x687 )
+	{
+		const(char)* GetMagickMimeType(const(MagickInfo)*);
+	}
 
 	DecodeImageHandler* GetImageDecoder(const(MagickInfo)*);
 

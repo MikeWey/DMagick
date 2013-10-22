@@ -4460,7 +4460,7 @@ version (Posix)
 {
 	shared static this()
 	{
-			MagickCoreGenesis(toStringz(Runtime.args[0]) , false);
+			MagickCoreGenesis(null, false);
 	}
 
 	shared static ~this()
