@@ -23,13 +23,22 @@ ifeq ("$(DC)","gdc")
     DCFLAGS=-O2
     LINKERFLAG=-Xlinker 
     UNITTESTFLAG=-funittest
+    VERSIONFLAG=-fversion=
     DDOCFLAGS=-fsyntax-only -c -fdoc -fdoc-file=$@
     DDOCINC=-fdoc-inc=
     output=-o $@
+else ifeq ("$(DC)","ldc2")
+    DCFLAGS=-O
+    LINKERFLAG=-L
+    UNITTESTFLAG=-unittest
+    VERSIONFLAG=-d-version=
+    DDOCFLAGS=-o- -Df$@
+    output=-of$@
 else
     DCFLAGS=-O
     LINKERFLAG=-L
     UNITTESTFLAG=-unittest
+    VERSIONFLAG=-version=
     DDOCFLAGS=-o- -Df$@
     output=-of$@
 endif
@@ -50,15 +59,15 @@ HDRISUPPORT = $(findstring HDRI,$(shell convert --version | grep HDRI))
 WRAPEDVERSION = $(subst 0x,,$(subst ;,,$(lastword $(shell grep "enum\ MagickLibVersion\ " dmagick/c/magickVersion.d))))
 
 ifneq ("$(QUANTUMDEPTH)","Q16")
-    VERSIONS+= -version=$(subst Q,Quantum,$(QUANTUMDEPTH))
+    VERSIONS+= $(VERSIONFLAG)$(subst Q,Quantum,$(QUANTUMDEPTH))
 endif
 
 ifneq ("$(MAGICKVERSION)","$(WRAPEDVERSION)")
-    VERSIONS+= -version=MagickCore_$(MAGICKVERSION)
+    VERSIONS+= $(VERSIONFLAG)MagickCore_$(MAGICKVERSION)
 endif
 
 ifeq ("$(HDRISUPPORT)","HDRI")
-    VERSIONS+= -version=MagickCore_HDRI
+    VERSIONS+= $(VERSIONFLAG)MagickCore_HDRI
 endif
 
 ifdef VERSIONS
