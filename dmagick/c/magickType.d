@@ -4,6 +4,17 @@ import dmagick.c.magickVersion;
 
 extern (C)
 {
+	version(X86)
+	{
+		alias real MagickFloatT;
+		alias real MagickDoubleT;
+	}
+	else version(X86_64)
+	{
+		alias float  MagickFloatT;
+		alias double MagickDoubleT;	
+	}
+
 	version(Quantum8)
 	{
 		/**
@@ -17,8 +28,10 @@ extern (C)
 
 		alias ptrdiff_t SignedQuantum;
 
-		static if ( MagickLibVersion >= 0x680 )
-			alias float  MagickRealType;
+		static if ( MagickLibVersion == 0x680 )
+			alias float MagickRealType;
+		else static if ( MagickLibVersion >= 0x681 )
+			alias MagickFloatT MagickRealType;
 		else
 			alias double MagickRealType;
 
@@ -48,7 +61,11 @@ extern (C)
 			alias uint  Quantum;
 
 		alias double SignedQuantum;
-		alias double MagickRealType;
+
+		static if ( MagickLibVersion >= 0x681 )
+			alias MagickDoubleT MagickRealType;
+		else
+			alias double MagickRealType;
 
 		/**
 		 * The largest value that fits in a Quantum, This is the same
@@ -103,8 +120,10 @@ extern (C)
 
 		alias ptrdiff_t SignedQuantum;
 
-		static if ( MagickLibVersion >= 0x680 )
-			alias float  MagickRealType;
+		static if ( MagickLibVersion == 0x680 )
+			alias float MagickRealType;
+		else static if ( MagickLibVersion >= 0x681 )
+			alias MagickFloatT MagickRealType;
 		else
 			alias double MagickRealType;
 
