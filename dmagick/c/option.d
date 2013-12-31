@@ -124,8 +124,15 @@ extern(C)
 			MagickThresholdOptions,
 			MagickTypeOptions,
 			MagickValidateOptions,
-			MagickVirtualPixelOptions
-		}";
+			MagickVirtualPixelOptions";
+
+			static if ( MagickLibVersion >= 0x688 )
+			{
+				options ~= "MagickComplexOptions,
+				            MagickIntensityOptions,";
+			}
+
+			options ~= "}";
 
 		return options;
 	}());
