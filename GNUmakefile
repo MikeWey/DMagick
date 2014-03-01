@@ -53,7 +53,7 @@ MAGICKCORELIB=$(LINKERFLAG)$(lastword $(shell pkg-config --libs MagickCore))
 AR=ar
 RANLIB=ranlib
 
-QUANTUMDEPTH = $(word 5,$(shell convert --version))
+QUANTUMDEPTH = $(filter Q%,$(shell convert --version))
 MAGICKVERSION = $(firstword $(subst -, ,$(subst .,,$(word 3,$(shell convert --version)))))
 HDRISUPPORT = $(findstring HDRI,$(shell convert --version | grep HDRI))
 WRAPEDVERSION = $(subst 0x,,$(subst ;,,$(lastword $(shell grep "enum\ MagickLibVersion\ " dmagick/c/magickVersion.d))))
