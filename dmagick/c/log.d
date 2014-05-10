@@ -66,6 +66,11 @@ extern(C)
 
 	struct LogInfo {}
 
+	static if (MagickLibVersion >= 0x689)
+	{
+		alias void function(const LogEventType, const(char)*) MagickLogMethod;
+	}
+
 	char** GetLogList(const(char)*, size_t*, ExceptionInfo*);
 
 	const(char)* GetLogName();
@@ -84,4 +89,9 @@ extern(C)
 	void CloseMagickLog();
 	void LogComponentTerminus();
 	void SetLogFormat(const(char)*);
+
+	static if (MagickLibVersion >= 0x689)
+	{
+		void SetLogMethod(MagickLogMethod);
+	}
 }

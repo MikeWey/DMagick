@@ -6,6 +6,7 @@ import core.stdc.time;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -50,7 +51,11 @@ extern(C)
 
 	const(ModuleInfo)** GetModuleInfoList(const(char)*, size_t*, ExceptionInfo*);
 
-	MagickBooleanType InitializeModuleList(ExceptionInfo*);
+	static if ( MagickLibVersion < 0x689 )
+	{
+		MagickBooleanType InitializeModuleList(ExceptionInfo*);
+	}
+
 	MagickBooleanType InvokeDynamicImageFilter(const(char)*, Image**, const int, const(char)**, ExceptionInfo*);
 	MagickBooleanType ListModuleInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType ModuleComponentGenesis();

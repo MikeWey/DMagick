@@ -5,6 +5,8 @@ import core.stdc.stdio;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
+import dmagick.c.semaphore;
 
 alias ptrdiff_t ssize_t;
 
@@ -32,6 +34,11 @@ extern(C)
 
 		size_t
 			signature;
+
+		static if ( MagickLibVersion >= 0x689 )
+		{
+			SemaphoreInfo* semaphore;
+		}
 	}
 
 	char*  GetDelegateCommand(const(ImageInfo)*, Image*, const(char)*, const(char)*, ExceptionInfo*);

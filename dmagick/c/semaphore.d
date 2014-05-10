@@ -1,6 +1,7 @@
 module dmagick.c.semaphore;
 
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -10,10 +11,24 @@ extern(C)
 
 	SemaphoreInfo* AllocateSemaphoreInfo();
 
-	void AcquireSemaphoreInfo(SemaphoreInfo**);
+	static if ( MagickLibVersion < 0x689 )
+	{
+		void AcquireSemaphoreInfo(SemaphoreInfo**);
+	}
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		void ActivateSemaphoreInfo(SemaphoreInfo**);
+	}
+
 	void DestroySemaphoreInfo(SemaphoreInfo**);
 	void LockSemaphoreInfo(SemaphoreInfo*);
-	void RelinquishSemaphoreInfo(SemaphoreInfo*);
+
+	static if ( MagickLibVersion < 0x689 )
+	{
+		void RelinquishSemaphoreInfo(SemaphoreInfo*);
+	}
+
 	void SemaphoreComponentTerminus();
 	void UnlockSemaphoreInfo(SemaphoreInfo*);
 }

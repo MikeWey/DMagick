@@ -483,6 +483,12 @@ extern(C)
 			PixelIntensityMethod
 				intensity;      /* method to generate an intensity value from a pixel */
 		}
+
+		static if ( MagickLibVersion >= 0x689 )
+		{
+			/** Total animation duration sum(delay*iterations) */
+			size_t duration;
+		}
 	}
 
 	struct ImageInfo

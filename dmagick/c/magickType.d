@@ -40,7 +40,7 @@ extern (C)
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
 		enum QuantumRange = ubyte.max;
-		enum MAGICKCORE_QUANTUM_DEPTH = 8;
+		enum MagickQuantumDepth = 8;
 		enum MaxColormapSize = 256;
 
 		static if ( MagickLibVersion < 0x678 )
@@ -72,7 +72,7 @@ extern (C)
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
 		enum QuantumRange = uint.max;
-		enum MAGICKCORE_QUANTUM_DEPTH = 32;
+		enum MagickQuantumDepth = 32;
 		enum MaxColormapSize = 65536;
 
 		static if ( MagickLibVersion < 0x678 )
@@ -98,7 +98,7 @@ extern (C)
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
 		enum QuantumRange = 18446744073709551615.0;
-		enum MAGICKCORE_QUANTUM_DEPTH = 64;
+		enum MagickQuantumDepth = 64;
 		enum MaxColormapSize = 65536;
 
 		static if ( MagickLibVersion < 0x678 )
@@ -132,7 +132,7 @@ extern (C)
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
 		enum QuantumRange = ushort.max;
-		enum MAGICKCORE_QUANTUM_DEPTH = 16;
+		enum MagickQuantumDepth = 16;
 		enum MaxColormapSize = 65536;
 
 		static if ( MagickLibVersion < 0x678 )
@@ -157,10 +157,14 @@ extern (C)
 		enum MagickRealType MagickEpsilon = 1.0e-16;
 		enum MagickRealType MagickHuge    = 3.4e+38;
 	}
-	else static if ( MagickLibVersion >= 0x681 )
+	else static if ( MagickLibVersion >= 0x681 && MagickLibVersion < 0x689 )
 	{
 		enum MagickRealType MagickEpsilon = 1.0e-15;
 		enum MagickRealType MagickHuge    = 3.4e+38;
+	}
+	else static if ( MagickLibVersion >= 0x689 )
+	{
+		enum MagickRealType MagickEpsilon = 1.0e-15;
 	}
 
 	alias uint  MagickStatusType;
@@ -172,8 +176,8 @@ extern (C)
 	alias MaxColormapSize MaxMap;
 	enum  MaxTextExtent = 4096;
 
-	/// The Quantum depth ImageMagick / DMagick is compiled with.
-	alias MAGICKCORE_QUANTUM_DEPTH MagickQuantumDepth;
+	enum MagickMaximumValue = 1.79769313486231570E+308;
+	enum MagickMinimumValue = 2.22507385850720140E-308;
 
 	enum  QuantumScale  = (1.0/ cast(double)QuantumRange);
 	alias QuantumRange    TransparentOpacity; /// Fully transparent Quantum.

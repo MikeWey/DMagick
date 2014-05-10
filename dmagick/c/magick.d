@@ -4,6 +4,7 @@ import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
 import dmagick.c.magickVersion;
+import dmagick.c.semaphore;
 
 extern(C)
 {
@@ -77,6 +78,12 @@ extern(C)
 			char*
 				mime_type;
 		}
+
+		static if (MagickLibVersion >= 0x689)
+		{
+			SemaphoreInfo*
+				semaphore;
+		}
 	}
 
 	char** GetMagickList(const(char)*, size_t*, ExceptionInfo*);
@@ -101,7 +108,17 @@ extern(C)
 	MagickBooleanType GetMagickEndianSupport(const(MagickInfo)*);
 	MagickBooleanType GetMagickRawSupport(const(MagickInfo)*);
 	MagickBooleanType GetMagickSeekableStream(const(MagickInfo)*);
-	MagickBooleanType IsMagickInstantiated();
+	
+	static if (MagickLibVersion < 0x689)
+	{
+		MagickBooleanType IsMagickInstantiated();
+	}
+
+	static if (MagickLibVersion >= 0x689)
+	{
+		MagickBooleanType IsMagickCoreInstantiated();
+	}
+
 	MagickBooleanType MagickComponentGenesis();
 	MagickBooleanType UnregisterMagickInfo(const(char)*);
 

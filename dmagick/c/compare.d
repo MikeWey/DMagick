@@ -20,7 +20,8 @@ extern(C)
 		RootMeanSquaredErrorMetric,
 		NormalizedCrossCorrelationErrorMetric,
 		FuzzErrorMetric,
-		UndefinedErrorMetric = 0
+		UndefinedErrorMetric = 0,
+		PerceptualHashErrorMetric = 0xff
 	}
 
 	double* GetImageChannelDistortions(Image*, const(Image)*, const MetricType, ExceptionInfo*);

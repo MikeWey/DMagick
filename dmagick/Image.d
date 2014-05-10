@@ -2264,21 +2264,6 @@ class Image
 	}
 
 	/**
-	 * Applies a radial blur to the image.
-	 * 
-	 * Params:
-	 *     angle   = The angle of the radial blur, in degrees.
-	 *     channel = If no channels are specified, blurs all the channels.
-	 */
-	void radialBlur(double angle, ChannelType channel = ChannelType.DefaultChannels)
-	{
-		MagickCoreImage* image = 
-			RadialBlurImageChannel(imageRef, channel, angle, DMagickExceptionInfo());
-
-		imageRef = ImageRef(image);
-	}
-
-	/**
 	 * Creates a simulated three-dimensional button-like effect by
 	 * lightening and darkening the edges of the image.
 	 * 
@@ -2441,9 +2426,8 @@ class Image
 	 *     storage = The pixel Staroage type (CharPixel,
 	 *               ShortPixel, IntegerPixel, FloatPixel, or DoublePixel).
 	 *     pixels  = The pixel data.
-	 * Bugs: DMD bug 2972 prevents readpixels from being named just read.
 	 */
-	void readPixels(T)(size_t width, size_t height, string map, T[] pixels)
+	void read(T)(size_t width, size_t height, string map, T[] pixels)
 	{
 		StorageType storage = getStorageType!(T);
 
@@ -2564,6 +2548,31 @@ class Image
 
 		imageRef = ImageRef(image);
 	}
+
+	/**
+	 * Applies a rotational blur to the image.
+	 * 
+	 * Params:
+	 *     angle   = The angle of the rotational blur, in degrees.
+	 *     channel = If no channels are specified, blurs all the channels.
+	 */
+	void rotationalBlur(double angle, ChannelType channel = ChannelType.DefaultChannels)
+	{
+		static if ( is(typeof(RotationalBlurImage)) )
+		{
+			MagickCoreImage* image = 
+				RotationalBlurImageChannel(imageRef, channel, angle, DMagickExceptionInfo());
+		}
+		else
+		{
+			MagickCoreImage* image = 
+				RadialBlurImageChannel(imageRef, channel, angle, DMagickExceptionInfo());
+		}
+
+		imageRef = ImageRef(image);
+	}
+	/** ditto */
+	alias rotationalBlur radialBlur;
 
 	/**
 	 * scales an image to the desired dimensions with pixel sampling.

@@ -3,6 +3,7 @@ module dmagick.c.exception;
 import core.vararg;
 
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.semaphore;
 
 extern(C)
@@ -117,6 +118,12 @@ extern(C)
 	ErrorHandler SetErrorHandler(ErrorHandler);
 
 	ExceptionInfo* AcquireExceptionInfo();
+
+	static if ( MagickLibVersion >= 0x669 )
+	{
+		ExceptionInfo* CloneExceptionInfo(ExceptionInfo*);
+	}
+
 	ExceptionInfo* DestroyExceptionInfo(ExceptionInfo*);
 
 	FatalErrorHandler SetFatalErrorHandler(FatalErrorHandler);

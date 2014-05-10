@@ -31,6 +31,13 @@ deprecated extern(C)
 	alias MagickOffsetType ExtendedSignedIntegralType;
 	alias MagickSizeType   ExtendedUnsignedIntegralType;
 	alias MagickRealType   ExtendedRationalType;
+	/// The Quantum depth ImageMagick / DMagick is compiled with.
+	alias MagickQuantumDepth MAGICKCORE_QUANTUM_DEPTH;
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		enum MagickRealType MagickHuge    = 3.4e+38;
+	}
 
 	struct ViewInfo {}
 
@@ -107,6 +114,12 @@ deprecated extern(C)
 	Image* MosaicImages(Image*, ExceptionInfo*);
 	Image* PopImageList(Image**);
 
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		Image* RadialBlurImage(const(Image)*, const double, ExceptionInfo*);
+		Image* RadialBlurImageChannel(const(Image)*, const ChannelType, const double, ExceptionInfo*);
+	}
+
 	static if ( MagickLibVersion >= 0x661 )
 	{
 		Image* RecolorImage(const(Image)*, const size_t, const(double)*, ExceptionInfo*);
@@ -140,6 +153,12 @@ deprecated extern(C)
 	MagickBooleanType ClipPathImage(Image*, const(char)*, const MagickBooleanType);
 	MagickBooleanType CloneImageAttributes(Image*, const(Image)*);
 	MagickBooleanType ColorFloodfillImage(Image*, const(DrawInfo)*, const PixelPacket, const ssize_t, const ssize_t, const PaintMethod);
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		MagickBooleanType ConstituteComponentGenesis();
+	}
+
 	MagickBooleanType DeleteImageAttribute(Image*, const(char)*);
 	MagickBooleanType DeleteMagickRegistry(const ssize_t);
 	MagickBooleanType DescribeImage(Image*, FILE*, const MagickBooleanType);
@@ -153,7 +172,20 @@ deprecated extern(C)
 
 	MagickBooleanType FuzzyColorCompare(const(Image)*, const(PixelPacket)*, const(PixelPacket)*);
 	MagickBooleanType FuzzyOpacityCompare(const(Image)*, const(PixelPacket)*, const(PixelPacket)*);
+
+	static if (MagickLibVersion >= 0x689)
+	{
+		MagickBooleanType InitializeModuleList(ExceptionInfo*);
+		MagickBooleanType IsMagickInstantiated();
+	}
+
 	MagickBooleanType LevelImageColors(Image*, const ChannelType, const(MagickPixelPacket)*, const(MagickPixelPacket)*, const MagickBooleanType);
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		MagickBooleanType LoadMimeLists(const(char)*, ExceptionInfo*);
+	}
+
 	MagickBooleanType MagickMonitor(const(char)*, const MagickOffsetType, const MagickSizeType, void*);
 	MagickBooleanType MapImage(Image*, const(Image)*, const MagickBooleanType);
 	MagickBooleanType MapImages(Image*, const(Image)*, const MagickBooleanType);
@@ -220,7 +252,19 @@ deprecated extern(C)
 	uint UnshiftImageList(Image**, const(Image)*, ExceptionInfo*);
 
 	void* AcquireMemory(const size_t);
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		void AcquireSemaphoreInfo(SemaphoreInfo**);
+	}
+
 	void  AllocateNextImage(const(ImageInfo)*, Image*);
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		void ConstituteComponentTerminus();
+	}
+
 	void* CloneMemory(void*, const(void)*, const size_t);
 
 	static if ( MagickLibVersion >= 0x655 )
@@ -243,6 +287,12 @@ deprecated extern(C)
 	void  InitializeMagick(const(char)*);
 	void  MagickIncarnate(const(char)*);
 	void  ReacquireMemory(void**, const size_t);
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		void RelinquishSemaphoreInfo(SemaphoreInfo*);
+	}
+
 	void  ResetImageAttributeIterator(const(Image)*);
 	void  SetCacheThreshold(const size_t);
 	void  SetImage(Image*, const Quantum);

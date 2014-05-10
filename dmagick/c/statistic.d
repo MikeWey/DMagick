@@ -1,5 +1,6 @@
 module dmagick.c.statistic;
 
+import dmagick.c.draw;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
@@ -36,6 +37,31 @@ extern(C)
 				standard_deviation,
 				kurtosis,
 				skewness;
+		}
+	}
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		struct ChannelMoments
+		{
+			double[32]
+				I;
+
+			PointInfo
+				centroid,
+				ellipse_axis;
+
+			double
+				ellipse_angle,
+				ellipse_eccentricity,
+				ellipse_intensity;
+		}
+
+		struct ChannelPerceptualHash
+		{
+			double[32]
+				P,
+				Q;
 		}
 	}
 
@@ -146,6 +172,13 @@ extern(C)
 
 	ChannelStatistics* GetImageChannelStatistics(const(Image)*, ExceptionInfo*);
 
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		ChannelMoments* GetImageChannelMoments(const(Image)*, ExceptionInfo*);
+
+		ChannelPerceptualHash* GetImageChannelPerceptualHash(const(Image)*, ExceptionInfo*);
+	}
+
 	static if ( MagickLibVersion < 0x661 )
 	{
 		Image* AverageImages(const(Image)*, ExceptionInfo*);
@@ -177,7 +210,7 @@ extern(C)
 	MagickBooleanType GetImageChannelKurtosis(const(Image)*, const ChannelType, double*, double*, ExceptionInfo*);
 	MagickBooleanType GetImageChannelRange(const(Image)*, const ChannelType, double*, double*, ExceptionInfo*);
 	MagickBooleanType GetImageExtrema(const(Image)*, size_t*, size_t*, ExceptionInfo*);
-	MagickBooleanType GetImageRange(const(Image)*, double*, double*, ExceptionInfo*);
 	MagickBooleanType GetImageMean(const(Image)*, double*, double*, ExceptionInfo*);
 	MagickBooleanType GetImageKurtosis(const(Image)*, double*, double*, ExceptionInfo*);
+	MagickBooleanType GetImageRange(const(Image)*, double*, double*, ExceptionInfo*);
 }

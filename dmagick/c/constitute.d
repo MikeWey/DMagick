@@ -3,6 +3,7 @@ module dmagick.c.constitute;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -28,9 +29,16 @@ extern(C)
 	Image* ReadImages(const(ImageInfo)*, ExceptionInfo*);
 	Image* ReadInlineImage(const(ImageInfo)*, const(char)*, ExceptionInfo*);
 
-	MagickBooleanType ConstituteComponentGenesis();
+
+	static if ( MagickLibVersion < 0x689 )
+	{
+		MagickBooleanType ConstituteComponentGenesis();
+	}
 	MagickBooleanType WriteImage(const(ImageInfo)*, Image*);
 	MagickBooleanType WriteImages(const(ImageInfo)*, Image*, const(char)*, ExceptionInfo*);
 
-	void ConstituteComponentTerminus();
+	static if ( MagickLibVersion < 0x689 )
+	{
+		void ConstituteComponentTerminus();
+	}
 }
