@@ -69,10 +69,8 @@ class DMagickException : Exception
 				exceptions ~=
 					"case ExceptionType."~ severity ~"Error:
 						throw new "~ severity ~"Exception(reason, description, file, line);
-						break;
 					 case ExceptionType."~ severity ~"FatalError:
-						throw new "~ severity ~"Error(reason, description, file, line);
-						break;";
+						throw new "~ severity ~"Error(reason, description, file, line);";
 			}
 
 			return exceptions ~= 

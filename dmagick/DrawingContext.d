@@ -302,7 +302,6 @@ class DrawingContext
 
 			case DecorationType.UndefinedDecoration:
 				throw new DrawException("Undefined Decoration");
-				break;
 		}
 	}
 
