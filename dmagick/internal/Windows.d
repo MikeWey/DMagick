@@ -17,8 +17,8 @@ class Window
 	Image image;
 	Image[] imageList;
 	size_t index;
-	size_t height;
-	size_t width;
+	int height;
+	int width;
 
 	WNDCLASS   wndclass;
 	HINSTANCE  hInstance;
@@ -35,8 +35,8 @@ class Window
 	{
 		this.image = image;
 
-		height = image.rows;
-		width  = image.columns;
+		height = cast(int)image.rows;
+		width  = cast(int)image.columns;
 
 		hInstance = cast(HINSTANCE) GetModuleHandleA(null);
 
