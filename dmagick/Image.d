@@ -25,7 +25,13 @@ import dmagick.ImageView;
 import dmagick.Options;
 import dmagick.Utils;
 
-version(Windows) import dmagick.internal.Windows;
+version(DMagick_No_Display)
+{
+}
+else
+{
+	version(Windows) import dmagick.internal.Windows;
+}
 
 //Import all translated c headers.
 import dmagick.c.MagickCore;
@@ -1225,16 +1231,22 @@ class Image
 	 */
 	void display()
 	{
-		version(Windows)
+		version(DMagick_No_Display)
 		{
-			Window win = new Window(this);
-			win.display();
 		}
 		else
 		{
-			DisplayImages(options.imageInfo, imageRef);
+			version(Windows)
+			{
+				Window win = new Window(this);
+				win.display();
+			}
+			else
+			{
+				DisplayImages(options.imageInfo, imageRef);
 
-			DMagickException.throwException(&(imageRef.exception));
+				DMagickException.throwException(&(imageRef.exception));
+			}
 		}
 	}
 
