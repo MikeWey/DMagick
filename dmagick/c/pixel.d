@@ -181,5 +181,10 @@ extern(C)
 		MagickRealType GetPixelIntensity(const(Image)* image, const(PixelPacket)* restrict);
 	}
 
+	static if ( MagickLibVersion >= 0x690 )
+	{
+		void ConformMagickPixelPacket(Image*, const(MagickPixelPacket)*, MagickPixelPacket*, ExceptionInfo*);
+	}
+
 	void GetMagickPixelPacket(const(Image)*, MagickPixelPacket*);
 }

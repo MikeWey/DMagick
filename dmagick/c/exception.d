@@ -134,7 +134,12 @@ extern(C)
 
 	void CatchException(ExceptionInfo*);
 	void ClearMagickException(ExceptionInfo*);
-	void GetExceptionInfo(ExceptionInfo*);
+
+	static if ( MagickLibVersion < 0x689 )
+	{
+		void GetExceptionInfo(ExceptionInfo*);
+	}
+
 	void InheritException(ExceptionInfo*, const(ExceptionInfo)*);
 	void MagickError(const ExceptionType, const(char)*, const(char)*);
 	void MagickFatalError(const ExceptionType, const(char)*, const(char)*);

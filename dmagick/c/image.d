@@ -115,7 +115,13 @@ extern(C)
 		FlattenAlphaChannel,
 
 		/** ditto */
-		RemoveAlphaChannel
+		RemoveAlphaChannel,
+
+		/** */
+		AssociateAlphaChannel,
+
+		/** */
+		DisassociateAlphaChannel
 	}
 
 	/**

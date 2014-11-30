@@ -442,6 +442,9 @@ extern(C)
 		 */
 		LightenIntensityCompositeOp,
 
+		/** */
+		HardMixCompositeOp,
+
 		/* Depreciated (renamed) Method Names for backward compatibility */
 		AddCompositeOp      = ModulusAddCompositeOp,
 		SubtractCompositeOp = ModulusSubtractCompositeOp,

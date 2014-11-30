@@ -2,6 +2,7 @@ module dmagick.c.feature;
 
 import dmagick.c.exception;
 import dmagick.c.image;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -25,4 +26,14 @@ extern(C)
 	}
 
 	ChannelFeatures* GetImageChannelFeatures(const(Image)*, const size_t, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		Image* CannyEdgeImage(const(Image)*, const double, const double, const double, const double, ExceptionInfo*);
+	}
+	static if ( MagickLibVersion >= 0x690 )
+	{
+		Image* HoughLineImage(const(Image)*, const size_t, const size_t, const size_t, ExceptionInfo*);
+		Image* MeanShiftImage(const(Image)*, const size_t, const size_t, const double, ExceptionInfo*);
+	}
 }

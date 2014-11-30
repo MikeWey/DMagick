@@ -38,6 +38,11 @@ extern(C)
 				kurtosis,
 				skewness;
 		}
+
+		static if ( MagickLibVersion >= 0x690 )
+		{
+			double entropy;
+		}
 	}
 
 	static if ( MagickLibVersion >= 0x689 )
@@ -102,7 +107,8 @@ extern(C)
 		AbsEvaluateOperator,         /// Add value to pixels and return absolute value.
 		ExponentialEvaluateOperator, /// base-e exponential function.
 		MedianEvaluateOperator,      /// Choose the median value from an image sequence.
-		SumEvaluateOperator          /// Add value to pixels.
+		SumEvaluateOperator,         /// Add value to pixels.
+		RootMeanSquareEvaluateOperator /// 
 	}
 
 	/**
@@ -134,7 +140,8 @@ extern(C)
 			MinimumStatistic,   /// Minimum value per channel in neighborhood.
 			ModeStatistic,      /// Mode (most frequent) value per channel in neighborhood.
 			NonpeakStatistic,   /// Value just before or after the median value per channel in neighborhood.
-			StandardDeviationStatistic  /// 
+			StandardDeviationStatistic,  /// 
+			RootMeanSquareStatistic      ///
 		}
 	}
 	else
@@ -161,6 +168,11 @@ extern(C)
 				static if ( MagickLibVersion >= 0x670 )
 				{
 					types ~= "StandardDeviationStatistic,";
+				}
+
+				static if ( MagickLibVersion >= 0x690 )
+				{
+					types ~= "RootMeanSquareStatistic,";
 				}
 
 				types ~= "
@@ -205,10 +217,22 @@ extern(C)
 	MagickBooleanType EvaluateImageChannel(Image*, const ChannelType, const MagickEvaluateOperator, const double, ExceptionInfo*);
 	MagickBooleanType FunctionImage(Image*, const MagickFunction, const size_t, const(double)*, ExceptionInfo*);
 	MagickBooleanType FunctionImageChannel(Image*, const ChannelType, const MagickFunction, const size_t, const(double)*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x690 )
+	{
+		MagickBooleanType GetImageChannelEntropy(const(Image)*, const ChannelType, double*, ExceptionInfo*);
+	}
+
 	MagickBooleanType GetImageChannelExtrema(const(Image)*, const ChannelType, size_t*, size_t*, ExceptionInfo*);
 	MagickBooleanType GetImageChannelMean(const(Image)*, const ChannelType, double*, double*, ExceptionInfo*);
 	MagickBooleanType GetImageChannelKurtosis(const(Image)*, const ChannelType, double*, double*, ExceptionInfo*);
 	MagickBooleanType GetImageChannelRange(const(Image)*, const ChannelType, double*, double*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x690 )
+	{
+		MagickBooleanType GetImageEntropy(const(Image)*, double*, ExceptionInfo*);
+	}
+
 	MagickBooleanType GetImageExtrema(const(Image)*, size_t*, size_t*, ExceptionInfo*);
 	MagickBooleanType GetImageMean(const(Image)*, double*, double*, ExceptionInfo*);
 	MagickBooleanType GetImageKurtosis(const(Image)*, double*, double*, ExceptionInfo*);

@@ -145,6 +145,11 @@ deprecated extern(C)
 	int GetImageGeometry(Image*, const(char)*, const uint, RectangleInfo*);
 	int ParseImageGeometry(const(char)*, ssize_t*, ssize_t*, size_t*, size_t*);
 
+	static if ( MagickLibVersion >= 0x690 )
+	{
+		int SystemCommand(const MagickBooleanType, const MagickBooleanType, const(char)*, ExceptionInfo*);
+	}
+
 	MagickBooleanType AcquireOneCacheViewPixel(const(CacheView)*, const ssize_t, const ssize_t, PixelPacket*, ExceptionInfo*);
 	MagickBooleanType AcquireOneCacheViewVirtualPixel(const(CacheView)*, const VirtualPixelMethod, const ssize_t, const ssize_t, PixelPacket*, ExceptionInfo*);
 	MagickBooleanType AffinityImage(const(QuantizeInfo)*, Image*, const(Image)*);
@@ -277,6 +282,12 @@ deprecated extern(C)
 	void  DestroyMagick();
 	void  DestroyMagickRegistry();
 	void* GetConfigureBlob(const(char)*, char*, size_t*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		void GetExceptionInfo(ExceptionInfo*);
+	}
+
 	void* GetMagickRegistry(const ssize_t, RegistryType*, size_t*, ExceptionInfo*);
 	void  IdentityAffine(AffineMatrix*);
 	void  LiberateMemory(void**);

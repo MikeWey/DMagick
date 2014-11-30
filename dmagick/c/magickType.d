@@ -56,9 +56,16 @@ extern (C)
 		 * a pixel channel.
 		 */
 		version(MagickCore_HDRI)
-			alias float Quantum;
+		{
+			static if ( MagickLibVersion >= 0x690 )
+				alias double Quantum;
+			else
+				alias float Quantum;
+		}
 		else
+		{
 			alias uint  Quantum;
+		}
 
 		alias double SignedQuantum;
 
@@ -87,8 +94,16 @@ extern (C)
 		 * Quantum is an alias for the smallest integer that can hold
 		 * a pixel channel.
 		 */
-		alias double Quantum;
-		alias double SignedQuantum;
+		static if ( MagickLibVersion >= 0x690 )
+		{
+			alias real Quantum;
+			alias real SignedQuantum;
+		}
+		else
+		{
+			alias double Quantum;
+			alias double SignedQuantum;
+		}
 		//real seems to be the same size as long double for
 		//dmc and dmd on windows and for dmd and gcc on linux. 
 		alias real MagickRealType;

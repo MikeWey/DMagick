@@ -32,7 +32,10 @@ extern(C)
 		FILE* OpenMagickStream(const(char)*, const(char)*);
 	}
 
-	int SystemCommand(const MagickBooleanType, const MagickBooleanType, const(char)*, ExceptionInfo*);
+	static if ( MagickLibVersion < 0x690 )
+	{
+		int SystemCommand(const MagickBooleanType, const MagickBooleanType, const(char)*, ExceptionInfo*);
+	}
 
 	MagickBooleanType AcquireUniqueFilename(char*);
 	MagickBooleanType AcquireUniqueSymbolicLink(const(char)*, char*);

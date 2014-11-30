@@ -195,7 +195,14 @@ extern(C)
 		HCLpColorspace,
 
 		/** */
-		YDbDrColorspace
+		YDbDrColorspace,
+
+		/**
+		 * In CIE xyY, Y is the luminance and x and y represents the chrominance
+		 * values derived from the tristimulus values X, Y and Z in the CIE XYZ
+		 * color space.
+		 */
+		xyYColorspace
 	}
 
 	MagickBooleanType RGBTransformImage(Image*, const ColorspaceType);

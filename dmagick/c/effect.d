@@ -51,12 +51,6 @@ extern(C)
 	Image* AdaptiveSharpenImageChannel(const(Image)*, const ChannelType, const double, const double, ExceptionInfo*);
 	Image* BlurImage(const(Image)*, const double, const double, ExceptionInfo*);
 	Image* BlurImageChannel(const(Image)*, const ChannelType, const double, const double, ExceptionInfo*);
-
-	static if ( MagickLibVersion >= 0x689 )
-	{
-		Image* CannyEdgeImage(const(Image)*, const double, const double, const double, const double, ExceptionInfo*);
-	}
-
 	Image* ConvolveImage(const(Image)*, const size_t, const(double)*, ExceptionInfo*);
 	Image* ConvolveImageChannel(const(Image)*, const ChannelType, const size_t, const(double)*, ExceptionInfo*);
 	Image* DespeckleImage(const(Image)*, ExceptionInfo*);
@@ -66,6 +60,12 @@ extern(C)
 	Image* FilterImageChannel(const(Image)*, const ChannelType, const(KernelInfo)*, ExceptionInfo*);
 	Image* GaussianBlurImage(const(Image)*, const double, const double, ExceptionInfo*);
 	Image* GaussianBlurImageChannel(const(Image)*, const ChannelType, const double, const double, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x689 )
+	{
+		Image* KuwaharaImage(const(Image)*, const double, const double, ExceptionInfo*);
+		Image* KuwaharaImageChannel(const(Image)*, const ChannelType, const double, const double, ExceptionInfo*);
+	}
 
 	static if ( MagickLibVersion < 0x669 )
 	{

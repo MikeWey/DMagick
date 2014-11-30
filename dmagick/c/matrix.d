@@ -1,6 +1,7 @@
 module dmagick.c.matrix;
 
 import dmagick.c.exception;
+import dmagick.c.image;
 import dmagick.c.magickType;
 import dmagick.c.magickVersion;
 
@@ -12,6 +13,11 @@ extern(C)
 
 	double** AcquireMagickMatrix(const size_t, const size_t);
 	double** RelinquishMagickMatrix(double**, const size_t);
+
+	static if ( MagickLibVersion >= 0x690 )
+	{
+		Image* MatrixToImage(const(MatrixInfo)*, ExceptionInfo*);
+	}
 
 	MagickBooleanType GaussJordanElimination(double**, double**, const size_t, const size_t);
 
