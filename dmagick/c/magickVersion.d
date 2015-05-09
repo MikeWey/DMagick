@@ -215,12 +215,19 @@ extern(C)
 		///ditto
 		enum MagickLibVersionText = "6.8.9";
 	}
-	else
+	else version(MagickCore_690)
 	{
 		/// Defines the version of ImageMagick where these headers are based on.
 		enum MagickLibVersion = 0x690;
 		///ditto
 		enum MagickLibVersionText = "6.9.0";
+	}
+	else
+	{
+		/// Defines the version of ImageMagick where these headers are based on.
+		enum MagickLibVersion = 0x691;
+		///ditto
+		enum MagickLibVersionText = "6.9.1";
 	}
 
 	/*

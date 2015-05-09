@@ -219,10 +219,15 @@ extern(C)
 	{
 		void ScaleGeometryKernelInfo(KernelInfo*, const(char)*);
 	}
-	else static if ( MagickLibVersion == 0x661 )
+	static if ( MagickLibVersion == 0x661 || MagickLibVersion >= 0x691 )
 	{
 		void ScaleKernelInfo(KernelInfo*, const double, const GeometryFlags);
 	}
 
 	void ShowKernelInfo(const(KernelInfo)*);
+
+	static if ( MagickLibVersion >= 0x691 )
+	{
+		void UnityAddKernelInfo(KernelInfo*, const double);
+	}
 }

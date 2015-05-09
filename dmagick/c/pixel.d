@@ -176,6 +176,11 @@ extern(C)
 		MagickRealType EncodePixelGamma(const MagickRealType);
 	}
 
+	static if ( MagickLibVersion >= 0x691 )
+	{
+		MagickRealType GetMagickPixelIntensity(const(Image)* image, const(MagickPixelPacket)* restrict);
+	}
+
 	static if ( MagickLibVersion >= 0x684 )
 	{
 		MagickRealType GetPixelIntensity(const(Image)* image, const(PixelPacket)* restrict);

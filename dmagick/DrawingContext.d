@@ -993,19 +993,19 @@ class DrawingContext
 
 		version(Windows)
 		{
-			tempPath = getenv("TMP");
+			tempPath = environment.get("TMP");
 			if ( tempPath is null )
-				tempPath = getenv("TEMP");
+				tempPath = environment.get("TEMP");
 			if ( tempPath is null )
-				tempPath = buildPath(getenv("USERPROFILE"), "AppData/Local/Temp");
+				tempPath = buildPath(environment.get("USERPROFILE"), "AppData/Local/Temp");
 			if ( tempPath is null || !tempPath.exists )
-				tempPath = buildPath(getenv("WinDir"), "Temp");
+				tempPath = buildPath(environment.get("WinDir"), "Temp");
 		}
 		else
 		{
 			import core.sys.posix.stdio;
 
-			tempPath = getenv("TMPDIR");
+			tempPath = environment.get("TMPDIR");
 			if ( tempPath is null )
 				tempPath = P_tmpdir;
 		}
