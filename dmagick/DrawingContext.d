@@ -1012,7 +1012,7 @@ class DrawingContext
 
 		do
 		{
-			filename = buildPath(tempPath, "DMagick."~to!(string)(Clock.currTime().stdTime));
+			filename = buildPath(tempPath, "DMagick."~std.conv.to!(string)(Clock.currTime().stdTime));
 
 			if ( image.magick !is null && toLower(image.magick) != "canvas" )
 				filename ~= "."~image.magick;
