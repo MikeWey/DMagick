@@ -9,6 +9,7 @@ module dmagick.Color;
 import std.conv;
 import std.math;
 import std.string;
+import std.traits;
 
 import dmagick.Exception;
 import dmagick.Utils;
@@ -118,10 +119,21 @@ class Color
 		else
 			string frm = "%016X";
 
-		if ( packet.opacity == OpaqueOpacity )
-			return format("#"~frm~frm~frm, rndtol(packet.red), rndtol(packet.green), rndtol(packet.blue));
+
+		static if ( isFloatingPoint!Quantum )
+		{
+			if ( packet.opacity == OpaqueOpacity )
+				return format("#"~frm~frm~frm, rndtol(packet.red), rndtol(packet.green), rndtol(packet.blue));
+			else
+				return format("#"~frm~frm~frm~frm, rndtol(packet.red), rndtol(packet.green), rndtol(packet.blue), rndtol(QuantumRange-packet.opacity));
+		}
 		else
-			return format("#"~frm~frm~frm~frm, rndtol(packet.red), rndtol(packet.green), rndtol(packet.blue), rndtol(QuantumRange-packet.opacity));
+		{
+			if ( packet.opacity == OpaqueOpacity )
+				return format("#"~frm~frm~frm, packet.red, packet.green, packet.blue);
+			else
+				return format("#"~frm~frm~frm~frm, packet.red, packet.green, packet.blue, QuantumRange-packet.opacity);
+		}
 	}
 
 	unittest
