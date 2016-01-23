@@ -669,6 +669,12 @@ extern(C)
 
 	MagickBooleanType ClipImage(Image*);
 	MagickBooleanType ClipImagePath(Image*, const(char)*, const MagickBooleanType);
+
+	static if (MagickLibVersion >= 0x692)
+	{
+		MagickBooleanType CopyImagePixels(Image*, const(Image)*, const(RectangleInfo)*, const(OffsetInfo)*, ExceptionInfo*);
+	}
+
 	MagickBooleanType IsTaintImage(const(Image)*);
 	MagickBooleanType IsMagickConflict(const(char)*);
 	MagickBooleanType IsHighDynamicRangeImage(const(Image)*, ExceptionInfo*);

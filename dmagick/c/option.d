@@ -132,6 +132,12 @@ extern(C)
 				            MagickIntensityOptions,";
 			}
 
+			static if ( MagickLibVersion >= 0x692 )
+			{
+				options ~= "MagickGradientOptions,
+				            MagickWeightOptions,";
+			}
+
 			options ~= "}";
 
 		return options;

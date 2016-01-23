@@ -1,7 +1,9 @@
 module dmagick.c.colorspace;
 
+import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -207,6 +209,13 @@ extern(C)
 
 	MagickBooleanType RGBTransformImage(Image*, const ColorspaceType);
 	MagickBooleanType SetImageColorspace(Image*, const ColorspaceType);
+
+	static if ( MagickLibVersion >= 0x692 )
+	{
+		MagickBooleanType SetImageGray(Image*, ExceptionInfo*);
+		MagickBooleanType SetImageMonochrome(Image*, ExceptionInfo*);
+	}
+
 	MagickBooleanType TransformImageColorspace(Image*, const ColorspaceType);
 	MagickBooleanType TransformRGBImage(Image*, const ColorspaceType);
 }
