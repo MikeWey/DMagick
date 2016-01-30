@@ -67,6 +67,11 @@ extern(C)
 		Image* KuwaharaImageChannel(const(Image)*, const ChannelType, const double, const double, ExceptionInfo*);
 	}
 
+	static if ( MagickLibVersion >= 0x693 )
+	{
+		Image* LocalContrastImage(const(Image)*, const double, const double, ExceptionInfo*);
+	}
+
 	static if ( MagickLibVersion < 0x669 )
 	{
 		Image* MedianFilterImage(const(Image)*, const double, ExceptionInfo*);

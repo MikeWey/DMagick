@@ -229,14 +229,20 @@ extern(C)
 		///ditto
 		enum MagickLibVersionText = "6.9.1";
 	}
-	else
+	else version(MagickCore_692)
 	{
 		/// Defines the version of ImageMagick where these headers are based on.
 		enum MagickLibVersion = 0x692;
 		///ditto
 		enum MagickLibVersionText = "6.9.2";
 	}
-
+	else
+	{
+		/// Defines the version of ImageMagick where these headers are based on.
+		enum MagickLibVersion = 0x693;
+		///ditto
+		enum MagickLibVersionText = "6.9.3";
+	}
 	/*
 	 * With ImageMagick 6.6.3 long and unsinged long were changed to
 	 * ssize_t and size_t. This is only a problem for 64bits windows.

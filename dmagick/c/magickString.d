@@ -51,8 +51,6 @@ extern(C)
 	}
 
 	int	CompareStringInfo(const(StringInfo)*, const(StringInfo)*);
-	int	LocaleCompare(const(char)*, const(char)*);
-	int	LocaleNCompare(const(char)*, const(char)*, const size_t);
 
 	MagickBooleanType ConcatenateString(char**, const(char)*);
 
@@ -95,8 +93,6 @@ extern(C)
 	ubyte* GetStringInfoDatum(const(StringInfo)*);
 
 	void ConcatenateStringInfo(StringInfo*, const(StringInfo)*);
-	void LocaleLower(char*);
-	void LocaleUpper(char*);
 	void PrintStringInfo(FILE *file, const(char)*, const(StringInfo)*);
 	void ResetStringInfo(StringInfo*);
 	void SetStringInfo(StringInfo*, const(StringInfo)*);

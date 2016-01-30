@@ -10,6 +10,14 @@ extern(C)
 {
 	ImageType GetImageType(const(Image)*, ExceptionInfo*);
 
+	static if ( MagickLibVersion >= 0x693 )
+	{
+		ImageType IdentifyImageGray(const(Image)*, ExceptionInfo*);
+		ImageType IdentifyImageType(const(Image)*, ExceptionInfo*);
+
+		MagickBooleanType IdentifyImageMonochrome(const(Image)*, ExceptionInfo*);
+	}
+
 	MagickBooleanType IsGrayImage(const(Image)*, ExceptionInfo*);
 	MagickBooleanType IsMonochromeImage(const(Image)*, ExceptionInfo*);
 	MagickBooleanType IsOpaqueImage(const(Image)*, ExceptionInfo*);

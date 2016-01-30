@@ -495,6 +495,11 @@ extern(C)
 			/** Total animation duration sum(delay*iterations) */
 			size_t duration;
 		}
+
+		static if ( MagickLibVersion >= 0x693 )
+		{
+			long tietz_offset;
+		}
 	}
 
 	struct ImageInfo

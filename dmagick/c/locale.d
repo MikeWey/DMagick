@@ -42,6 +42,9 @@ extern(C)
 		double InterpretLocaleValue(const(char)*, char**);
 	}
 
+	int LocaleCompare(const(char)*, const(char)*);
+	int LocaleNCompare(const(char)*, const(char)*, const size_t);
+
 	LinkedListInfo* DestroyLocaleOptions(LinkedListInfo*);
 	LinkedListInfo* GetLocaleOptions(const(char)*, ExceptionInfo*);
 
@@ -57,4 +60,6 @@ extern(C)
 	}
 
 	void LocaleComponentTerminus();
+	void LocaleLower(char*);
+	void LocaleUpper(char*);
 }

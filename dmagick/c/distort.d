@@ -320,7 +320,13 @@ extern(C)
 		 * of ShepardsColorInterpolate Generating spots of color in a sea
 		 * of the average of colors.
 		 */
-		InverseColorInterpolate
+		InverseColorInterpolate,
+
+		/**
+		 * Like voronoi, but resulting polygonal 'cells' are mapped
+		 * to fixed coordinate system.
+		 */
+		ManhattanColorInterpolate
 	}
 
 	Image* AffineTransformImage(const(Image)*, const(AffineMatrix)*, ExceptionInfo*);

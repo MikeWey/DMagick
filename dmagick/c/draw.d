@@ -271,6 +271,15 @@ extern(C)
 
 		MagickRealType
 			radius;
+
+		static if ( MagickLibVersion >= 0x693 )
+		{
+			MagickRealType
+				angle;
+
+			PointInfo
+				radii;
+		}
 	}
 
 	struct ElementReference

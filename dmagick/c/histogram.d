@@ -5,6 +5,7 @@ import core.stdc.stdio;
 import dmagick.c.exception;
 import dmagick.c.image;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 import dmagick.c.pixel;
 
 extern(C)
@@ -24,6 +25,11 @@ extern(C)
 	ColorPacket* GetImageHistogram(const(Image)*, size_t*, ExceptionInfo*);
 
 	Image* UniqueImageColors(const(Image)*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x693 )
+	{
+		MagickBooleanType IdentifyPaletteImage(const(Image)*, ExceptionInfo*);
+	}
 
 	MagickBooleanType IsHistogramImage(const(Image)*, ExceptionInfo*);
 	MagickBooleanType IsPaletteImage(const(Image)*, ExceptionInfo*);

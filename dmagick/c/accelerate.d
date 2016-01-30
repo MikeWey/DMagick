@@ -39,6 +39,15 @@ extern(C)
 	static if ( MagickLibVersion >= 0x687 )
 	{
 		Image* AccelerateConvolveImageChannel(const(Image)*, const ChannelType, const(KernelInfo)*, ExceptionInfo*);
+		Image* AccelerateDespeckleImage(const(Image)*, ExceptionInfo*);
+		Image* AccelerateRadialBlurImage(const(Image)*, const ChannelType, const double, ExceptionInfo*);
+		//Image* AccelerateResizeImage(const(Image)*, const size_t, const size_t, const(ResizeFilter)*, ExceptionInfo*);
+		Image* AccelerateUnsharpMaskImage(const(Image)*, const ChannelType, const double, const double, const double, const double, ExceptionInfo*);
+	}
+
+	static if ( MagickLibVersion >= 0x693 )
+	{
+		Image* AccelerateLocalContrastImage(const(Image)*, const double, const double, ExceptionInfo*);
 	}
 
 	static if ( MagickLibVersion >= 0x689 )
