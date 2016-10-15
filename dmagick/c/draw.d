@@ -437,6 +437,13 @@ extern(C)
 			double
 				direction;
 		}
+
+		static if (MagickLibVersion >= 0x695)
+		{
+			double
+				fill_opacity,
+				stroke_opacity;
+		}
 	}
 
 	struct PrimitiveInfo
