@@ -15,7 +15,8 @@ extern(C)
 		FilterPolicyDomain,
 		PathPolicyDomain,
 		ResourcePolicyDomain,
-		SystemPolicyDomain
+		SystemPolicyDomain,
+		CachePolicyDomain
 	}
 
 	enum PolicyRights

@@ -177,9 +177,13 @@ extern (C)
 		enum MagickRealType MagickEpsilon = 1.0e-15;
 		enum MagickRealType MagickHuge    = 3.4e+38;
 	}
-	else static if ( MagickLibVersion >= 0x689 )
+	else static if ( MagickLibVersion >= 0x689 && MagickLibVersion < 0x694 )
 	{
 		enum MagickRealType MagickEpsilon = 1.0e-15;
+	}
+	else static if ( MagickLibVersion >= 0x694 )
+	{
+		enum MagickRealType MagickEpsilon = 1.0e-14;
 	}
 
 	alias uint  MagickStatusType;

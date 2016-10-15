@@ -60,6 +60,11 @@ extern(C)
 	Image* VignetteImage(const(Image)*, const double, const double, const ssize_t, const ssize_t, ExceptionInfo*);
 	Image* WaveImage(const(Image)*, const double, const double, ExceptionInfo*);
 
+	static if ( MagickLibVersion >= 0x694 )
+	{
+		Image* WaveletDenoiseImage(const(Image)*, const double, const double, ExceptionInfo*);
+	}
+
 	MagickBooleanType PlasmaImage(Image*, const(SegmentInfo)*, size_t, size_t);
 	MagickBooleanType SolarizeImage(Image*, const double);
 

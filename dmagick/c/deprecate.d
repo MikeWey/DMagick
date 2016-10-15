@@ -289,6 +289,12 @@ deprecated extern(C)
 	}
 
 	void* GetMagickRegistry(const ssize_t, RegistryType*, size_t*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x694 )
+	{
+		void GetTokenToken(const(char)*, const(char)**, char*);
+	}
+
 	void  IdentityAffine(AffineMatrix*);
 	void  LiberateMemory(void**);
 	void  LiberateSemaphoreInfo(SemaphoreInfo**);
