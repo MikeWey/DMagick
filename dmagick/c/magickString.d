@@ -33,6 +33,12 @@ extern(C)
 	char*  EscapeString(const(char)*, const char);
 	char*  FileToString(const(char)*, const size_t, ExceptionInfo*);
 	char*  GetEnvironmentValue(const(char)*);
+
+	static if ( MagickLibVersion >= 0x694 )
+	{
+		char* SanitizeString(const(char)*);
+	}
+
 	char*  StringInfoToHexString(const(StringInfo)*);
 	char*  StringInfoToString(const(StringInfo)*);
 	char** StringToArgv(const(char)*, int*);

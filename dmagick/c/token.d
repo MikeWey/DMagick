@@ -16,5 +16,13 @@ extern(C)
 	TokenInfo* AcquireTokenInfo();
 	TokenInfo* DestroyTokenInfo(TokenInfo*);
 
-	void GetMagickToken(const(char)*, const(char)**, char*);
+	static if ( MagickLibVersion < 0x694 )
+	{
+		void GetMagickToken(const(char)*, const(char)**, char*);
+	}
+
+	static if ( MagickLibVersion >= 0x694 )
+	{
+		void GetNextToken(const(char)*, const(char)**, const size_t, char*);
+	}
 }
