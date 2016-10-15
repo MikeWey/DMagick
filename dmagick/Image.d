@@ -4429,6 +4429,7 @@ class Image
 	unittest
 	{
 		Image img = new Image(Geometry(200, 200), new Color());
+		img.options.font = "/usr/share/fonts/TTF/DejaVuSans.ttf";
 		string wraped = img.wordWrap("Lorem ipsum dolor sit amet.", Geometry(100, 200));
 
 		assert(wraped == "Lorem ipsum\ndolor sit amet.");

@@ -1,6 +1,7 @@
 module dmagick.c.token;
 
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
