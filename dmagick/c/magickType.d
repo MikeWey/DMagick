@@ -11,7 +11,11 @@ extern (C)
 	}
 	else version(X86_64)
 	{
-		alias float  MagickFloatT;
+		static if ( MagickLibVersion >= 0x698 )
+			alias double  MagickFloatT;
+		else
+			alias float  MagickFloatT;
+
 		alias double MagickDoubleT;	
 	}
 
