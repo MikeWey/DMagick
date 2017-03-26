@@ -45,19 +45,19 @@ class Window
 		wndclass.cbClsExtra    = 0;
 		wndclass.cbWndExtra    = 0;
 		wndclass.hInstance     = hInstance;
-		wndclass.hIcon         = LoadIconA(null, IDI_APPLICATION);
-		wndclass.hCursor       = LoadCursorA(null, IDC_ARROW);
+		wndclass.hIcon         = LoadIcon(null, IDI_APPLICATION);
+		wndclass.hCursor       = LoadCursor(null, IDC_ARROW);
 		wndclass.hbrBackground = null;
 		wndclass.lpszMenuName  = null;
 		wndclass.lpszClassName = "DMagick";
 
-		if (!RegisterClassA(&wndclass))
+		if (!RegisterClass(&wndclass))
 			throw new DMagickException("Displaying images requires Windows NT!");
 
 		RECT rect = RECT(0,0, width,height);
 		AdjustWindowRect(&rect, WS_CAPTION | WS_SYSMENU, false);
 
-		hwnd = CreateWindowA("DMagick", "DMagick", WS_CAPTION | WS_SYSMENU,
+		hwnd = CreateWindow("DMagick", "DMagick", WS_CAPTION | WS_SYSMENU,
 			CW_USEDEFAULT, CW_USEDEFAULT, rect.right-rect.left, rect.bottom-rect.top,
 			null, null, hInstance, null);
 
