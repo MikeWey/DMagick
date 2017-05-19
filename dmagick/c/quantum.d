@@ -70,7 +70,7 @@ extern(C)
 	alias ClampToQuantum RoundToQuantum;
 	static pure nothrow Quantum ClampToQuantum(const MagickRealType value)
 	{
-		version(MagickCore_HDRI)
+		static if(MagickHDRISupport)
 		{
 			return value;
 		}
@@ -86,7 +86,7 @@ extern(C)
 
 	static pure nothrow ubyte ScaleQuantumToChar(const Quantum quantum)
 	{
-		version(MagickCore_HDRI)
+		static if(MagickHDRISupport)
 		{
 			if ( quantum <= 0 )
 				return 0;

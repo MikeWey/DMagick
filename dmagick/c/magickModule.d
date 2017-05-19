@@ -16,7 +16,7 @@ extern(C)
 		MagickImageFilterModule
 	}
 
-	struct ModuleInfo
+	struct MagickModuleInfo
 	{
 		char*
 			path,
@@ -37,7 +37,7 @@ extern(C)
 		MagickBooleanType
 			stealth;
 
-		ModuleInfo*
+		MagickModuleInfo*
 			previous,
 			next;
 
@@ -49,7 +49,7 @@ extern(C)
 
 	char** GetModuleList(const(char)*, const MagickModuleType, size_t*, ExceptionInfo*);
 
-	const(ModuleInfo)** GetModuleInfoList(const(char)*, size_t*, ExceptionInfo*);
+	const(MagickModuleInfo)** GetModuleInfoList(const(char)*, size_t*, ExceptionInfo*);
 
 	static if ( MagickLibVersion < 0x689 )
 	{
@@ -62,7 +62,7 @@ extern(C)
 	MagickBooleanType OpenModule(const(char)*, ExceptionInfo*);
 	MagickBooleanType OpenModules(ExceptionInfo*);
 
-	ModuleInfo* GetModuleInfo(const(char)*, ExceptionInfo*);
+	MagickModuleInfo* GetModuleInfo(const(char)*, ExceptionInfo*);
 
 	void DestroyModuleList();
 	void ModuleComponentTerminus();

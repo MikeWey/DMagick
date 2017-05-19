@@ -19,13 +19,13 @@ extern (C)
 		alias double MagickDoubleT;	
 	}
 
-	version(Quantum8)
+	static if(MagickQuantumDepth == 8)
 	{
 		/**
 		 * Quantum is an alias for the smallest integer that can hold
 		 * a pixel channel.
 		 */
-		version(MagickCore_HDRI)
+		static if(MagickHDRISupport)
 			alias float Quantum;
 		else
 			alias ubyte Quantum;
@@ -44,7 +44,6 @@ extern (C)
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
 		enum QuantumRange = ubyte.max;
-		enum MagickQuantumDepth = 8;
 		enum MaxColormapSize = 256;
 
 		static if ( MagickLibVersion < 0x678 )
@@ -53,13 +52,13 @@ extern (C)
 			enum MagickHuge    = 1.0e6;
 		}
 	}
-	else version(Quantum32)
+	else static if(MagickQuantumDepth == 32)
 	{
 		/**
 		 * Quantum is an alias for the smallest integer that can hold
 		 * a pixel channel.
 		 */
-		version(MagickCore_HDRI)
+		static if(MagickHDRISupport)
 		{
 			static if ( MagickLibVersion >= 0x690 )
 				alias double Quantum;
@@ -83,7 +82,6 @@ extern (C)
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
 		enum QuantumRange = uint.max;
-		enum MagickQuantumDepth = 32;
 		enum MaxColormapSize = 65536;
 
 		static if ( MagickLibVersion < 0x678 )
@@ -92,7 +90,7 @@ extern (C)
 			enum MagickHuge    = 1.0e12;
 		}
 	}
-	else version(Quantum64)
+	else static if(MagickQuantumDepth == 64)
 	{
 		/**
 		 * Quantum is an alias for the smallest integer that can hold
@@ -117,7 +115,6 @@ extern (C)
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
 		enum QuantumRange = 18446744073709551615.0;
-		enum MagickQuantumDepth = 64;
 		enum MaxColormapSize = 65536;
 
 		static if ( MagickLibVersion < 0x678 )
@@ -132,7 +129,7 @@ extern (C)
 		 * Quantum is an alias for the smallest integer that can hold
 		 * a pixel channel.
 		 */
-		version(MagickCore_HDRI)
+		static if(MagickHDRISupport)
 			alias float  Quantum;
 		else
 			alias ushort Quantum;
@@ -151,7 +148,6 @@ extern (C)
 		 * as Quantum.max except when the Quantum dept is 64 bits.
 		 */
 		enum QuantumRange = ushort.max;
-		enum MagickQuantumDepth = 16;
 		enum MaxColormapSize = 65536;
 
 		static if ( MagickLibVersion < 0x678 )
@@ -160,6 +156,8 @@ extern (C)
 			enum MagickHuge    = 1.0e12;
 		}
 	}
+
+	alias MagickQuantumDepth = dmagick.c.magickVersion.MagickQuantumDepth;
 
 	static if ( MagickLibVersion == 0x678 )
 	{

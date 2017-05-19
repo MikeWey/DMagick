@@ -48,37 +48,27 @@ ifeq ("$(ARCH)", "x86_64")
     LDFLAGS+=-m64
 endif 
 
-MAGICKCORELIB=$(LINKERFLAG)$(lastword $(shell pkg-config --libs MagickCore))
+MAGICKCORELIB=$(LINKERFLAG)-l$(shell pkg-config --variable=libname MagickCore)
 
 AR=ar
 RANLIB=ranlib
 
 QUANTUMDEPTH = $(filter Q%,$(shell convert --version))
-MAGICKVERSION = $(firstword $(subst -, ,$(subst .,,$(word 3,$(shell convert --version)))))
+MAGICKVERSION = $(firstword $(subst -, ,$(word 3,$(shell convert --version))))
 HDRISUPPORT = $(findstring HDRI,$(shell convert --version | grep HDRI))
-WRAPEDVERSION = $(subst 0x,,$(subst ;,,$(lastword $(shell grep "enum\ MagickLibVersion\ " dmagick/c/magickVersion.d))))
-
-ifneq ("$(QUANTUMDEPTH)","Q16")
-    VERSIONS+= $(VERSIONFLAG)$(subst Q,Quantum,$(QUANTUMDEPTH))
-endif
-
-ifneq ("$(MAGICKVERSION)","$(WRAPEDVERSION)")
-    VERSIONS+= $(VERSIONFLAG)MagickCore_$(MAGICKVERSION)
-endif
 
 ifeq ("$(HDRISUPPORT)","HDRI")
-    VERSIONS+= $(VERSIONFLAG)MagickCore_HDRI
-endif
-
-ifdef VERSIONS
-	DCFLAGS+=$(VERSIONS)
+    HDRI=true
+else
+    HDRI=false
 endif
 
 #######################################################################
 
 LIBNAME_DMAGICK = libDMagick.a
 SOURCES_DMAGICK = $(sort $(wildcard dmagick/*.d)) \
-                  $(sort $(wildcard dmagick/c/*.d))
+                  $(sort $(wildcard dmagick/c/*.d)) \
+                  dmagick/c/magickVersion.d
 
 OBJECTS_DMAGICK = $(patsubst %.d,%.o,$(SOURCES_DMAGICK))
 DOCS_DMAGICK    = $(patsubst dmagick/%.d,docs/%.html,$(SOURCES_DMAGICK))
@@ -91,9 +81,15 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 	$(AR) rcs $@ $^
 	$(RANLIB) $@
 
+dmagick/c/magickVersion.d: dmagick/c/magickVersion.d.in
+	sed 's/@MagickLibVersion@/$(subst .,,$(MAGICKVERSION))/g' $< > $@
+	sed -i 's/@MagickLibVersionText@/$(MAGICKVERSION)/g' $@
+	sed -i 's/@QuantumDepth@/$(subst Q,,$(QUANTUMDEPTH))/g' $@
+	sed -i 's/@HDRI@/$(HDRI)/g' $@
+
 #######################################################################
 
-%.o : %.d
+%.o : %.d dmagick/c/magickVersion.d
 	$(DC) $(DCFLAGS) -c $< $(output)
 
 #######################################################################
@@ -145,6 +141,7 @@ uninstall:
 	rm -f $(DESTDIR)$(prefix)/lib/pkgconfig/DMagick.pc
 
 clean:
+	rm -rf dmagick/c/magickVersion.d
 	rm -rf $(LIBNAME_DMAGICK) $(OBJECTS_DMAGICK)
 	rm -rf $(DOCS_DMAGICK) docs/c
 	rm -rf unittest.o unittest

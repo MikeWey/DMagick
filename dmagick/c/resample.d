@@ -1,27 +1,17 @@
 module dmagick.c.resample;
 
-import dmagick.c.cacheView;
-import dmagick.c.exception;
-import dmagick.c.image;
-import dmagick.c.magickType;
 import dmagick.c.magickVersion;
-import dmagick.c.pixel;
-
-//A mixin with static if has problems with circular imports. (dmagick.c.image)
-version(MagickCore_660) {} else
-version(MagickCore_661) {} else
-version(MagickCore_662) {} else
-version(MagickCore_663) {} else
-version(MagickCore_664) {} else
-version(MagickCore_665) {} else
-{
-	version = MagickCore_666_and_up;
-}
 
 extern(C)
 {
-	version ( MagickCore_666_and_up )
+	static if ( MagickLibVersion >= 0x666 )
 	{
+		import dmagick.c.cacheView;
+		import dmagick.c.exception;
+		import dmagick.c.image;
+		import dmagick.c.magickType;
+		import dmagick.c.pixel;
+
 		/**
 		 * Used to adjust the filter algorithm used when resizing images.
 		 * Different filters experience varying degrees of success with
@@ -78,6 +68,12 @@ extern(C)
 	}
 	else
 	{
+		import dmagick.c.cacheView;
+		import dmagick.c.exception;
+		import dmagick.c.image;
+		import dmagick.c.magickType;
+		import dmagick.c.pixel;
+
 		enum FilterTypes
 		{
 			UndefinedFilter,

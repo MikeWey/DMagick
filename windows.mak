@@ -523,6 +523,13 @@ docs\c\xwindow.html: dmagick\c\xwindow.d
 
 ################### Library generation #########################
 
+dmagick\c\magickVersion.d: dmagick\c\magickVersion.d.in
+	@powershell -Command "get-content $** | \
+	%{$$_ -replace '@MagickLibVersion@','700'} | \
+	%{$$_ -replace '@MagickLibVersionText@','7.0.0'} | \
+	%{$$_ -replace '@QuantumDepth@','16'} | \
+	%{$$_ -replace '@HDRI@','false'} | Set-Content $@"
+
 $(LIBNAME): $(SOURCE)
 	$(DMD) -lib -of$(LIBNAME) $(DFLAGS) $(SOURCE)
 
@@ -541,6 +548,7 @@ stubmain.d:
 	echo void main(){} > $@
 
 clean:
+	del dmagick\c\magickVersion.d
 	del $(LIBNAME)
 	del $(MAGICKCORELIBNAME)
 	del $(DOCS)
