@@ -33,14 +33,6 @@ Building:
     This should build DMagick (DMagick.lib) and generate the Import
     import library (MagickCore.lib) needed to link with the dll.
 
-    If another version then the latest is used the used version needs
-    to be set in the DFLAGS variable of the make file.
-        make -f windows.mak DFLAGS="-version=MagickCore_$$$ -version=Quantum$$"
-    Where the $$$ after MagickCore_ represent the major.minor.maintenance
-    version of ImageMagick without the dots.
-    For Quantum the $$ stands for eighter 8, 16, 32, or 64 whitch
-    correspondes to the quantum depth used by ImageMagick 16 is the default.
-
 Building Applications using DMagick:
 ====================================
 
@@ -56,11 +48,3 @@ Building Applications using DMagick:
     When using the latest version of ImageMagick only the libs need to
     be passed to the compiler.
         dmd myapp.d -L DMagick.lib MagickCore.lib
-
-When not using pkg-config or when not using the latest vewrsion on Windows
-the ImageMagick version needs to be passed to the compiler using
-"-version=MagickCore_$$$" and "-version=Quantum$$". Where the $$$ after
-MagickCore_ represent the major.minor.maintenance version of ImageMagick
-without the dots.
-For Quantum the $$ stands for eighter 8, 16, 32, or 64 whitch
-correspondes to the quantum depth used by ImageMagick 16 is the default.
