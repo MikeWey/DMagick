@@ -82,10 +82,7 @@ $(LIBNAME_DMAGICK): $(OBJECTS_DMAGICK)
 	$(RANLIB) $@
 
 dmagick/c/magickVersion.d: dmagick/c/magickVersion.d.in
-	sed 's/@MagickLibVersion@/$(subst .,,$(MAGICKVERSION))/g' $< > $@
-	sed -i 's/@MagickLibVersionText@/$(MAGICKVERSION)/g' $@
-	sed -i 's/@QuantumDepth@/$(subst Q,,$(QUANTUMDEPTH))/g' $@
-	sed -i 's/@HDRI@/$(HDRI)/g' $@
+	sed 's/@MagickLibVersion@/$(subst .,,$(MAGICKVERSION))/g' $< | sed 's/@MagickLibVersionText@/$(MAGICKVERSION)/g' | sed 's/@QuantumDepth@/$(subst Q,,$(QUANTUMDEPTH))/g' | sed 's/@HDRI@/$(HDRI)/g' > $@
 
 #######################################################################
 

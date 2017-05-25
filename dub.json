@@ -1,0 +1,34 @@
+{
+	"name": "dmagick",
+	"description": "An ImageMagick binding for the D Programming Language.",
+	"authors": ["Mike Wey"],
+	"license": "Zlib",
+	"targetType": "library",
+	"sourcePaths": ["dmagick"],
+	"importPaths": ["dmagick"],
+	"libs": ["MagickCore"],
+	"configurations": [
+		{
+			"name": "windows",
+			"platforms": ["windows"],
+			"sourceFiles-x86": ["MagickCore.lib"],
+			"preGenerateCommands": [
+				"powershell -Command \"get-content $PACKAGE_DIR/dmagick/c/magickVersion.d.in | %{$$_ -replace '@MagickLibVersion@','700'} | %{$$_ -replace '@MagickLibVersionText@','7.0.0'} | %{$$_ -replace '@QuantumDepth@','16'} | %{$$_ -replace '@HDRI@','false'} | Set-Content $PACKAGE_DIR/dmagick/c/magickVersion.d.in\""
+			],
+			"preGenerateCommands-x86": [
+				"@echo @for %%i in (%1) do @if NOT \"%%~$PATH:i\"==\"\" @copy \"%%~$PATH:i\" $PACKAGE_DIR/ > copydll.bat",
+				"copydll CORE_RL_magick_.dll",
+				"implib /s $PACKAGE_DIR/MagickCore.lib $PACKAGE_DIR/CORE_RL_magick_.dll",
+				"@del copydll.bat",
+				"del $PACKAGE_DIR/CORE_RL_magick_.dll"
+			]
+
+		},
+		{
+			"name": "other",
+			"preGenerateCommands": [
+				"PACKAGE_DIR=$PACKAGE_DIR $PACKAGE_DIR/build-aux/magickVersion.sh"
+			]
+		}
+	]
+}
