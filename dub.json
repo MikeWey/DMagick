@@ -28,6 +28,7 @@
 			"name": "other",
 			"libs": ["MagickCore"],
 			"preGenerateCommands": [
+				"chmod +x $PACKAGE_DIR/build-aux/magickVersion.sh",
 				"PACKAGE_DIR=$PACKAGE_DIR $PACKAGE_DIR/build-aux/magickVersion.sh"
 			]
 		}
