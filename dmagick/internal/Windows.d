@@ -6,6 +6,8 @@
  
 module dmagick.internal.Windows;
 
+version(Windows):
+
 import core.sys.windows.windows;
 
 import dmagick.Image;
