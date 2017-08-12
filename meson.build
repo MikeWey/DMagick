@@ -1,4 +1,4 @@
-project('DMagick', 'd', version: '0.2.0')
+project('DMagick', 'd', version: '0.2.0', meson_version: '>=0.41')
 
 magick_core = dependency('MagickCore')
 magick_core_lib = magick_core.get_pkgconfig_variable('libname')
@@ -31,7 +31,7 @@ magick_version = configure_file(input: 'dmagick/c/magickVersion.d.in',
 
 compiler = meson.get_compiler('d')
 
-if meson.version().version_compare('>0.40.1') and compiler.has_argument('-mv=dmagick.c.magickVersion=' + meson.current_build_dir() + '/magickVersion.d')
+if compiler.has_argument('-mv=dmagick.c.magickVersion=' + meson.current_build_dir() + '/magickVersion.d')
 	add_project_arguments('-mv=dmagick.c.magickVersion=' + meson.current_build_dir() + '/magickVersion.d', language: 'd')
 else
 	run_command('mkdir', '-p', meson.current_build_dir() + '/dmagick/c')
@@ -40,6 +40,13 @@ endif
 
 source_dmagick = [
 	'dmagick/Array.d',
+	'dmagick/CoderInfo.d',
+	'dmagick/ColorCMYK.d',
+	'dmagick/Color.d',
+	'dmagick/ColorGray.d',
+	'dmagick/ColorHSL.d',
+	'dmagick/ColorRGB.d',
+	'dmagick/ColorYUV.d',
 	'dmagick/DrawingContext.d',
 	'dmagick/Exception.d',
 	'dmagick/Geometry.d',
@@ -106,13 +113,6 @@ source_magick = [
 	'dmagick/c/monitor.d',
 	'dmagick/c/montage.d',
 	'dmagick/c/morphology.d',
-	'dmagick/CoderInfo.d',
-	'dmagick/ColorCMYK.d',
-	'dmagick/Color.d',
-	'dmagick/ColorGray.d',
-	'dmagick/ColorHSL.d',
-	'dmagick/ColorRGB.d',
-	'dmagick/ColorYUV.d',
 	'dmagick/c/option.d',
 	'dmagick/c/paint.d',
 	'dmagick/c/pixel.d',
@@ -165,7 +165,7 @@ dmagick_lib = static_library('DMagick',
 
 pkg_conf.generate(name: 'DMagick',
 	libraries: [dmagick_lib, '-l'+magick_core_lib],
-	subdirs: 'd/',
+	subdirs: 'd/dmagick',
 	version: meson.project_version(),
 	description: 'DMagick - A D binding for ImageMagick.')
 
