@@ -270,6 +270,11 @@ deprecated extern(C)
 		void ConstituteComponentTerminus();
 	}
 
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		void* CropImageToHBITMAP(Image*, const(RectangleInfo)*, ExceptionInfo*);
+	}
+
 	void* CloneMemory(void*, const(void)*, const size_t);
 
 	static if ( MagickLibVersion >= 0x655 )
@@ -296,6 +301,12 @@ deprecated extern(C)
 	}
 
 	void  IdentityAffine(AffineMatrix*);
+
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		void* ImageToHBITMAP(Image*, ExceptionInfo*);
+	}
+
 	void  LiberateMemory(void**);
 	void  LiberateSemaphoreInfo(SemaphoreInfo**);
 	void  FormatString(char*, const(char)*, ...);

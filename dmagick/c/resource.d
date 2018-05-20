@@ -18,7 +18,8 @@ extern(C)
 		MemoryResource,
 		ThreadResource,
 		TimeResource,
-		ThrottleResource
+		ThrottleResource,
+		ListLengthResource
 	}
 
 	int AcquireUniqueFileResource(char*);

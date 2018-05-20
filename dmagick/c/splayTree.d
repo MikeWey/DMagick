@@ -1,6 +1,7 @@
 module dmagick.c.splayTree;
 
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -12,6 +13,12 @@ extern(C)
 
 	const(void)* GetNextKeyInSplayTree(SplayTreeInfo*);
 	const(void)* GetNextValueInSplayTree(SplayTreeInfo*);
+
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		const(void)* GetRootValueFromSplayTree(SplayTreeInfo*);
+	}
+
 	const(void)* GetValueFromSplayTree(SplayTreeInfo*, const(void)*);
 
 	int CompareSplayTreeString(const(void)*, const(void)*);

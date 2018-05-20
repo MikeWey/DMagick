@@ -687,6 +687,12 @@ extern(C)
 	MagickBooleanType ListMagickInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType ModifyImage(Image**, ExceptionInfo*);
 	MagickBooleanType ResetImagePage(Image*, const(char)*);
+
+	static if (MagickLibVersion >= 0x699)
+	{
+		MagickBooleanType ResetImagePixels(Image*, ExceptionInfo*);
+	}
+
 	MagickBooleanType SetImageBackgroundColor(Image*);
 	MagickBooleanType SetImageClipMask(Image*, const(Image)*);
 

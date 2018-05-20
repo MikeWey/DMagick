@@ -1,5 +1,6 @@
 module dmagick.c.draw;
 
+import dmagick.c.color;
 import dmagick.c.composite;
 import dmagick.c.geometry;
 import dmagick.c.image;
@@ -444,6 +445,21 @@ extern(C)
 				fill_opacity,
 				stroke_opacity;
 		}
+
+		static if (MagickLibVersion >= 0x699)
+		{
+			MagickBooleanType
+				clip_path;
+
+			Image*
+				clipping_mask;
+
+			ComplianceType
+				compliance;
+
+			Image*
+				composite_mask;
+		}
 	}
 
 	struct PrimitiveInfo
@@ -462,6 +478,12 @@ extern(C)
 
 		char*
 			text;
+
+		static if (MagickLibVersion >= 0x699)
+		{
+			MagickBooleanType
+				closed_subpath;
+		}
 	}
 
 	/**

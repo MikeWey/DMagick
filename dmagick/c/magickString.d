@@ -23,6 +23,12 @@ extern(C)
 		size_t
 			length,
 			signature;
+
+		static if ( MagickLibVersion >= 0x699 )
+		{
+			char*
+				name;
+		}
 	}
 
 	char*  AcquireString(const(char)*);
@@ -44,6 +50,11 @@ extern(C)
 	char** StringToArgv(const(char)*, int*);
 	char*  StringToken(const(char)*, char**);
 	char** StringToList(const(char)*);
+
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		const(char)* GetStringInfoName(const(StringInfo)*);
+	}
 
 	const(char)* GetStringInfoPath(const(StringInfo)*);
 
@@ -71,6 +82,12 @@ extern(C)
 	size_t ConcatenateMagickString(char*, const(char)*, const size_t);
 	size_t CopyMagickString(char*, const(char)*, const size_t);
 	size_t GetStringInfoLength(const(StringInfo)*);
+
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		size_t SetStringInfoName(StringInfo* ,const(char)*);
+	}
+
 
 	ssize_t	FormatMagickSize(const MagickSizeType, const MagickBooleanType, char*);
 

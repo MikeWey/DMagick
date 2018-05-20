@@ -138,6 +138,16 @@ extern(C)
 				            MagickWeightOptions,";
 			}
 
+			static if ( MagickLibVersion >= 0x693 )
+			{
+				options ~= "MagickComplianceOptions,";
+			}
+
+			static if ( MagickLibVersion >= 0x699 )
+			{
+				options ~= "MagickAutoThresholdOptions";
+			}
+
 			options ~= "}";
 
 		return options;

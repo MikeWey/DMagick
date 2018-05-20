@@ -204,9 +204,19 @@ extern(C)
 		 * values derived from the tristimulus values X, Y and Z in the CIE XYZ
 		 * color space.
 		 */
-		xyYColorspace
+		xyYColorspace,
+
+		/**
+		 * A linear version ofGRAYColorspace.
+		 */
+		LinearGRAYColorspace 
 	}
 
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		ColorspaceType GetImageColorspaceType(const(Image)* ,ExceptionInfo*);
+	}
+	
 	MagickBooleanType RGBTransformImage(Image*, const ColorspaceType);
 	MagickBooleanType SetImageColorspace(Image*, const ColorspaceType);
 

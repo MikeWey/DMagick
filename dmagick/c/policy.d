@@ -4,6 +4,7 @@ import core.stdc.stdio;
 
 import dmagick.c.exception;
 import dmagick.c.magickType;
+import dmagick.c.magickVersion;
 
 extern(C)
 {
@@ -38,6 +39,11 @@ extern(C)
 	MagickBooleanType IsRightsAuthorized(const PolicyDomain, const PolicyRights, const(char)*);
 	MagickBooleanType ListPolicyInfo(FILE*, ExceptionInfo*);
 	MagickBooleanType PolicyComponentGenesis();
+
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		MagickBooleanType SetMagickSecurityPolicy(const(char)*, ExceptionInfo*);
+	}
 
 	void PolicyComponentTerminus();
 }

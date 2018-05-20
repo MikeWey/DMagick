@@ -445,6 +445,9 @@ extern(C)
 		/** */
 		HardMixCompositeOp,
 
+		/** */
+		StereoCompositeOp,
+
 		/* Depreciated (renamed) Method Names for backward compatibility */
 		AddCompositeOp      = ModulusAddCompositeOp,
 		SubtractCompositeOp = ModulusSubtractCompositeOp,

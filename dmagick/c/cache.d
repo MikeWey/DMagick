@@ -26,6 +26,11 @@ extern(C)
 		CacheType GetImagePixelCacheType(const(Image)*);
 	}
 
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		const(char)* GetPixelCacheFilename(const(Image)*);
+	}
+
 	const(IndexPacket)* GetVirtualIndexQueue(const(Image)*);
 
 	const(PixelPacket)* GetVirtualPixels(const(Image)*, const ssize_t, const ssize_t, const size_t, const size_t, ExceptionInfo*);

@@ -13,7 +13,8 @@ extern(C)
 	{
 		ReadMode,
 		WriteMode,
-		IOMode
+		IOMode,
+		PersistMode
 	}
 
 	FILE* GetBlobFileHandle(const(Image)*);

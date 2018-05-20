@@ -11,12 +11,28 @@ alias ptrdiff_t ssize_t;
 
 extern(C)
 {
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		enum AutoThresholdMethod
+		{
+			UndefinedThresholdMethod,
+			KapurThresholdMethod,
+			OTSUThresholdMethod,
+			TriangleThresholdMethod
+		}
+	}
+
 	struct ThresholdMap {}
 
 	Image* AdaptiveThresholdImage(const(Image)*, const size_t, const size_t, const ssize_t, ExceptionInfo*);
 
 	ThresholdMap* DestroyThresholdMap(ThresholdMap*);
 	ThresholdMap* GetThresholdMap(const(char)*, ExceptionInfo*);
+
+	static if ( MagickLibVersion >= 0x699 )
+	{
+		MagickBooleanType AutoThresholdImage(Image*, const AutoThresholdMethod, ExceptionInfo*);
+	}
 
 	MagickBooleanType BilevelImage(Image*, const double);
 	MagickBooleanType BilevelImageChannel(Image*, const ChannelType, const double);

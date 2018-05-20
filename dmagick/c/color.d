@@ -20,6 +20,7 @@ extern(C)
 		SVGCompliance = 0x0001,
 		X11Compliance = 0x0002,
 		XPMCompliance = 0x0004,
+		MVGCompliance = 0x0008,
 		AllCompliance = 0x7fffffff
 	}
 
