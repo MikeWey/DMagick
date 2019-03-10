@@ -5,7 +5,7 @@
 	"license": "Zlib",
 	"targetType": "library",
 	"sourcePaths": ["dmagick"],
-	"importPaths": ["dmagick"],
+	"importPaths": ["."],
 	"configurations": [
 		{
 			"name": "windows",
