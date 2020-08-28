@@ -136,8 +136,8 @@ extern(C)
 			DistanceMorphology,          /* Add Kernel Value, take Minimum */
 
 			/* Second-level Morphology methods */
-			OpenMorphology,              /* Dilate then Erode */
-			CloseMorphology,             /* Erode then Dilate */
+			OpenMorphology,              /* Erode then Dilate */
+			CloseMorphology,             /* Dilate then Erode */
 			OpenIntensityMorphology,     /* Pixel Pick using GreyScale Open */
 			CloseIntensityMorphology,    /* Pixel Pick using GreyScale Close */";
 
